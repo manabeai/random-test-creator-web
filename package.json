@@ -1,0 +1,35 @@
+{
+  "name": "random-test-creator",
+  "private": true,
+  "version": "0.1.6",
+  "type": "module",
+  "scripts": {
+    "build:wasm": "wasm-pack build cp-ast-ecosystems/crates/cp-ast-wasm --target web --out-dir ../../../wasm",
+    "dev": "npm run build:wasm && vite",
+    "dev:fast": "vite",
+    "dev:e2e": "npm run build:wasm && vite --host 127.0.0.1 --port 4173 --strictPort",
+    "build": "npm run build:wasm && tsc && vite build",
+    "preview": "vite preview",
+    "test:unit": "npm run build:wasm && vitest run",
+    "test:e2e": "playwright test --config tests/e2e/playwright.config.ts",
+    "test:e2e:ui": "playwright test --config tests/e2e/playwright.config.ts --ui"
+  },
+  "dependencies": {
+    "@preact/signals": "^1.2.0",
+    "effect": "^3.21.2",
+    "katex": "^0.16.0",
+    "preact": "^10.19.0"
+  },
+  "devDependencies": {
+    "@effect/language-service": "^0.85.1",
+    "@playwright/test": "^1.59.1",
+    "@preact/preset-vite": "^2.8.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/preact": "^3.2.4",
+    "@types/katex": "^0.16.0",
+    "jsdom": "^28.1.0",
+    "typescript": "^5.3.0",
+    "vite": "^5.0.0",
+    "vitest": "^4.1.4"
+  }
+}

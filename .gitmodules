@@ -1,0 +1,3 @@
+[submodule "cp-ast-ecosystems"]
+	path = cp-ast-ecosystems
+	url = https://github.com/manabeai/cp-ast-ecosystems.git
