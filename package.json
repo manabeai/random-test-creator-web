@@ -9,6 +9,7 @@
     "dev:fast": "vite",
     "dev:e2e": "npm run build:wasm && vite --host 127.0.0.1 --port 4173 --strictPort",
     "build": "npm run build:wasm && tsc && vite build",
+    "lint": "tsc --noEmit",
     "preview": "vite preview",
     "test:unit": "npm run build:wasm && vitest run",
     "test:e2e": "playwright test --config tests/e2e/playwright.config.ts",
