@@ -144,16 +144,16 @@ export function ConstraintPane() {
   return (
     <div
       ref={paneRef}
-      class={`pane ${folded ? 'folded' : ''}`}
+      class={`pane flex min-w-0 flex-col overflow-hidden bg-[#0f1115] ${folded ? 'folded' : ''} max-md:flex-none max-md:overflow-visible`}
       data-testid="constraint-pane"
       onMouseLeave={dismissEditor}
     >
-      <div class="pane-header">
-        <span class="pane-title">Constraints</span>
-        <div class="pane-header-controls">
-          <div class="constraint-shortcuts">
+      <div class="pane-header flex min-h-11 items-center justify-between border-b border-[#2a2f3a] bg-[#151922] px-3">
+        <span class="pane-title text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Constraints</span>
+        <div class="pane-header-controls flex items-center gap-2">
+          <div class="constraint-shortcuts flex gap-1.5">
             <button
-              class="shortcut-btn"
+              class="shortcut-btn rounded-md border border-[#384152] bg-transparent px-2.5 py-1 text-[12px] font-medium text-slate-400 transition hover:border-cyan-300 hover:text-cyan-200"
               data-testid="property-shortcut"
               onClick={() => {
                 closeConstraintEditor();
@@ -163,7 +163,7 @@ export function ConstraintPane() {
               Property
             </button>
             <button
-              class="shortcut-btn"
+              class="shortcut-btn rounded-md border border-[#384152] bg-transparent px-2.5 py-1 text-[12px] font-medium text-slate-400 transition hover:border-cyan-300 hover:text-cyan-200"
               data-testid="sumbound-shortcut"
               onClick={() => {
                 showPropertyOptions.value = false;
@@ -173,12 +173,12 @@ export function ConstraintPane() {
               ΣBound
             </button>
           </div>
-          <button class="fold-toggle" onClick={toggleConstraintFold} aria-label={folded ? 'Expand' : 'Collapse'}>
+          <button class="fold-toggle hidden rounded-md border border-[#384152] bg-transparent px-2.5 py-1 text-[12px] font-medium text-slate-400 transition hover:border-cyan-300 hover:text-cyan-200 max-md:inline-flex" onClick={toggleConstraintFold} aria-label={folded ? 'Expand' : 'Collapse'}>
             {folded ? '▶' : '▼'}
           </button>
         </div>
       </div>
-      <div class="pane-content-scroll">
+      <div class={`pane-content-scroll flex-1 overflow-auto p-3 max-md:max-h-[2000px] max-md:overflow-hidden max-md:transition-[max-height,opacity] max-md:duration-300 ${folded ? 'max-md:max-h-0 max-md:py-0 max-md:opacity-0' : 'max-md:opacity-100'}`}>
         {/* Property options (signal-driven visibility) */}
         {showPropertyOptions.value && (
           <PropertyOptions onSelect={handlePropertySelect} />
@@ -188,7 +188,7 @@ export function ConstraintPane() {
         {proj.constraints.items.map(item => (
           <div
             key={`constraint-item-${item.index}`}
-            class={`constraint-item ${item.status} ${editState.step !== 'closed' && editState.step !== 'sumbound' && editState.targetId === item.target_id ? 'active' : ''}`}
+            class={`constraint-item group flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[13px] transition hover:bg-[#151922] ${item.status === 'draft' ? 'draft text-slate-500' : 'completed text-slate-100'} ${editState.step !== 'closed' && editState.step !== 'sumbound' && editState.targetId === item.target_id ? 'active bg-[#202633] ring-1 ring-cyan-300/15' : ''}`}
             data-testid={`constraint-item-${item.index}`}
             data-constraint-status={item.status}
             onClick={() => {
@@ -208,9 +208,9 @@ export function ConstraintPane() {
               }, 120);
             }}
           >
-            <span class="constraint-icon">{item.status === 'draft' ? '○' : '●'}</span>
+            <span class="constraint-icon font-mono text-[11px]">{item.status === 'draft' ? '○' : '●'}</span>
             <span
-              class="constraint-display"
+              class="constraint-display flex-1 font-mono"
               data-testid={
                 item.status === 'draft' && item.draft_index !== undefined
                   ? `draft-constraint-${item.draft_index}`
@@ -223,7 +223,7 @@ export function ConstraintPane() {
             </span>
             {item.status === 'completed' && item.constraint_id && (
               <button
-                class="constraint-delete-btn"
+                class="constraint-delete-btn text-slate-500 opacity-0 transition hover:text-rose-300 group-hover:opacity-100"
                 data-testid={`delete-constraint-${item.completed_index ?? item.index}`}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -266,23 +266,23 @@ export function ConstraintPane() {
 
 function PropertyOptions({ onSelect }: { onSelect: (tag: string) => void }) {
   return (
-    <div class="property-options visible">
+    <div class="property-options visible mb-2 flex flex-wrap gap-1.5 p-2">
       <button
-        class="property-option"
+        class="property-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200"
         data-testid="property-option-tree"
         onClick={() => onSelect('Tree')}
       >
         Tree
       </button>
       <button
-        class="property-option"
+        class="property-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200"
         data-testid="property-option-connected"
         onClick={() => onSelect('Connected')}
       >
         Connected
       </button>
       <button
-        class="property-option"
+        class="property-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200"
         data-testid="property-option-simple"
         onClick={() => onSelect('Simple')}
       >
@@ -314,11 +314,11 @@ function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
   };
 
   return (
-    <div class="charset-options">
-      <div class="constraint-editor-label">Select Character Set</div>
-      <div class="charset-presets">
+    <div class="charset-options flex flex-col gap-2 p-2">
+      <div class="constraint-editor-label mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Select Character Set</div>
+      <div class="charset-presets flex flex-wrap gap-1.5">
         <button
-          class={`charset-option ${selected === 'LowerAlpha' ? 'active' : ''}`}
+          class={`charset-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200 ${selected === 'LowerAlpha' ? 'active selected border-cyan-300 bg-cyan-300 font-semibold text-[#0f1115]' : ''}`}
           data-testid="charset-option-lowercase"
           onClick={() => {
             charSetSelection.value = 'LowerAlpha';
@@ -328,7 +328,7 @@ function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
           a-z (lowercase)
         </button>
         <button
-          class={`charset-option ${selected === 'UpperAlpha' ? 'active' : ''}`}
+          class={`charset-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200 ${selected === 'UpperAlpha' ? 'active selected border-cyan-300 bg-cyan-300 font-semibold text-[#0f1115]' : ''}`}
           data-testid="charset-option-uppercase"
           onClick={() => {
             charSetSelection.value = 'UpperAlpha';
@@ -338,7 +338,7 @@ function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
           A-Z (uppercase)
         </button>
         <button
-          class={`charset-option ${selected === 'Digit' ? 'active' : ''}`}
+          class={`charset-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200 ${selected === 'Digit' ? 'active selected border-cyan-300 bg-cyan-300 font-semibold text-[#0f1115]' : ''}`}
           data-testid="charset-option-digit"
           onClick={() => {
             charSetSelection.value = 'Digit';
@@ -348,7 +348,7 @@ function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
           0-9 (digit)
         </button>
         <button
-          class={`charset-option ${selected === 'Alpha' ? 'active' : ''}`}
+          class={`charset-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200 ${selected === 'Alpha' ? 'active selected border-cyan-300 bg-cyan-300 font-semibold text-[#0f1115]' : ''}`}
           data-testid="charset-option-alpha"
           onClick={() => {
             charSetSelection.value = 'Alpha';
@@ -358,7 +358,7 @@ function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
           a-zA-Z (letters)
         </button>
         <button
-          class={`charset-option ${selected === 'AlphaNumeric' ? 'active' : ''}`}
+          class={`charset-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200 ${selected === 'AlphaNumeric' ? 'active selected border-cyan-300 bg-cyan-300 font-semibold text-[#0f1115]' : ''}`}
           data-testid="charset-option-alphanumeric"
           onClick={() => {
             charSetSelection.value = 'AlphaNumeric';
@@ -368,7 +368,7 @@ function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
           a-zA-Z0-9
         </button>
         <button
-          class={`charset-option ${selected === 'Custom' ? 'active' : ''}`}
+          class={`charset-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200 ${selected === 'Custom' ? 'active selected border-cyan-300 bg-cyan-300 font-semibold text-[#0f1115]' : ''}`}
           data-testid="charset-option-custom"
           onClick={() => { charSetSelection.value = 'Custom'; }}
         >
@@ -377,14 +377,14 @@ function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
       </div>
 
       {selected === 'Custom' && (
-        <div class="charset-custom-editor">
-          <div class="charset-custom-label">Enter characters:</div>
-          <div class="charset-custom-inputs">
+        <div class="charset-custom-editor mt-2 rounded-lg border border-[#2a2f3a] bg-[#151922] p-2">
+          <div class="charset-custom-label mb-2 text-[12px] text-slate-500">Enter characters:</div>
+          <div class="charset-custom-inputs flex flex-wrap items-center gap-1.5">
             {customChars.map((char, index) => (
-              <div key={index} class="charset-char-input-group">
+              <div key={index} class="charset-char-input-group flex items-center gap-1">
                 <input
                   type="text"
-                  class="charset-char-input"
+                  class="charset-char-input h-8 w-8 rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 text-center font-mono text-[13px] text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
                   data-testid={`charset-char-input-${index}`}
                   value={char}
                   maxLength={1}
@@ -393,7 +393,7 @@ function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
                 />
                 {customChars.length > 1 && (
                   <button
-                    class="charset-char-remove"
+                    class="text-slate-500 opacity-0 transition hover:text-rose-300 group-hover:opacity-100"
                     onClick={() => removeCustomChar(index)}
                   >
                     ×
@@ -402,7 +402,7 @@ function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
               </div>
             ))}
             <button
-              class="charset-add-btn"
+              class="h-8 w-8 rounded-md border border-dashed border-cyan-300/80 px-1.5 py-0.5 font-mono text-[11px] text-cyan-300 transition hover:bg-cyan-300 hover:text-[#0f1115]"
               data-testid="charset-add-char"
               onClick={addCustomChar}
             >
@@ -421,11 +421,12 @@ function SumBoundEditor({ onConfirm }: { onConfirm: () => void }) {
   const bExprState = boundExprState.value;
 
   return (
-    <div class="sumbound-editor">
-      <div class="constraint-editor-label">SumBound</div>
-      <div class="sumbound-row">
-        <label>Variable</label>
+    <div class="sumbound-editor my-2 rounded-lg border border-[#2a2f3a] bg-[#151922] p-3">
+      <div class="constraint-editor-label mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">SumBound</div>
+      <div class="sumbound-row mb-2 flex items-center gap-2">
+        <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Variable</label>
         <select
+          class="rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 text-[13px] text-slate-100 outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
           data-testid="sumbound-var-select"
           value={sumBoundVar.value}
           onChange={(e) => { sumBoundVar.value = (e.target as HTMLSelectElement).value; }}
@@ -436,10 +437,10 @@ function SumBoundEditor({ onConfirm }: { onConfirm: () => void }) {
           ))}
         </select>
       </div>
-      <div class="sumbound-row">
-        <label>Upper Bound</label>
+      <div class="sumbound-row mb-2 flex items-center gap-2">
+        <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Upper Bound</label>
         <div
-          class="bound-input"
+          class="bound-input flex min-h-8 cursor-pointer items-center rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 transition hover:border-cyan-300/70"
           data-testid="sumbound-upper-input"
           onClick={() => {
             if (!upper) openValueInput('sumbound-upper');
@@ -447,7 +448,7 @@ function SumBoundEditor({ onConfirm }: { onConfirm: () => void }) {
         >
           {upper ? (
             <span
-              class="bound-expression"
+              class="bound-expression font-mono text-[13px] text-cyan-300"
               data-testid="sumbound-upper-expression"
               onClick={(e) => {
                 e.stopPropagation();
@@ -457,7 +458,7 @@ function SumBoundEditor({ onConfirm }: { onConfirm: () => void }) {
               {upper}
             </span>
           ) : (
-            <span class="bound-placeholder">upper...</span>
+            <span class="bound-placeholder text-[12px] text-slate-600">upper...</span>
           )}
         </div>
         {isValueInputOpen('sumbound-upper') && <ValueInput target="sumbound-upper" />}

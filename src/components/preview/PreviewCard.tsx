@@ -50,22 +50,22 @@ export function PreviewCard({ preset }: { preset: PresetInfo }) {
   };
 
   return (
-    <div class="preview-card" onClick={handleClick}>
-      <div class="card-header">
-        <span class="card-title">📝 {preset.description}</span>
-        <span class="card-name">{preset.name}</span>
+    <div class="preview-card cursor-pointer overflow-hidden rounded-lg border border-[#2a2f3a] bg-[#151922] transition hover:-translate-y-0.5 hover:border-cyan-300/70 hover:shadow-xl hover:shadow-black/30" onClick={handleClick}>
+      <div class="card-header flex items-center justify-between border-b border-[#2a2f3a] bg-[#18202b] px-3 py-2">
+        <span class="card-title text-[13px] font-semibold text-slate-100">{preset.description}</span>
+        <span class="card-name font-mono text-[11px] text-slate-500">{preset.name}</span>
       </div>
-      <div class="card-section">
-        <div class="card-section-label">Structure</div>
-        <pre class="card-content">{data.structure}</pre>
+      <div class="card-section border-b border-[#2a2f3a] px-3 py-2">
+        <div class="card-section-label mb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">Structure</div>
+        <pre class="card-content max-h-24 overflow-hidden whitespace-pre-wrap font-mono text-[12px] leading-5 text-slate-300">{data.structure}</pre>
       </div>
-      <div class="card-section">
-        <div class="card-section-label">Constraints</div>
-        <pre class="card-content">{data.constraints}</pre>
+      <div class="card-section border-b border-[#2a2f3a] px-3 py-2">
+        <div class="card-section-label mb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">Constraints</div>
+        <pre class="card-content max-h-24 overflow-hidden whitespace-pre-wrap font-mono text-[12px] leading-5 text-slate-300">{data.constraints}</pre>
       </div>
-      <div class="card-section">
-        <div class="card-section-label">Sample (seed=0)</div>
-        <SamplePreviewBlock preview={data.sample} contentClass="card-content" />
+      <div class="card-section px-3 py-2">
+        <div class="card-section-label mb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">Sample (seed=0)</div>
+        <SamplePreviewBlock preview={data.sample} contentClass="card-content max-h-24 overflow-hidden whitespace-pre-wrap font-mono text-[12px] leading-5 text-slate-300" />
       </div>
     </div>
   );

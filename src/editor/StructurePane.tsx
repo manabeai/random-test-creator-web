@@ -100,19 +100,19 @@ export function StructurePane() {
 
   return (
     <div
-      class={`pane ${folded ? 'folded' : ''}`}
+      class={`pane flex min-w-0 flex-col overflow-hidden bg-[#0f1115] ${folded ? 'folded' : ''} max-md:flex-none max-md:overflow-visible`}
       data-testid="structure-pane"
       onMouseLeave={closePopup}
     >
-      <div class="pane-header">
-        <span class="pane-title">Structure</span>
-        <button class="fold-toggle" onClick={toggleStructureFold} aria-label={folded ? 'Expand' : 'Collapse'}>
+      <div class="pane-header flex min-h-11 items-center justify-between border-b border-[#2a2f3a] bg-[#151922] px-3">
+        <span class="pane-title text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Structure</span>
+        <button class="fold-toggle hidden rounded-md border border-[#384152] bg-transparent px-2.5 py-1 text-[12px] font-medium text-slate-400 transition hover:border-cyan-300 hover:text-cyan-200 max-md:inline-flex" onClick={toggleStructureFold} aria-label={folded ? 'Expand' : 'Collapse'}>
           {folded ? '▶' : '▼'}
         </button>
       </div>
-      <div class="pane-content-scroll">
+      <div class={`pane-content-scroll flex-1 overflow-auto p-3 max-md:max-h-[2000px] max-md:overflow-hidden max-md:transition-[max-height,opacity] max-md:duration-300 ${folded ? 'max-md:max-h-0 max-md:py-0 max-md:opacity-0' : 'max-md:opacity-100'}`}>
         {proj.nodes.length === 0 && (
-          <div class="structure-empty">
+          <div class="structure-empty p-4 text-center">
             {proj.hotspots.filter(h => h.direction === 'below').map(h => (
               <HotspotButton key={`below-${h.parent_id}`} hotspot={h} />
             ))}
@@ -123,7 +123,7 @@ export function StructurePane() {
             return (
               <div
                 key={item.line.nodes.map(node => node.id).join('-')}
-                class="structure-line"
+                class="structure-line flex min-h-7 items-center gap-2 py-1 pr-2"
                 style={{ paddingLeft: `${item.line.depth * 1.2}rem` }}
               >
                 {item.line.nodes.map(node => (
@@ -137,13 +137,13 @@ export function StructurePane() {
             );
           }
           return (
-            <div key={`below-${item.hotspot.parent_id}`} class="structure-node" style={{ paddingLeft: `${item.depth * 1.2}rem` }}>
+            <div key={`below-${item.hotspot.parent_id}`} class="structure-node flex min-h-7 items-center gap-2" style={{ paddingLeft: `${item.depth * 1.2}rem` }}>
               <HotspotButton hotspot={item.hotspot} />
             </div>
           );
         })}
         {proj.nodes.length > 0 && orphanBelowHotspots.map(h => (
-          <div key={`orphan-below-${h.parent_id}`} class="structure-node">
+          <div key={`orphan-below-${h.parent_id}`} class="structure-node flex min-h-7 items-center gap-2">
             <HotspotButton hotspot={h} />
           </div>
         ))}
@@ -160,7 +160,7 @@ function StructureNodeView({ node, hotspots }: { node: ProjectedNode; hotspots: 
 
   return (
     <div
-      class="structure-node"
+      class="structure-node flex min-h-7 items-center gap-2"
       data-testid={`structure-node-${node.id}`}
       data-node-id={node.id}
       data-node-label={node.label}
@@ -172,7 +172,7 @@ function StructureNodeView({ node, hotspots }: { node: ProjectedNode; hotspots: 
         />
       ) : (
         <span
-          class={`node-label ${node.is_hole ? 'node-hole' : 'node-editable'}`}
+          class={`node-label font-mono text-[13px] text-slate-100 ${node.is_hole ? 'node-hole italic text-slate-500' : 'node-editable cursor-pointer rounded px-1 transition hover:bg-[#202633] hover:text-cyan-200'}`}
           onClick={() => {
             if (node.edit) {
               openNodeEdit(node);
@@ -209,12 +209,12 @@ function NodeInlineEdit({ nodeId }: { nodeId: string; currentLabel: string }) {
   };
   
   return (
-    <span class="node-inline-edit node-popup">
-      <span class="popup-fields">
-        <span class="popup-field">
-          <label>Kind</label>
+    <span class="node-inline-edit node-popup inline-flex items-center rounded-lg border border-[#2a2f3a] bg-[#151922] p-3 shadow-2xl shadow-black/40">
+      <span class="popup-fields flex flex-col gap-2">
+        <span class="popup-field flex items-center gap-2">
+          <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Kind</label>
           <select
-            class="node-edit-kind-select"
+            class="node-edit-kind-select rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 text-[13px] text-slate-100 outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
             data-testid="node-edit-kind-select"
             value={kind}
             onChange={(e) => { nodeEditKind.value = (e.target as HTMLSelectElement).value as 'scalar' | 'array'; }}
@@ -224,10 +224,10 @@ function NodeInlineEdit({ nodeId }: { nodeId: string; currentLabel: string }) {
             ))}
           </select>
         </span>
-        <span class="popup-field">
-          <label>Type</label>
+        <span class="popup-field flex items-center gap-2">
+          <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Type</label>
           <select
-            class="node-edit-type-select"
+            class="node-edit-type-select rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 text-[13px] text-slate-100 outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
             data-testid="node-edit-type-select"
             value={nodeEditType.value}
             onChange={(e) => { nodeEditType.value = (e.target as HTMLSelectElement).value; }}
@@ -239,11 +239,11 @@ function NodeInlineEdit({ nodeId }: { nodeId: string; currentLabel: string }) {
             ))}
           </select>
         </span>
-        <span class="popup-field">
-          <label>Name</label>
+        <span class="popup-field flex items-center gap-2">
+          <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Name</label>
           <input
             type="text"
-            class="node-edit-input"
+            class="node-edit-input w-24 rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 font-mono text-[13px] text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
             data-testid="node-edit-input"
             value={name}
             onInput={(e) => { nodeEditName.value = (e.target as HTMLInputElement).value; }}
@@ -255,12 +255,12 @@ function NodeInlineEdit({ nodeId }: { nodeId: string; currentLabel: string }) {
           />
         </span>
       {kind === 'array' && (
-        <span class="popup-field node-edit-length">
-          <label>Length</label>
+        <span class="popup-field node-edit-length flex items-center gap-2">
+          <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Length</label>
           {lengthVars.map(v => (
             <button
               key={v.node_id}
-              class={`length-var-option ${length === v.name ? 'active' : ''}`}
+              class={`length-var-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200 ${length === v.name ? 'active selected border-cyan-300 bg-cyan-300 font-semibold text-[#0f1115]' : ''}`}
               data-testid={`node-edit-length-var-option-${v.name}`}
               onClick={() => { nodeEditLength.value = v.name; }}
               type="button"
@@ -269,7 +269,7 @@ function NodeInlineEdit({ nodeId }: { nodeId: string; currentLabel: string }) {
             </button>
           ))}
           <input
-            class="length-expression-input"
+            class="length-expression-input rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 font-mono text-[13px] text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
             data-testid="node-edit-length-input"
             value={length}
             placeholder="length"
@@ -278,7 +278,7 @@ function NodeInlineEdit({ nodeId }: { nodeId: string; currentLabel: string }) {
         </span>
       )}
       <button
-        class="popup-confirm node-edit-confirm"
+        class="popup-confirm node-edit-confirm rounded-md border border-cyan-300 bg-cyan-300 px-3 py-1.5 text-[12px] font-semibold text-[#0f1115] transition hover:bg-sky-300 disabled:cursor-not-allowed disabled:border-[#384152] disabled:bg-[#202633] disabled:text-slate-500"
         data-testid="node-edit-confirm"
         disabled={!name.trim() || (kind === 'array' && !length.trim())}
         onClick={handleConfirm}
@@ -286,7 +286,7 @@ function NodeInlineEdit({ nodeId }: { nodeId: string; currentLabel: string }) {
       >
         Confirm
       </button>
-      <button class="node-edit-cancel" onClick={closeNodeEdit} type="button">Cancel</button>
+      <button class="node-edit-cancel rounded-md border border-[#384152] bg-transparent px-2.5 py-1 text-[12px] font-medium text-slate-400 transition hover:border-cyan-300 hover:text-cyan-200" onClick={closeNodeEdit} type="button">Cancel</button>
       </span>
     </span>
   );
@@ -295,7 +295,7 @@ function NodeInlineEdit({ nodeId }: { nodeId: string; currentLabel: string }) {
 function HotspotButton({ hotspot }: { hotspot: Hotspot }) {
   return (
     <button
-      class={`hotspot-btn hotspot-${hotspot.direction}`}
+      class={`hotspot-btn hotspot-${hotspot.direction} rounded-md border border-dashed border-cyan-300/80 px-1.5 py-0.5 font-mono text-[11px] text-cyan-300 transition hover:bg-cyan-300 hover:text-[#0f1115]`}
       data-testid={`insertion-hotspot-${hotspot.direction}`}
       data-parent-id={hotspot.parent_id}
       data-hotspot-direction={hotspot.direction}

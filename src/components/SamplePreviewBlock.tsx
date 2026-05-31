@@ -10,7 +10,7 @@ export function SamplePreviewBlock({ preview, contentClass = 'sample-output' }: 
   return (
     <>
       <pre class={contentClass} data-testid="sample-output">{text}</pre>
-      {message && <div class="sample-status" data-testid="sample-status">{message}</div>}
+      {message && <div class="sample-status mt-2 rounded-md border border-[#384152] bg-[#151922] px-3 py-2 text-[13px] leading-5 text-slate-400" data-testid="sample-status">{message}</div>}
     </>
   );
 }

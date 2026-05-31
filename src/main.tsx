@@ -22,6 +22,7 @@ async function restoreStateFromUrl(): Promise<boolean> {
 }
 
 async function main() {
+  document.body.className = 'bg-[#0f1115] text-slate-200';
   await initWasm();
   initEditor();
   if (!await restoreStateFromUrl()) {

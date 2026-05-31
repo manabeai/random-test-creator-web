@@ -34,7 +34,7 @@ export function NodePopup() {
   // Variant bypasses the wizard layout
   if (state.step === 'fields' && state.candidate === 'variant') {
     return (
-      <div class="node-popup" data-testid="node-popup">
+      <div class="node-popup rounded-lg border border-[#2a2f3a] bg-[#151922] p-3 shadow-2xl shadow-black/40" data-testid="node-popup">
         <VariantFieldsPanel />
       </div>
     );
@@ -46,14 +46,14 @@ export function NodePopup() {
   const selectedCandidate = state.step === 'fields' ? state.candidate : null;
 
   return (
-    <div class="node-popup" data-testid="node-popup">
+    <div class="node-popup rounded-lg border border-[#2a2f3a] bg-[#151922] p-3 shadow-2xl shadow-black/40" data-testid="node-popup">
       <StepIndicator active={activeStep} />
-      <div class="popup-wizard">
-        <div class="popup-candidate-list">
+      <div class="popup-wizard grid grid-cols-[9rem_1fr] gap-3 max-md:grid-cols-1">
+        <div class="popup-candidate-list flex flex-col gap-1.5 max-md:flex-row max-md:flex-wrap">
           {candidates.map(c => (
             <button
               key={c}
-              class={`popup-option${selectedCandidate === c ? ' selected' : ''}`}
+              class={`popup-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200 ${selectedCandidate === c ? 'selected border-cyan-300 bg-cyan-300 font-semibold text-[#0f1115]' : ''}`}
               data-testid={`popup-option-${c}`}
               onClick={() => selectCandidate(c)}
               onMouseEnter={() => { hoveredCandidate.value = c; }}
@@ -63,7 +63,7 @@ export function NodePopup() {
             </button>
           ))}
         </div>
-        <div class="popup-right-panel">
+        <div class="popup-right-panel flex min-h-20 flex-col">
           {state.step === 'candidates' && <PreviewPanel />}
           {state.step === 'fields' && <FieldsPanel />}
         </div>
@@ -74,10 +74,10 @@ export function NodePopup() {
 
 function StepIndicator({ active }: { active: number }) {
   return (
-    <div class="popup-step-indicator">
-      <span class={active === 1 ? 'step-active' : 'step-inactive'}>①</span>
-      <span class="step-arrow">→</span>
-      <span class={active === 2 ? 'step-active' : 'step-inactive'}>②</span>
+    <div class="popup-step-indicator mb-2 flex items-center gap-1.5 text-[12px]">
+      <span class={active === 1 ? 'step-active font-semibold text-cyan-300' : 'step-inactive text-slate-600'}>01 Choose</span>
+      <span class="step-arrow text-slate-600">/</span>
+      <span class={active === 2 ? 'step-active font-semibold text-cyan-300' : 'step-inactive text-slate-600'}>02 Configure</span>
     </div>
   );
 }
@@ -86,18 +86,18 @@ function PreviewPanel() {
   const hovered = hoveredCandidate.value;
   const state = popupState.value;
   if (!hovered) {
-    return <div class="popup-preview popup-preview-empty">Hover to preview fields</div>;
+    return <div class="popup-preview popup-preview-empty flex flex-1 items-center justify-center rounded-md border border-dashed border-[#384152] bg-[#101318] p-2 text-[12px] text-slate-500">Hover to preview fields</div>;
   }
   const detail = state.step === 'closed'
     ? undefined
     : state.hotspot.candidate_details.find(candidate => candidate.kind === hovered);
   const fields = detail?.fields ?? [];
   return (
-    <div class="popup-preview">
-      <div class="preview-title">{detail?.label ?? hovered}</div>
-      <div class="preview-fields">
+    <div class="popup-preview flex flex-1 flex-col gap-2 rounded-md border border-dashed border-[#384152] bg-[#101318] p-2">
+      <div class="preview-title text-[12px] font-semibold text-cyan-300">{detail?.label ?? hovered}</div>
+      <div class="preview-fields flex flex-wrap gap-1.5">
         {fields.map(f => (
-          <span key={f.name} class="preview-field-tag">{f.label}</span>
+          <span key={f.name} class="preview-field-tag rounded border border-[#384152] bg-[#151922] px-1.5 py-0.5 text-[11px] text-slate-400">{f.label}</span>
         ))}
       </div>
     </div>
@@ -125,26 +125,28 @@ function VariantFieldsPanel() {
   const isVariantValid = () => popupVariantTag.value.trim() !== '' && popupName.value.trim() !== '';
   return (
     <div
-      class="popup-fields"
+      class="popup-fields flex flex-col gap-2"
       onMouseLeave={handleCommit}
       onKeyDown={(e) => {
         if (e.key === 'Enter') handleCommit();
       }}
     >
-      <div class="popup-field">
-        <label>Tag Value</label>
+      <div class="popup-field flex items-center gap-2">
+        <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Tag Value</label>
         <input
           type="text"
+          class="rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 font-mono text-[13px] text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
           data-testid="variant-tag-input"
           value={popupVariantTag.value}
           onInput={(e) => { popupVariantTag.value = (e.target as HTMLInputElement).value; }}
           autoFocus
         />
       </div>
-      <div class="popup-field">
-        <label>Name</label>
+      <div class="popup-field flex items-center gap-2">
+        <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Name</label>
         <input
           type="text"
+          class="rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 font-mono text-[13px] text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
           data-testid="name-input"
           value={popupName.value}
           onInput={(e) => { popupName.value = (e.target as HTMLInputElement).value; }}
@@ -223,21 +225,21 @@ function FieldsPanel() {
 
   return (
     <div
-      class="popup-fields"
+      class="popup-fields flex flex-col gap-2"
       onMouseLeave={handleCommit}
       onKeyDown={(e) => {
         if (e.key === 'Enter') handleCommit();
       }}
     >
       {needsType && (
-        <div class="popup-field">
-          <label>Type</label>
-          <div class="type-buttons">
+        <div class="popup-field flex items-center gap-2">
+          <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Type</label>
+          <div class="type-buttons flex flex-wrap gap-1.5">
             {['number', 'string', 'char'].map(t => (
               <button
                 key={t}
                 type="button"
-                class={`type-btn ${popupType.value === t ? 'active' : ''}`}
+                class={`type-btn rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200 ${popupType.value === t ? 'active selected border-cyan-300 bg-cyan-300 font-semibold text-[#0f1115]' : ''}`}
                 onClick={() => { popupType.value = t; }}
               >
                 {t}
@@ -249,7 +251,7 @@ function FieldsPanel() {
             data-testid="type-select"
             value={popupType.value}
             onChange={(e) => { popupType.value = (e.target as HTMLSelectElement).value; }}
-            style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', width: 0, height: 0, overflow: 'hidden' }}
+            class="absolute h-px w-px overflow-hidden opacity-0"
           >
             <option value="number">number</option>
             <option value="string">string</option>
@@ -259,10 +261,11 @@ function FieldsPanel() {
       )}
 
       {needsName && (
-        <div class="popup-field">
-          <label>Name</label>
+        <div class="popup-field flex items-center gap-2">
+          <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Name</label>
           <input
             type="text"
+            class="rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 font-mono text-[13px] text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
             data-testid="name-input"
             value={popupName.value}
             onInput={(e) => { popupName.value = (e.target as HTMLInputElement).value; }}
@@ -275,8 +278,8 @@ function FieldsPanel() {
       )}
 
       {needsLength && (
-        <div class="popup-field">
-          <label>Length</label>
+        <div class="popup-field flex items-center gap-2">
+          <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Length</label>
           <LengthField
             value={popupLengthVar.value}
             onChange={(value) => { popupLengthVar.value = value; }}
@@ -288,16 +291,16 @@ function FieldsPanel() {
 
       {needsGridLength && (
         <>
-          <div class="popup-field">
-            <label>Rows</label>
+          <div class="popup-field flex items-center gap-2">
+            <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Rows</label>
             <LengthField
               value={popupLengthVar.value}
               onChange={(value) => { popupLengthVar.value = value; }}
               availableVars={lengthVars}
             />
           </div>
-          <div class="popup-field">
-            <label>Cols</label>
+          <div class="popup-field flex items-center gap-2">
+            <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Cols</label>
             <LengthField
               value={popupLengthVar2.value}
               onChange={(value) => { popupLengthVar2.value = value; }}
@@ -309,17 +312,18 @@ function FieldsPanel() {
       )}
 
       {needsCountExpr && (
-        <div class="popup-field">
-          <label>Count</label>
+        <div class="popup-field flex items-center gap-2">
+          <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Count</label>
           <CountField availableVars={lengthVars} />
         </div>
       )}
 
       {needsWeightName && (
-        <div class="popup-field">
-          <label>Weight Name</label>
+        <div class="popup-field flex items-center gap-2">
+          <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Weight Name</label>
           <input
             type="text"
+            class="rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 font-mono text-[13px] text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
             data-testid="weight-name-input"
             value={popupWeightName.value}
             onInput={(e) => { popupWeightName.value = (e.target as HTMLInputElement).value; }}
@@ -350,7 +354,7 @@ function GridLengthTestSelect({ availableVars }: { availableVars: { name: string
           popupLengthVar2.value = value;
         }
       }}
-      style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', width: 0, height: 0, overflow: 'hidden' }}
+      class="absolute h-px w-px overflow-hidden opacity-0"
     >
       <option value="">-- select --</option>
       {availableVars.map(v => (
@@ -372,13 +376,13 @@ function LengthField({
   testId?: string;
 }) {
   return (
-    <div class="length-field">
-      <div class="length-var-options">
+    <div class="length-field flex min-w-0 flex-1 flex-col gap-1.5">
+      <div class="length-var-options flex flex-wrap gap-1.5">
         {availableVars.map(v => (
           <button
             key={v.name}
             type="button"
-            class={`length-var-option ${value === v.name ? 'active' : ''}`}
+            class={`length-var-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200 ${value === v.name ? 'active selected border-cyan-300 bg-cyan-300 font-semibold text-[#0f1115]' : ''}`}
             data-testid={`length-var-option-${v.name}`}
             onClick={() => onChange(v.name)}
           >
@@ -387,7 +391,7 @@ function LengthField({
         ))}
       </div>
       <input
-        class="length-expression-input"
+        class="length-expression-input rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 font-mono text-[13px] text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
         data-testid="length-expression-input"
         type="text"
         placeholder="length expression"
@@ -398,7 +402,7 @@ function LengthField({
         data-testid={testId}
         value={value}
         onChange={(e) => onChange((e.currentTarget as HTMLSelectElement).value)}
-        style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', width: 0, height: 0, overflow: 'hidden' }}
+        class="absolute h-px w-px overflow-hidden opacity-0"
       >
         <option value="">-- select --</option>
         {availableVars.map(v => (

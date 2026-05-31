@@ -71,14 +71,14 @@ export function ConstraintEditor({ targetId, targetName, onConfirm, onMouseEnter
   }, [bothFilled, lower, upper, onConfirm]);
 
   return (
-    <div class="constraint-editor" onMouseEnter={onMouseEnter} onMouseLeave={commitIfChanged}>
-      <div class="constraint-editor-label">
+    <div class="constraint-editor my-2 rounded-lg border border-[#2a2f3a] bg-[#151922] p-3 shadow-xl shadow-black/25" onMouseEnter={onMouseEnter} onMouseLeave={commitIfChanged}>
+      <div class="constraint-editor-label mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
         Constraint for <strong>{targetName}</strong>
       </div>
 
-      <div class="constraint-bound-row">
+      <div class="constraint-bound-row flex flex-wrap items-center gap-2">
         <BoundArea label="Lower" target="lower" value={lower} excludeNodeId={targetId} />
-        <span class="constraint-sep">≤ {targetName} ≤</span>
+        <span class="constraint-sep whitespace-nowrap text-[13px] text-slate-500">≤ {targetName} ≤</span>
         <BoundArea label="Upper" target="upper" value={upper} excludeNodeId={targetId} />
       </div>
 
@@ -91,9 +91,9 @@ function BoundArea({ label, target, value, excludeNodeId }: { label: string; tar
   const isOpen = isValueInputOpen(target);
 
   return (
-    <div class="bound-area">
+    <div class="bound-area relative min-w-20 flex-1">
       <div
-        class="bound-input"
+        class="bound-input flex min-h-8 cursor-pointer items-center rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 transition hover:border-cyan-300/70"
         data-testid={`constraint-${target}-input`}
         onClick={() => {
           if (!value) openValueInput(target);
@@ -101,7 +101,7 @@ function BoundArea({ label, target, value, excludeNodeId }: { label: string; tar
       >
         {value ? (
           <span
-            class="bound-expression"
+            class="bound-expression font-mono text-[13px] text-cyan-300"
             data-testid={`constraint-${target}-expression`}
             onClick={(e) => {
               e.stopPropagation();
@@ -111,7 +111,7 @@ function BoundArea({ label, target, value, excludeNodeId }: { label: string; tar
             {value}
           </span>
         ) : (
-          <span class="bound-placeholder">{label}...</span>
+          <span class="bound-placeholder text-[12px] text-slate-600">{label}...</span>
         )}
       </div>
       {isOpen && <ValueInput target={target} excludeNodeId={excludeNodeId} />}
@@ -124,7 +124,7 @@ function BoundExpressionUI() {
   if (state.step === 'idle') return null;
 
   return (
-    <div class="bound-expr-ui">
+    <div class="bound-expr-ui mt-2">
       {state.step === 'fn-select' && (
         <FunctionOpsPanel onSelectOp={selectBoundFnOp} />
       )}

@@ -38,9 +38,9 @@ export function ValueInput({ target, excludeNodeId }: ValueInputProps) {
   };
 
   return (
-    <div class="value-input-popup">
+    <div class="value-input-popup mt-1.5 rounded-lg border border-[#2a2f3a] bg-[#151922] p-2 shadow-xl shadow-black/30">
       <input
-        class="value-literal-input"
+        class="value-literal-input mb-2 w-full rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 font-mono text-[13px] text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
         data-testid="constraint-value-literal"
         type="text"
         placeholder="integer"
@@ -56,11 +56,11 @@ export function ValueInput({ target, excludeNodeId }: ValueInputProps) {
           }
         }}
       />
-      <div class="value-var-options">
+      <div class="value-var-options flex flex-wrap gap-1.5">
         {filteredVars.map(v => (
           <button
             key={v.name}
-            class="value-var-option"
+            class="value-var-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200"
             data-testid={`constraint-var-option-${v.name}`}
             onClick={() => handleVarSelect(v.name)}
           >
