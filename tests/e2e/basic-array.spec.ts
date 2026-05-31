@@ -85,18 +85,23 @@ test.describe('基本配列: N + A_1...A_N', () => {
     await expect(editor.getStructureNodeByLabel('A').getByTestId('insertion-hotspot-right')).toBeVisible();
   });
 
-  test('Array は必須項目が埋まるまで confirm できない', async () => {
+  test('Array は必須項目が埋まるまで作成されない', async () => {
     await editor.addScalar('N');
 
     await editor.clickHotspotForNode('N', 'right');
     await editor.selectPopupOption('array');
-    await expect(editor.page.getByTestId('confirm-button')).toBeDisabled();
+    await expect(editor.page.getByTestId('confirm-button')).toHaveCount(0);
 
     await editor.inputName('A');
-    await expect(editor.page.getByTestId('confirm-button')).toBeDisabled();
+    await editor.previewPane.click();
+    await expect(editor.getStructureNodeByLabel('A')).toHaveCount(0);
 
+    await editor.clickHotspotForNode('N', 'right');
+    await editor.selectPopupOption('array');
+    await editor.inputName('A');
     await editor.pickLengthVar('N');
-    await expect(editor.page.getByTestId('confirm-button')).toBeEnabled();
+    await editor.previewPane.click();
+    await expect(editor.getStructureNodeByLabel('A')).toBeVisible();
   });
 
   test('draft constraint を埋めて completed に昇格する', async () => {

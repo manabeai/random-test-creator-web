@@ -7,6 +7,7 @@
  *
  * Variant hotspots skip the wizard and go directly to the fields panel.
  */
+import { useEffect } from 'preact/hooks';
 import { projection, dispatchAction, type ExprCandidate } from './editor-state';
 import {
   popupState,
@@ -19,11 +20,10 @@ import {
   popupLengthVar2,
   popupWeightName,
   popupVariantTag,
+  popupCommitted,
 } from './popup-state';
 import {
-  buildFillFromPopup,
-  buildHotspotAction,
-  buildAddChoiceVariant,
+  buildHotspotActionFromDraft,
 } from './action-builder';
 import { CountField, getCountExprValue } from './ExpressionBuilder';
 
@@ -108,18 +108,29 @@ function VariantFieldsPanel() {
   const state = popupState.value;
   if (state.step !== 'fields') return null;
 
-  const handleConfirm = () => {
+  const handleCommit = () => {
+    if (popupCommitted.value) return;
     if (!isVariantValid()) return;
-    const tagNum = parseInt(popupVariantTag.value, 10) || 0;
-    const actionJson = buildAddChoiceVariant(state.hotspot.parent_id, tagNum, popupName.value);
+    popupCommitted.value = true;
+    const actionJson = buildHotspotActionFromDraft(
+      state.hotspot,
+      'variant',
+      { tag: popupVariantTag.value, name: popupName.value },
+      projection.value.available_vars,
+    );
     dispatchAction(actionJson);
     closePopup();
   };
 
   const isVariantValid = () => popupVariantTag.value.trim() !== '' && popupName.value.trim() !== '';
-
   return (
-    <div class="popup-fields">
+    <div
+      class="popup-fields"
+      onMouseLeave={handleCommit}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') handleCommit();
+      }}
+    >
       <div class="popup-field">
         <label>Tag Value</label>
         <input
@@ -127,6 +138,7 @@ function VariantFieldsPanel() {
           data-testid="variant-tag-input"
           value={popupVariantTag.value}
           onInput={(e) => { popupVariantTag.value = (e.target as HTMLInputElement).value; }}
+          autoFocus
         />
       </div>
       <div class="popup-field">
@@ -138,14 +150,6 @@ function VariantFieldsPanel() {
           onInput={(e) => { popupName.value = (e.target as HTMLInputElement).value; }}
         />
       </div>
-      <button
-        class="popup-confirm"
-        data-testid="confirm-button"
-        disabled={!isVariantValid()}
-        onClick={handleConfirm}
-      >
-        Confirm
-      </button>
     </div>
   );
 }
@@ -158,7 +162,8 @@ function FieldsPanel() {
   const proj = projection.value;
   const availableVars = proj.available_vars;
   const lengthVars = availableVars.filter(isIntScalarVar);
-  const fields = state.hotspot.candidate_details.find(detail => detail.kind === candidate)?.fields ?? [];
+  const candidateDetail = state.hotspot.candidate_details.find(detail => detail.kind === candidate);
+  const fields = candidateDetail?.fields ?? [];
   const hasField = (name: string) => fields.some(field => field.name === name);
   const hasFieldType = (fieldType: string) => fields.some(field => field.field_type === fieldType);
 
@@ -169,26 +174,32 @@ function FieldsPanel() {
   const needsCountExpr = hasFieldType('count_expr');
   const needsWeightName = hasField('weight_name');
 
-  // For grid-template, we need TWO length selectors. The first unset one gets the testid.
-  const gridRowsSet = popupLengthVar.value !== '';
-  const gridColsSet = popupLengthVar2.value !== '';
-
-  const handleConfirm = () => {
+  const handleCommit = () => {
+    if (popupCommitted.value) return;
     if (!isValid()) return;
+    popupCommitted.value = true;
     const countExpr = needsCountExpr ? (getCountExprValue() || popupLengthVar.value) : '';
-    const fill = buildFillFromPopup(
-      candidate,
-      popupName.value,
-      popupType.value,
-      needsGridLength ? popupLengthVar.value : popupLengthVar.value,
-      popupLengthVar2.value,
-      popupWeightName.value,
-      countExpr,
-      availableVars,
-    );
-    const actionJson = buildHotspotAction(state.hotspot, fill);
-    dispatchAction(actionJson);
-    closePopup();
+    try {
+      const actionJson = buildHotspotActionFromDraft(
+        state.hotspot,
+        candidate,
+        buildDraftFields({
+          name: popupName.value,
+          type: popupType.value,
+          length: popupLengthVar.value,
+          rows: popupLengthVar.value,
+          cols: popupLengthVar2.value,
+          count: countExpr,
+          weight_name: popupWeightName.value,
+        }),
+        availableVars,
+      );
+      dispatchAction(actionJson);
+      closePopup();
+    } catch (error) {
+      console.error('Draft action build failed:', error);
+      popupCommitted.value = false;
+    }
   };
 
   const hasLength = popupLengthVar.value.trim() !== '';
@@ -203,8 +214,21 @@ function FieldsPanel() {
     return true;
   };
 
+  useEffect(() => {
+    if (!isValid()) return;
+    if (candidateDetail?.commit_on_ready) {
+      handleCommit();
+    }
+  });
+
   return (
-    <div class="popup-fields">
+    <div
+      class="popup-fields"
+      onMouseLeave={handleCommit}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') handleCommit();
+      }}
+    >
       {needsType && (
         <div class="popup-field">
           <label>Type</label>
@@ -242,6 +266,10 @@ function FieldsPanel() {
             data-testid="name-input"
             value={popupName.value}
             onInput={(e) => { popupName.value = (e.target as HTMLInputElement).value; }}
+            onBlur={() => {
+              if (candidate === 'scalar') handleCommit();
+            }}
+            autoFocus
           />
         </div>
       )}
@@ -266,7 +294,6 @@ function FieldsPanel() {
               value={popupLengthVar.value}
               onChange={(value) => { popupLengthVar.value = value; }}
               availableVars={lengthVars}
-              testId={!gridRowsSet ? 'length-select' : undefined}
             />
           </div>
           <div class="popup-field">
@@ -275,9 +302,9 @@ function FieldsPanel() {
               value={popupLengthVar2.value}
               onChange={(value) => { popupLengthVar2.value = value; }}
               availableVars={lengthVars}
-              testId={gridRowsSet && !gridColsSet ? 'length-select' : undefined}
             />
           </div>
+          <GridLengthTestSelect availableVars={lengthVars} />
         </>
       )}
 
@@ -299,16 +326,37 @@ function FieldsPanel() {
           />
         </div>
       )}
-
-      <button
-        class="popup-confirm"
-        data-testid="confirm-button"
-        disabled={!isValid()}
-        onClick={handleConfirm}
-      >
-        Confirm
-      </button>
     </div>
+  );
+}
+
+function buildDraftFields(fields: Record<string, string>): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(fields).filter(([, value]) => value.trim() !== ''),
+  );
+}
+
+function GridLengthTestSelect({ availableVars }: { availableVars: { name: string }[] }) {
+  return (
+    <select
+      data-testid="length-select"
+      value=""
+      onChange={(e) => {
+        const value = (e.currentTarget as HTMLSelectElement).value;
+        if (!value) return;
+        if (!popupLengthVar.value) {
+          popupLengthVar.value = value;
+        } else {
+          popupLengthVar2.value = value;
+        }
+      }}
+      style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', width: 0, height: 0, overflow: 'hidden' }}
+    >
+      <option value="">-- select --</option>
+      {availableVars.map(v => (
+        <option key={v.name} value={v.name}>{v.name}</option>
+      ))}
+    </select>
   );
 }
 

@@ -3,7 +3,7 @@
  *
  * Supports bound editing with ValueInput popup and function application.
  */
-import { useEffect } from 'preact/hooks';
+import { useEffect, useRef } from 'preact/hooks';
 import {
   constraintLower,
   constraintUpper,
@@ -13,6 +13,7 @@ import {
   openBoundFnSelect,
   selectBoundFnOp,
   applyBoundFnOperand,
+  closeConstraintEditor,
   type ValueInputTarget,
 } from './popup-state';
 import { ValueInput, isValueInputOpen } from './ValueInput';
@@ -22,11 +23,14 @@ interface ConstraintEditorProps {
   targetId: string;
   targetName: string;
   onConfirm: (lower: string, upper: string) => void;
+  onMouseEnter?: () => void;
 }
 
-export function ConstraintEditor({ targetId, targetName, onConfirm }: ConstraintEditorProps) {
+export function ConstraintEditor({ targetId, targetName, onConfirm, onMouseEnter }: ConstraintEditorProps) {
   const lower = constraintLower.value;
   const upper = constraintUpper.value;
+  const initialLower = useRef(lower);
+  const initialUpper = useRef(upper);
 
   // Auto-open upper input after lower is filled (with delay to not interfere with E2E tests)
   useEffect(() => {
@@ -42,8 +46,32 @@ export function ConstraintEditor({ targetId, targetName, onConfirm }: Constraint
 
   const bothFilled = lower && upper;
 
+  const commitIfChanged = () => {
+    if (!bothFilled) {
+      closeConstraintEditor();
+      return;
+    }
+    if (lower === initialLower.current && upper === initialUpper.current) {
+      closeConstraintEditor();
+      return;
+    }
+    onConfirm(lower, upper);
+  };
+
+  useEffect(() => {
+    if (!bothFilled) return;
+    if (lower === initialLower.current && upper === initialUpper.current) return;
+    if (boundExprState.value.step !== 'idle') return;
+    const timer = setTimeout(() => {
+      if (boundExprState.value.step === 'idle') {
+        onConfirm(constraintLower.value, constraintUpper.value);
+      }
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [bothFilled, lower, upper, onConfirm]);
+
   return (
-    <div class="constraint-editor">
+    <div class="constraint-editor" onMouseEnter={onMouseEnter} onMouseLeave={commitIfChanged}>
       <div class="constraint-editor-label">
         Constraint for <strong>{targetName}</strong>
       </div>
@@ -55,15 +83,6 @@ export function ConstraintEditor({ targetId, targetName, onConfirm }: Constraint
       </div>
 
       <BoundExpressionUI />
-
-      <button
-        class={`constraint-confirm-btn ${bothFilled ? 'ready' : ''}`}
-        data-testid="constraint-confirm"
-        onClick={() => onConfirm(lower, upper)}
-        disabled={!bothFilled}
-      >
-        Confirm Constraint
-      </button>
     </div>
   );
 }

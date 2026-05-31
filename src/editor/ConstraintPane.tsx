@@ -8,12 +8,15 @@
  * - Constraint deletion and re-editing
  */
 import { signal } from '@preact/signals';
+import { useEffect, useRef } from 'preact/hooks';
 import { projection, dispatchAction, type CharSetSpec } from './editor-state';
 import {
   constraintEditState,
   openConstraintEditor,
   closeConstraintEditor,
   openSumBound,
+  constraintLower,
+  constraintUpper,
   sumBoundVar,
   sumBoundUpper,
   openValueInput,
@@ -25,11 +28,8 @@ import {
   customCharSetChars,
 } from './popup-state';
 import {
-  buildAddConstraintRange,
-  buildAddConstraintStringLength,
+  buildConstraintActionsFromDraft,
   buildAddConstraintProperty,
-  buildAddConstraintSumBound,
-  buildAddConstraintCharSet,
   buildRemoveConstraint,
 } from './action-builder';
 import { ConstraintEditor } from './ConstraintEditor';
@@ -38,21 +38,31 @@ import { FunctionOpsPanel, FunctionOperandInput } from './ExpressionBuilder';
 import { constraintFolded, toggleConstraintFold } from './fold-state';
 
 const showPropertyOptions = signal(false);
+let hoverDismissTimer: ReturnType<typeof setTimeout> | null = null;
+
+function clearHoverDismissTimer() {
+  if (hoverDismissTimer) {
+    clearTimeout(hoverDismissTimer);
+    hoverDismissTimer = null;
+  }
+}
 
 export function ConstraintPane() {
   const proj = projection.value;
   const editState = constraintEditState.value;
   const folded = constraintFolded.value;
+  const paneRef = useRef<HTMLDivElement>(null);
 
   const handleRangeConfirm = (lower: string, upper: string) => {
     if (editState.step === 'editing') {
-      if (editState.constraintId) {
-        dispatchAction(buildRemoveConstraint(editState.constraintId));
-      }
-      const actionJson = editState.template === 'StringLength'
-        ? buildAddConstraintStringLength(editState.targetId, lower, upper)
-        : buildAddConstraintRange(editState.targetId, lower, upper);
-      dispatchAction(actionJson);
+      const actions = buildConstraintActionsFromDraft({
+        targetId: editState.targetId,
+        template: editState.template === 'StringLength' ? 'StringLength' : 'Range',
+        existingConstraintId: editState.constraintId,
+        lower,
+        upper,
+      });
+      actions.forEach(dispatchAction);
       closeConstraintEditor();
     }
   };
@@ -69,17 +79,18 @@ export function ConstraintPane() {
     if (sumBoundVar.value && sumBoundUpper.value) {
       const varCandidate = proj.available_vars.find(v => v.name === sumBoundVar.value);
       const targetId = varCandidate?.node_id ?? '0';
-      const actionJson = buildAddConstraintSumBound(targetId, sumBoundVar.value, sumBoundUpper.value);
-      dispatchAction(actionJson);
+      buildConstraintActionsFromDraft({
+        targetId,
+        template: 'SumBound',
+        overVar: sumBoundVar.value,
+        upper: sumBoundUpper.value,
+      }).forEach(dispatchAction);
       closeConstraintEditor();
     }
   };
 
   const handleCharSetConfirm = () => {
     if (editState.step === 'charset' && charSetSelection.value) {
-      if (editState.constraintId) {
-        dispatchAction(buildRemoveConstraint(editState.constraintId));
-      }
       let charset: CharSetSpec;
       if (charSetSelection.value === 'Custom') {
         // Build custom charset from individual chars
@@ -89,14 +100,54 @@ export function ConstraintPane() {
       } else {
         charset = { kind: charSetSelection.value as CharSetSpec['kind'] } as CharSetSpec;
       }
-      const actionJson = buildAddConstraintCharSet(editState.targetId, charset);
-      dispatchAction(actionJson);
+      buildConstraintActionsFromDraft({
+        targetId: editState.targetId,
+        template: 'CharSet',
+        existingConstraintId: editState.constraintId,
+        charset,
+      }).forEach(dispatchAction);
       closeConstraintEditor();
     }
   };
 
+  const commitOpenEditor = () => {
+    const current = constraintEditState.value;
+    if (current.step === 'editing' && constraintLower.value && constraintUpper.value) {
+      handleRangeConfirm(constraintLower.value, constraintUpper.value);
+      return;
+    }
+    if (current.step === 'charset' && charSetSelection.value) {
+      handleCharSetConfirm();
+      return;
+    }
+    if (current.step === 'sumbound' && sumBoundVar.value && sumBoundUpper.value) {
+      handleSumBoundConfirm();
+    }
+  };
+
+  const dismissEditor = () => {
+    commitOpenEditor();
+    closeConstraintEditor();
+    showPropertyOptions.value = false;
+  };
+
+  useEffect(() => {
+    const handlePointerDown = (event: PointerEvent) => {
+      const pane = paneRef.current;
+      if (!pane || pane.contains(event.target as Node)) return;
+      dismissEditor();
+    };
+    document.addEventListener('pointerdown', handlePointerDown);
+    return () => document.removeEventListener('pointerdown', handlePointerDown);
+  });
+
   return (
-    <div class={`pane ${folded ? 'folded' : ''}`} data-testid="constraint-pane">
+    <div
+      ref={paneRef}
+      class={`pane ${folded ? 'folded' : ''}`}
+      data-testid="constraint-pane"
+      onMouseLeave={dismissEditor}
+    >
       <div class="pane-header">
         <span class="pane-title">Constraints</span>
         <div class="pane-header-controls">
@@ -145,6 +196,17 @@ export function ConstraintPane() {
               showPropertyOptions.value = false;
               openConstraintEditor(item.target_id, item.target_name, item.edit.kind, item.edit);
             }}
+            onMouseEnter={() => {
+              clearHoverDismissTimer();
+              if (!item.edit) return;
+              showPropertyOptions.value = false;
+              openConstraintEditor(item.target_id, item.target_name, item.edit.kind, item.edit);
+            }}
+            onMouseLeave={() => {
+              hoverDismissTimer = setTimeout(() => {
+                closeConstraintEditor();
+              }, 120);
+            }}
           >
             <span class="constraint-icon">{item.status === 'draft' ? '○' : '●'}</span>
             <span
@@ -182,6 +244,7 @@ export function ConstraintPane() {
             targetId={editState.targetId}
             targetName={editState.targetName}
             onConfirm={handleRangeConfirm}
+            onMouseEnter={clearHoverDismissTimer}
           />
         )}
 
@@ -250,8 +313,6 @@ function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
     }
   };
 
-  const hasValidCustomChars = customChars.some(c => c.length > 0);
-
   return (
     <div class="charset-options">
       <div class="constraint-editor-label">Select Character Set</div>
@@ -259,35 +320,50 @@ function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
         <button
           class={`charset-option ${selected === 'LowerAlpha' ? 'active' : ''}`}
           data-testid="charset-option-lowercase"
-          onClick={() => { charSetSelection.value = 'LowerAlpha'; }}
+          onClick={() => {
+            charSetSelection.value = 'LowerAlpha';
+            onConfirm();
+          }}
         >
           a-z (lowercase)
         </button>
         <button
           class={`charset-option ${selected === 'UpperAlpha' ? 'active' : ''}`}
           data-testid="charset-option-uppercase"
-          onClick={() => { charSetSelection.value = 'UpperAlpha'; }}
+          onClick={() => {
+            charSetSelection.value = 'UpperAlpha';
+            onConfirm();
+          }}
         >
           A-Z (uppercase)
         </button>
         <button
           class={`charset-option ${selected === 'Digit' ? 'active' : ''}`}
           data-testid="charset-option-digit"
-          onClick={() => { charSetSelection.value = 'Digit'; }}
+          onClick={() => {
+            charSetSelection.value = 'Digit';
+            onConfirm();
+          }}
         >
           0-9 (digit)
         </button>
         <button
           class={`charset-option ${selected === 'Alpha' ? 'active' : ''}`}
           data-testid="charset-option-alpha"
-          onClick={() => { charSetSelection.value = 'Alpha'; }}
+          onClick={() => {
+            charSetSelection.value = 'Alpha';
+            onConfirm();
+          }}
         >
           a-zA-Z (letters)
         </button>
         <button
           class={`charset-option ${selected === 'AlphaNumeric' ? 'active' : ''}`}
           data-testid="charset-option-alphanumeric"
-          onClick={() => { charSetSelection.value = 'AlphaNumeric'; }}
+          onClick={() => {
+            charSetSelection.value = 'AlphaNumeric';
+            onConfirm();
+          }}
         >
           a-zA-Z0-9
         </button>
@@ -335,15 +411,6 @@ function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
           </div>
         </div>
       )}
-
-      <button
-        class="constraint-confirm-btn"
-        data-testid="constraint-confirm"
-        onClick={onConfirm}
-        disabled={selected === 'Custom' && !hasValidCustomChars}
-      >
-        Confirm CharSet
-      </button>
     </div>
   );
 }
@@ -402,14 +469,6 @@ function SumBoundEditor({ onConfirm }: { onConfirm: () => void }) {
       {bExprState.step === 'fn-operand' && bExprState.target === 'sumbound-upper' && (
         <FunctionOperandInput onConfirm={applyBoundFnOperand} />
       )}
-
-      <button
-        class="constraint-confirm-btn"
-        data-testid="constraint-confirm"
-        onClick={onConfirm}
-      >
-        Confirm SumBound
-      </button>
     </div>
   );
 }

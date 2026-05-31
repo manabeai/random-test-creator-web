@@ -5,6 +5,7 @@ import { projection, dispatchAction } from './editor-state';
 import type { Hotspot, ProjectedNode, StructureLine } from './editor-state';
 import {
   openPopup,
+  closePopup,
   popupState,
   nodeEditState,
   nodeEditName,
@@ -15,7 +16,7 @@ import {
   closeNodeEdit,
 } from './popup-state';
 import { NodePopup } from './NodePopup';
-import { buildArrayFill, buildReplaceNode, buildScalarFill } from './action-builder';
+import { buildReplaceActionFromDraft } from './action-builder';
 import { structureFolded, toggleStructureFold } from './fold-state';
 
 type RenderItem =
@@ -98,7 +99,11 @@ export function StructurePane() {
   const folded = structureFolded.value;
 
   return (
-    <div class={`pane ${folded ? 'folded' : ''}`} data-testid="structure-pane">
+    <div
+      class={`pane ${folded ? 'folded' : ''}`}
+      data-testid="structure-pane"
+      onMouseLeave={closePopup}
+    >
       <div class="pane-header">
         <span class="pane-title">Structure</span>
         <button class="fold-toggle" onClick={toggleStructureFold} aria-label={folded ? 'Expand' : 'Collapse'}>
@@ -193,10 +198,12 @@ function NodeInlineEdit({ nodeId }: { nodeId: string; currentLabel: string }) {
   
   const handleConfirm = () => {
     if (name.trim() && (kind === 'scalar' || length.trim())) {
-      const fill = kind === 'array'
-        ? buildArrayFill(name.trim(), nodeEditType.value, length.trim(), proj.available_vars)
-        : buildScalarFill(name.trim(), nodeEditType.value);
-      dispatchAction(buildReplaceNode(nodeId, fill));
+      const fields: Record<string, string> = {
+        name: name.trim(),
+        type: nodeEditType.value,
+      };
+      if (kind === 'array') fields.length = length.trim();
+      dispatchAction(buildReplaceActionFromDraft(nodeId, kind, fields, proj.available_vars));
     }
     closeNodeEdit();
   };
@@ -292,6 +299,7 @@ function HotspotButton({ hotspot }: { hotspot: Hotspot }) {
       data-testid={`insertion-hotspot-${hotspot.direction}`}
       data-parent-id={hotspot.parent_id}
       data-hotspot-direction={hotspot.direction}
+      onMouseEnter={() => openPopup(hotspot)}
       onClick={() => openPopup(hotspot)}
     >
       {hotspot.direction === 'below' && '＋↓'}

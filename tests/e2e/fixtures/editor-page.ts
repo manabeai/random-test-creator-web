@@ -71,6 +71,16 @@ export class EditorPage {
   }
 
   async selectLength(varName: string): Promise<void> {
+    const expressionInputs = this.page.getByTestId('length-expression-input');
+    const inputCount = await expressionInputs.count();
+    if (inputCount > 0) {
+      const values = await expressionInputs.evaluateAll(inputs => (
+        inputs.map(input => (input as HTMLInputElement).value)
+      ));
+      const targetIndex = inputCount === 1 || !values[0] ? 0 : 1;
+      await expressionInputs.nth(targetIndex).fill(varName);
+      return;
+    }
     await this.page.getByTestId('length-select').selectOption(varName);
   }
 
@@ -113,7 +123,16 @@ export class EditorPage {
   }
 
   async confirm(): Promise<void> {
-    await this.page.getByTestId('confirm-button').click();
+    const confirmButton = this.page.getByTestId('confirm-button');
+    if (await confirmButton.count() > 0) {
+      await confirmButton.click();
+      return;
+    }
+    await this.page.keyboard.press('Enter');
+    if (await this.nodePopup.count() === 0) return;
+    await this.previewPane.hover();
+    await this.previewPane.hover();
+    await this.previewPane.click();
   }
 
   async closePopupByEscape(): Promise<void> {
@@ -221,7 +240,13 @@ export class EditorPage {
    * Confirm the current constraint editing.
    */
   async confirmConstraint(): Promise<void> {
-    await this.page.getByTestId('constraint-confirm').click();
+    const confirmButton = this.page.getByTestId('constraint-confirm');
+    if (await confirmButton.count() > 0) {
+      await confirmButton.click();
+      return;
+    }
+    await this.previewPane.click();
+    await this.page.locator('.constraint-editor, .charset-options, .sumbound-editor').waitFor({ state: 'detached' });
   }
 
   async addProperty(propertyName: string): Promise<void> {
@@ -239,7 +264,7 @@ export class EditorPage {
     await this.page.getByTestId('sumbound-upper-input').click();
     await this.page.getByTestId('constraint-value-literal').fill(upper);
     await this.page.getByTestId('constraint-value-literal').press('Enter');
-    await this.page.getByTestId('constraint-confirm').click();
+    await this.confirmConstraint();
   }
 
   /**
@@ -261,7 +286,7 @@ export class EditorPage {
     await this.page.getByTestId(`function-op-${op}`).click();
     await this.page.getByTestId('function-operand-input').fill(operand);
     await this.page.getByTestId('function-operand-input').press('Enter');
-    await this.page.getByTestId('constraint-confirm').click();
+    await this.confirmConstraint();
   }
 
   // ── Right pane (Preview) assertions ───────────────────────────────

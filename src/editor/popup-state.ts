@@ -47,6 +47,7 @@ export const popupLengthVar = signal('');
 export const popupLengthVar2 = signal(''); // second length (grid cols)
 export const popupWeightName = signal('');
 export const popupVariantTag = signal('');
+export const popupCommitted = signal(false);
 
 export function openPopup(hotspot: Hotspot): void {
   if (hotspot.direction === 'variant') {
@@ -60,6 +61,7 @@ export function openPopup(hotspot: Hotspot): void {
   popupLengthVar2.value = '';
   popupWeightName.value = '';
   popupVariantTag.value = '';
+  popupCommitted.value = false;
   countExprState.value = { step: 'idle', value: '' };
 }
 
@@ -76,6 +78,7 @@ export function selectCandidate(candidate: string): void {
     popupLengthVar.value = '';
     popupLengthVar2.value = '';
     popupWeightName.value = '';
+    popupCommitted.value = false;
     countExprState.value = { step: 'idle', value: '' };
   }
 }

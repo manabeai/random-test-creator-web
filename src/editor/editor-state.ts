@@ -59,6 +59,7 @@ export interface CandidateDetail {
   kind: string;
   label: string;
   fields: CandidateField[];
+  commit_on_ready: boolean;
 }
 
 export interface CandidateField {
