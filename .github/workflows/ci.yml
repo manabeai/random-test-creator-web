@@ -32,6 +32,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build wasm bindings
+        run: npm run build:wasm
+
       - name: Typecheck
         run: npm run lint
 
@@ -90,6 +93,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Build wasm bindings
+        run: npm run build:wasm
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
