@@ -1,0 +1,6 @@
+name = "random-test-creator"
+main = "worker.js"
+compatibility_date = "2025-06-20"
+
+[assets]
+directory = "./dist"

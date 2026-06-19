@@ -41,14 +41,15 @@ npm run test:e2e
 
 ## Deployment
 
-Pushing a tag that starts with `v` triggers the Cloudflare Pages workflow.
+Pushing a tag that starts with `v` triggers the Cloudflare Workers workflow.
 The GitHub Actions runner checks out `cp-ast-ecosystems` as a submodule,
-rebuilds wasm, builds the frontend, and deploys `dist/` to Cloudflare Pages.
+rebuilds wasm, builds the frontend, and deploys `dist/` as static assets
+to the `random-test-creator` Worker via `wrangler deploy`.
 
 ### Prerequisites
 
-1. Create a Cloudflare Pages project (e.g., `random-test-creator`)
-2. Generate a Cloudflare API token with **Cloudflare Pages — Edit** permission
+1. A Cloudflare Workers project named `random-test-creator` must exist
+2. Generate a Cloudflare API token with **Workers Scripts — Edit** permission
 3. Add these GitHub repository secrets:
    - `CLOUDFLARE_API_TOKEN` — your Cloudflare API token
    - `CLOUDFLARE_ACCOUNT_ID` — your Cloudflare account ID (found in the Cloudflare dashboard URL)
