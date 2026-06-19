@@ -49,6 +49,6 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: random-test-creator-web
+          projectName: random-test-creator
           directory: dist
           branch: main

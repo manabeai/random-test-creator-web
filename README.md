@@ -47,7 +47,7 @@ rebuilds wasm, builds the frontend, and deploys `dist/` to Cloudflare Pages.
 
 ### Prerequisites
 
-1. Create a Cloudflare Pages project (e.g., `random-test-creator-web`)
+1. Create a Cloudflare Pages project (e.g., `random-test-creator`)
 2. Generate a Cloudflare API token with **Cloudflare Pages — Edit** permission
 3. Add these GitHub repository secrets:
    - `CLOUDFLARE_API_TOKEN` — your Cloudflare API token
