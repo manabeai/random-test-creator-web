@@ -16,7 +16,8 @@ export type WorkbenchIconName =
   | 'range'
   | 'charset'
   | 'sigma'
-  | 'property';
+  | 'property'
+  | 'pin';
 
 const paths: Record<WorkbenchIconName, ComponentChildren> = {
   plus: <><path d="M12 5v14M5 12h14" /></>,
@@ -35,6 +36,7 @@ const paths: Record<WorkbenchIconName, ComponentChildren> = {
   charset: <><path d="M4 18 9 5l5 13M6 13h6M15 9h5M17.5 6.5v5" /></>,
   sigma: <><path d="M18 5H7l6 7-6 7h11" /></>,
   property: <><path d="M12 3 4.5 7.2v9.6L12 21l7.5-4.2V7.2L12 3Z" /><path d="m8.5 12 2.2 2.2 4.8-5" /></>,
+  pin: <><path d="M12 17v5M5 17h14" /><path d="m6 3 1 7-3 4h16l-3-4 1-7Z" /></>,
 };
 
 export function WorkbenchIcon({ name }: { name: WorkbenchIconName }) {

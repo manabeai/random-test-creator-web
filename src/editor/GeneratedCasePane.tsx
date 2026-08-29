@@ -31,6 +31,7 @@ export function GeneratedCasePane() {
   const [regenerating, setRegenerating] = useState(false);
   const sample = sampleText.value;
   const generation = projection.value.generation;
+  const seedLockLabel = seedLocked.value ? 'シード固定を解除' : 'シードを固定';
 
   const copySample = () => {
     if (!sample) return;
@@ -72,34 +73,37 @@ export function GeneratedCasePane() {
     <aside class="rtc-output-pane" data-testid="output-pane" aria-label="生成ケース">
       <div class="rtc-preview-pane" data-testid="preview-pane">
         <header class="rtc-output-heading">
-          <div>
+          <div class="rtc-output-title">
             <h2>生成ケース</h2>
             <span class="rtc-sync-mark" title="定義と同期" aria-label="定義と同期">
               <WorkbenchIcon name="link" />
             </span>
           </div>
-          <label class="rtc-seed-field">
-            <span>seed</span>
-            <input
-              type="number"
-              value={sampleSeed.value}
-              aria-label="生成シード"
-              onInput={event => { sampleSeed.value = Number(event.currentTarget.value); }}
-            />
-          </label>
+          <div class="rtc-seed-control">
+            <label class="rtc-seed-field">
+              <span>seed</span>
+              <input
+                type="number"
+                value={sampleSeed.value}
+                aria-label="生成シード"
+                onInput={event => { sampleSeed.value = Number(event.currentTarget.value); }}
+              />
+            </label>
+            <button
+              type="button"
+              class="rtc-seed-lock"
+              data-testid="seed-lock-button"
+              aria-pressed={seedLocked.value}
+              aria-label={seedLockLabel}
+              title={seedLockLabel}
+              onClick={() => { seedLocked.value = !seedLocked.value; }}
+            >
+              <WorkbenchIcon name="pin" />
+            </button>
+          </div>
         </header>
 
         <div class="rtc-generation-controls">
-          <label class="rtc-seed-lock">
-            <input
-              type="checkbox"
-              data-testid="seed-lock-checkbox"
-              checked={seedLocked.value}
-              onChange={event => { seedLocked.value = event.currentTarget.checked; }}
-            />
-            <span aria-hidden="true"><WorkbenchIcon name="check" /></span>
-            <span class="rtc-visually-hidden">シードを固定</span>
-          </label>
           <button
             type="button"
             class={`rtc-regenerate ${regenerating ? 'is-regenerating' : ''}`}

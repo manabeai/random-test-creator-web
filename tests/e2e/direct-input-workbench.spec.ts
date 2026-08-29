@@ -5,6 +5,17 @@ test.describe('direct input workbench', () => {
     await page.goto('/');
   });
 
+  test('keeps insertion points visible and gives them a clear hover action', async ({ page }) => {
+    const addPoint = page.getByTestId('insertion-hotspot-below').first();
+
+    await expect(addPoint).toHaveCSS('border-color', 'rgb(16, 24, 39)');
+    await expect(addPoint).toHaveCSS('color', 'rgb(16, 24, 39)');
+
+    await addPoint.hover();
+    await expect(addPoint).toHaveCSS('background-color', 'rgb(16, 24, 39)');
+    await expect(addPoint).toHaveCSS('color', 'rgb(255, 255, 255)');
+  });
+
   test('builds N and A directly from the competitive-programming notation surface', async ({ page }) => {
     await expect(page.getByTestId('editor-workbench')).toBeVisible();
     await expect(page.getByTestId('format-pane')).toBeVisible();
@@ -161,15 +172,29 @@ test.describe('direct input workbench', () => {
     await page.getByTestId('range-upper-input').press('Enter');
 
     const seed = page.getByLabel('生成シード');
+    const seedLock = page.getByTestId('seed-lock-button');
     const regenerate = page.getByTestId('regenerate-button');
     const initialSeed = await seed.inputValue();
+
+    await expect(seedLock).toHaveAttribute('aria-pressed', 'true');
+    await expect(seedLock).toHaveAccessibleName('シード固定を解除');
+    await expect(page.getByTestId('seed-lock-checkbox')).toHaveCount(0);
+
+    const seedBox = await seed.boundingBox();
+    const lockBox = await seedLock.boundingBox();
+    expect(seedBox).not.toBeNull();
+    expect(lockBox).not.toBeNull();
+    expect(lockBox!.x).toBeGreaterThan(seedBox!.x + seedBox!.width);
+    expect(lockBox!.x - (seedBox!.x + seedBox!.width)).toBeLessThanOrEqual(8);
 
     await regenerate.click();
     await expect(regenerate).toHaveAttribute('aria-busy', 'true');
     await expect(seed).toHaveValue(initialSeed);
     await expect(regenerate).toHaveAttribute('aria-busy', 'false');
 
-    await page.getByTestId('seed-lock-checkbox').uncheck();
+    await seedLock.click();
+    await expect(seedLock).toHaveAttribute('aria-pressed', 'false');
+    await expect(seedLock).toHaveAccessibleName('シードを固定');
     await regenerate.click();
     await expect(seed).not.toHaveValue(initialSeed);
   });

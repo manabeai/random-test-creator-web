@@ -113,7 +113,7 @@ body:has(.rtc-workbench) {
   letter-spacing: -0.015em;
 }
 
-.rtc-new-input {
+.rtc-reset-input {
   display: inline-flex;
   min-height: 40px;
   align-items: center;
@@ -128,7 +128,7 @@ body:has(.rtc-workbench) {
   cursor: pointer;
 }
 
-.rtc-new-input:hover {
+.rtc-reset-input:hover {
   border-color: #9fb0ba;
   background: #f5f8f9;
   color: var(--rtc-focus-deep);
@@ -290,16 +290,25 @@ body:has(.rtc-workbench) {
   height: 44px;
   align-items: center;
   justify-content: center;
-  border: 0;
+  border: 1px solid var(--rtc-ink);
   border-radius: 8px;
   background: transparent;
-  color: #788995;
+  color: var(--rtc-ink);
   cursor: pointer;
+  transition: background-color 140ms ease, color 140ms ease;
 }
 
 .rtc-add-point:hover {
-  background: #eaf0f3;
-  color: var(--rtc-focus-deep);
+  background: var(--rtc-ink);
+  color: var(--rtc-paper-raised);
+}
+
+.rtc-add-point .rtc-icon {
+  transition: transform 160ms cubic-bezier(.18, .84, .24, 1);
+}
+
+.rtc-add-point:hover .rtc-icon {
+  transform: rotate(90deg);
 }
 
 .rtc-add-point--terminal {
@@ -926,7 +935,7 @@ body:has(.rtc-workbench) {
   justify-content: space-between;
 }
 
-.rtc-output-heading > div {
+.rtc-output-title {
   display: flex;
   align-items: center;
   gap: 9px;
@@ -951,6 +960,12 @@ body:has(.rtc-workbench) {
 
 .rtc-sync-mark .rtc-icon { width: 16px; height: 16px; }
 
+.rtc-seed-control {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+}
+
 .rtc-seed-field {
   display: grid;
   grid-template-columns: auto 64px;
@@ -972,44 +987,37 @@ body:has(.rtc-workbench) {
 }
 
 .rtc-generation-controls {
-  display: grid;
-  grid-template-columns: 42px 1fr;
-  gap: 10px;
   margin-top: 24px;
 }
 
 .rtc-seed-lock {
-  position: relative;
-  display: flex;
-  width: 42px;
-  height: 48px;
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
   align-items: center;
   justify-content: center;
   border: 1px solid var(--rtc-control);
-  border-radius: 10px;
+  border-radius: 8px;
   background: #fff;
   color: #98a4ad;
   cursor: pointer;
 }
 
-.rtc-seed-lock input {
-  position: absolute;
-  opacity: 0;
+.rtc-seed-lock:hover {
+  border-color: var(--rtc-ink);
+  background: #f5f8f9;
+  color: var(--rtc-ink);
 }
 
-.rtc-seed-lock:has(input:checked) {
+.rtc-seed-lock[aria-pressed="true"] {
   border-color: var(--rtc-focus);
   background: var(--rtc-focus-wash);
   color: var(--rtc-focus-deep);
 }
 
-.rtc-seed-lock:focus-within {
-  outline: 2px solid var(--rtc-focus);
-  outline-offset: 2px;
-}
-
 .rtc-regenerate {
   display: inline-flex;
+  width: 100%;
   min-height: 48px;
   align-items: center;
   justify-content: center;
@@ -1280,7 +1288,7 @@ body:has(.rtc-workbench) {
   .rtc-topbar-identity { gap: 7px; }
   .rtc-topbar-identity > h1 { font-size: 15px; }
 
-  .rtc-new-input {
+  .rtc-reset-input {
     width: 42px;
     min-height: 42px;
     justify-content: center;
@@ -1289,7 +1297,7 @@ body:has(.rtc-workbench) {
     background: transparent;
   }
 
-  .rtc-new-input span,
+  .rtc-reset-input span,
   .rtc-topbar-actions button span,
   .rtc-toolbar-rule,
   .rtc-ready {
@@ -1436,4 +1444,7 @@ body:has(.rtc-workbench) {
   .rtc-node-inspector { animation: none; }
   .rtc-regenerate.is-regenerating .rtc-icon { animation: none; }
   .rtc-format-math [data-node-id] { transition: none; }
+  .rtc-add-point,
+  .rtc-add-point .rtc-icon { transition: none; }
+  .rtc-add-point:hover .rtc-icon { transform: none; }
 }

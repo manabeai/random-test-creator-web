@@ -134,9 +134,14 @@ test.describe('Web editor consistency', () => {
     await editor.addScalar('N');
     await expect(editor.structurePane).toContainText('N');
 
-    await editor.page.getByTestId('new-document-button').click();
+    const resetButton = editor.page.getByTestId('reset-document-button');
+    await expect(resetButton).toHaveAccessibleName('リセット');
+    await resetButton.click();
 
     await expect(editor.structurePane).not.toContainText('N');
     await expect(editor.insertionHotspots.first()).toBeVisible();
+
+    await editor.page.getByTestId('undo-button').click();
+    await expect(editor.structurePane).toContainText('N');
   });
 });

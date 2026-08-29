@@ -38,7 +38,7 @@ export function EditorPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const newInput = () => {
+  const resetInput = () => {
     resetDocument();
     closePopup();
     clearWorkbenchSelection();
@@ -59,9 +59,16 @@ export function EditorPage() {
       <header class="rtc-topbar">
         <div class="rtc-topbar-identity">
           <h1>ランダムテスト</h1>
-          <button type="button" class="rtc-new-input" data-testid="new-document-button" onClick={newInput}>
-            <WorkbenchIcon name="plus" />
-            <span>新しい入力</span>
+          <button
+            type="button"
+            class="rtc-reset-input"
+            data-testid="reset-document-button"
+            aria-label="リセット"
+            title="リセット"
+            onClick={resetInput}
+          >
+            <WorkbenchIcon name="refresh" />
+            <span>リセット</span>
           </button>
         </div>
         <nav class="rtc-topbar-actions" aria-label="ドキュメント操作">
