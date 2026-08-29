@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-29T10:10:24Z",
+  "title": "Design System: Random Test Creator（仮称）",
+  "extensions": {
+    "colorMeta": {
+      "paper": {"role": "neutral", "displayName": "クールペーパー", "canonical": "#f7f8fa", "tonalRamp": ["oklch(15% 0.003 264.5)", "oklch(25% 0.003 264.5)", "oklch(35% 0.003 264.5)", "oklch(45% 0.003 264.5)", "oklch(55% 0.003 264.5)", "oklch(68% 0.003 264.5)", "oklch(82% 0.003 264.5)", "oklch(95% 0.003 264.5)"]},
+      "paper-raised": {"role": "neutral", "displayName": "白い浮上紙", "canonical": "#ffffff", "tonalRamp": ["oklch(15% 0 0)", "oklch(25% 0 0)", "oklch(35% 0 0)", "oklch(45% 0 0)", "oklch(55% 0 0)", "oklch(68% 0 0)", "oklch(82% 0 0)", "oklch(95% 0 0)"]},
+      "paper-canvas": {"role": "neutral", "displayName": "入力キャンバス", "canonical": "#fbfcfd", "tonalRamp": ["oklch(15% 0.002 247.8)", "oklch(25% 0.002 247.8)", "oklch(35% 0.002 247.8)", "oklch(45% 0.002 247.8)", "oklch(55% 0.002 247.8)", "oklch(68% 0.002 247.8)", "oklch(82% 0.002 247.8)", "oklch(95% 0.002 247.8)"]},
+      "output-dock": {"role": "neutral", "displayName": "出力ドック", "canonical": "#f1f4f5", "tonalRamp": ["oklch(15% 0.003 219.5)", "oklch(25% 0.003 219.5)", "oklch(35% 0.003 219.5)", "oklch(45% 0.003 219.5)", "oklch(55% 0.003 219.5)", "oklch(68% 0.003 219.5)", "oklch(82% 0.003 219.5)", "oklch(95% 0.003 219.5)"]},
+      "ink": {"role": "neutral", "displayName": "ディープインク", "canonical": "#101827", "tonalRamp": ["oklch(15% 0.032 262.4)", "oklch(25% 0.032 262.4)", "oklch(35% 0.032 262.4)", "oklch(45% 0.032 262.4)", "oklch(55% 0.032 262.4)", "oklch(68% 0.032 262.4)", "oklch(82% 0.032 262.4)", "oklch(95% 0.032 262.4)"]},
+      "body": {"role": "neutral", "displayName": "本文スレート", "canonical": "#344252", "tonalRamp": ["oklch(15% 0.033 252.1)", "oklch(25% 0.033 252.1)", "oklch(35% 0.033 252.1)", "oklch(45% 0.033 252.1)", "oklch(55% 0.033 252.1)", "oklch(68% 0.033 252.1)", "oklch(82% 0.033 252.1)", "oklch(95% 0.033 252.1)"]},
+      "muted": {"role": "neutral", "displayName": "可読ミュート", "canonical": "#526273", "tonalRamp": ["oklch(15% 0.034 250.1)", "oklch(25% 0.034 250.1)", "oklch(35% 0.034 250.1)", "oklch(45% 0.034 250.1)", "oklch(55% 0.034 250.1)", "oklch(68% 0.034 250.1)", "oklch(82% 0.034 250.1)", "oklch(95% 0.034 250.1)"]},
+      "rule": {"role": "neutral", "displayName": "罫線", "canonical": "#dce3e8", "tonalRamp": ["oklch(15% 0.010 238.5)", "oklch(25% 0.010 238.5)", "oklch(35% 0.010 238.5)", "oklch(45% 0.010 238.5)", "oklch(55% 0.010 238.5)", "oklch(68% 0.010 238.5)", "oklch(82% 0.010 238.5)", "oklch(95% 0.010 238.5)"]},
+      "rule-soft": {"role": "neutral", "displayName": "淡い罫線", "canonical": "#e8edf1", "tonalRamp": ["oklch(15% 0.008 241.7)", "oklch(25% 0.008 241.7)", "oklch(35% 0.008 241.7)", "oklch(45% 0.008 241.7)", "oklch(55% 0.008 241.7)", "oklch(68% 0.008 241.7)", "oklch(82% 0.008 241.7)", "oklch(95% 0.008 241.7)"]},
+      "rule-control": {"role": "neutral", "displayName": "操作境界", "canonical": "#82939f", "tonalRamp": ["oklch(15% 0.027 238.6)", "oklch(25% 0.027 238.6)", "oklch(35% 0.027 238.6)", "oklch(45% 0.027 238.6)", "oklch(55% 0.027 238.6)", "oklch(68% 0.027 238.6)", "oklch(82% 0.027 238.6)", "oklch(95% 0.027 238.6)"]},
+      "rule-control-soft": {"role": "neutral", "displayName": "操作内境界", "canonical": "#cbd6dd", "tonalRamp": ["oklch(15% 0.015 235.4)", "oklch(25% 0.015 235.4)", "oklch(35% 0.015 235.4)", "oklch(45% 0.015 235.4)", "oklch(55% 0.015 235.4)", "oklch(68% 0.015 235.4)", "oklch(82% 0.015 235.4)", "oklch(95% 0.015 235.4)"]},
+      "rule-dock": {"role": "neutral", "displayName": "ドック境界", "canonical": "#c8d4dc", "tonalRamp": ["oklch(15% 0.017 236.7)", "oklch(25% 0.017 236.7)", "oklch(35% 0.017 236.7)", "oklch(45% 0.017 236.7)", "oklch(55% 0.017 236.7)", "oklch(68% 0.017 236.7)", "oklch(82% 0.017 236.7)", "oklch(95% 0.017 236.7)"]},
+      "rule-subtle": {"role": "neutral", "displayName": "補助境界", "canonical": "#c7d3db", "tonalRamp": ["oklch(15% 0.017 236.7)", "oklch(25% 0.017 236.7)", "oklch(35% 0.017 236.7)", "oklch(45% 0.017 236.7)", "oklch(55% 0.017 236.7)", "oklch(68% 0.017 236.7)", "oklch(82% 0.017 236.7)", "oklch(95% 0.017 236.7)"]},
+      "focus": {"role": "primary", "displayName": "選択シアン", "canonical": "#006a7a", "tonalRamp": ["oklch(15% 0.084 212.7)", "oklch(25% 0.084 212.7)", "oklch(35% 0.084 212.7)", "oklch(45% 0.084 212.7)", "oklch(55% 0.084 212.7)", "oklch(68% 0.084 212.7)", "oklch(82% 0.084 212.7)", "oklch(95% 0.084 212.7)"]},
+      "focus-deep": {"role": "primary", "displayName": "深いティール", "canonical": "#005565", "tonalRamp": ["oklch(15% 0.074 216.2)", "oklch(25% 0.074 216.2)", "oklch(35% 0.074 216.2)", "oklch(45% 0.074 216.2)", "oklch(55% 0.074 216.2)", "oklch(68% 0.074 216.2)", "oklch(82% 0.074 216.2)", "oklch(95% 0.074 216.2)"]},
+      "focus-wash": {"role": "primary", "displayName": "選択ウォッシュ", "canonical": "#e2f0f2", "tonalRamp": ["oklch(15% 0.015 207.1)", "oklch(25% 0.015 207.1)", "oklch(35% 0.015 207.1)", "oklch(45% 0.015 207.1)", "oklch(55% 0.015 207.1)", "oklch(68% 0.015 207.1)", "oklch(82% 0.015 207.1)", "oklch(95% 0.015 207.1)"]},
+      "focus-soft": {"role": "primary", "displayName": "淡い選択", "canonical": "#a9d9df", "tonalRamp": ["oklch(15% 0.050 205.7)", "oklch(25% 0.050 205.7)", "oklch(35% 0.050 205.7)", "oklch(45% 0.050 205.7)", "oklch(55% 0.050 205.7)", "oklch(68% 0.050 205.7)", "oklch(82% 0.050 205.7)", "oklch(95% 0.050 205.7)"]},
+      "focus-on-ink": {"role": "primary", "displayName": "濃色上フォーカス", "canonical": "#bfe9ed", "tonalRamp": ["oklch(15% 0.044 203.5)", "oklch(25% 0.044 203.5)", "oklch(35% 0.044 203.5)", "oklch(45% 0.044 203.5)", "oklch(55% 0.044 203.5)", "oklch(68% 0.044 203.5)", "oklch(82% 0.044 203.5)", "oklch(95% 0.044 203.5)"]},
+      "focus-shadow": {"role": "primary", "displayName": "操作点シャドウ色", "canonical": "rgb(23 54 62 / 28%)", "tonalRamp": ["oklch(15% 0.039 216.9 / 28%)", "oklch(25% 0.039 216.9 / 28%)", "oklch(35% 0.039 216.9 / 28%)", "oklch(45% 0.039 216.9 / 28%)", "oklch(55% 0.039 216.9 / 28%)", "oklch(68% 0.039 216.9 / 28%)", "oklch(82% 0.039 216.9 / 28%)", "oklch(95% 0.039 216.9 / 28%)"]},
+      "ink-deep": {"role": "neutral", "displayName": "最深インク", "canonical": "#08151b", "tonalRamp": ["oklch(15% 0.022 229.1)", "oklch(25% 0.022 229.1)", "oklch(35% 0.022 229.1)", "oklch(45% 0.022 229.1)", "oklch(55% 0.022 229.1)", "oklch(68% 0.022 229.1)", "oklch(82% 0.022 229.1)", "oklch(95% 0.022 229.1)"]},
+      "ink-math": {"role": "neutral", "displayName": "数式インク", "canonical": "#111820", "tonalRamp": ["oklch(15% 0.019 252.1)", "oklch(25% 0.019 252.1)", "oklch(35% 0.019 252.1)", "oklch(45% 0.019 252.1)", "oklch(55% 0.019 252.1)", "oklch(68% 0.019 252.1)", "oklch(82% 0.019 252.1)", "oklch(95% 0.019 252.1)"]},
+      "ink-selected": {"role": "neutral", "displayName": "選択インク", "canonical": "#08282e", "tonalRamp": ["oklch(15% 0.038 212.5)", "oklch(25% 0.038 212.5)", "oklch(35% 0.038 212.5)", "oklch(45% 0.038 212.5)", "oklch(55% 0.038 212.5)", "oklch(68% 0.038 212.5)", "oklch(82% 0.038 212.5)", "oklch(95% 0.038 212.5)"]},
+      "danger": {"role": "tertiary", "displayName": "削除レッド", "canonical": "#b92f40", "tonalRamp": ["oklch(15% 0.174 19.1)", "oklch(25% 0.174 19.1)", "oklch(35% 0.174 19.1)", "oklch(45% 0.174 19.1)", "oklch(55% 0.174 19.1)", "oklch(68% 0.174 19.1)", "oklch(82% 0.174 19.1)", "oklch(95% 0.174 19.1)"]},
+      "danger-wash": {"role": "tertiary", "displayName": "削除ウォッシュ", "canonical": "#fff0f1", "tonalRamp": ["oklch(15% 0.016 12.8)", "oklch(25% 0.016 12.8)", "oklch(35% 0.016 12.8)", "oklch(45% 0.016 12.8)", "oklch(55% 0.016 12.8)", "oklch(68% 0.016 12.8)", "oklch(82% 0.016 12.8)", "oklch(95% 0.016 12.8)"]},
+      "danger-deep": {"role": "tertiary", "displayName": "深い削除", "canonical": "#8f2432", "tonalRamp": ["oklch(15% 0.142 18.3)", "oklch(25% 0.142 18.3)", "oklch(35% 0.142 18.3)", "oklch(45% 0.142 18.3)", "oklch(55% 0.142 18.3)", "oklch(68% 0.142 18.3)", "oklch(82% 0.142 18.3)", "oklch(95% 0.142 18.3)"]},
+      "danger-shadow": {"role": "tertiary", "displayName": "エラーシャドウ色", "canonical": "rgb(69 18 26 / 28%)", "tonalRamp": ["oklch(15% 0.078 14.9 / 28%)", "oklch(25% 0.078 14.9 / 28%)", "oklch(35% 0.078 14.9 / 28%)", "oklch(45% 0.078 14.9 / 28%)", "oklch(55% 0.078 14.9 / 28%)", "oklch(68% 0.078 14.9 / 28%)", "oklch(82% 0.078 14.9 / 28%)", "oklch(95% 0.078 14.9 / 28%)"]},
+      "success": {"role": "tertiary", "displayName": "同期グリーン", "canonical": "#137a54", "tonalRamp": ["oklch(15% 0.107 162.0)", "oklch(25% 0.107 162.0)", "oklch(35% 0.107 162.0)", "oklch(45% 0.107 162.0)", "oklch(55% 0.107 162.0)", "oklch(68% 0.107 162.0)", "oklch(82% 0.107 162.0)", "oklch(95% 0.107 162.0)"]},
+      "control-hover": {"role": "neutral", "displayName": "ホバー境界", "canonical": "#9fb0ba", "tonalRamp": ["oklch(15% 0.024 233.5)", "oklch(25% 0.024 233.5)", "oklch(35% 0.024 233.5)", "oklch(45% 0.024 233.5)", "oklch(55% 0.024 233.5)", "oklch(68% 0.024 233.5)", "oklch(82% 0.024 233.5)", "oklch(95% 0.024 233.5)"]},
+      "control-disabled": {"role": "neutral", "displayName": "無効境界", "canonical": "#a9b4bd", "tonalRamp": ["oklch(15% 0.018 242.5)", "oklch(25% 0.018 242.5)", "oklch(35% 0.018 242.5)", "oklch(45% 0.018 242.5)", "oklch(55% 0.018 242.5)", "oklch(68% 0.018 242.5)", "oklch(82% 0.018 242.5)", "oklch(95% 0.018 242.5)"]},
+      "icon-add": {"role": "neutral", "displayName": "追加アイコン", "canonical": "#788995", "tonalRamp": ["oklch(15% 0.027 238.7)", "oklch(25% 0.027 238.7)", "oklch(35% 0.027 238.7)", "oklch(45% 0.027 238.7)", "oklch(55% 0.027 238.7)", "oklch(68% 0.027 238.7)", "oklch(82% 0.027 238.7)", "oklch(95% 0.027 238.7)"]},
+      "icon-disabled": {"role": "neutral", "displayName": "無効アイコン", "canonical": "#84929d", "tonalRamp": ["oklch(15% 0.023 241.5)", "oklch(25% 0.023 241.5)", "oklch(35% 0.023 241.5)", "oklch(45% 0.023 241.5)", "oklch(55% 0.023 241.5)", "oklch(68% 0.023 241.5)", "oklch(82% 0.023 241.5)", "oklch(95% 0.023 241.5)"]},
+      "icon-quiet": {"role": "neutral", "displayName": "静かなアイコン", "canonical": "#9ca8b1", "tonalRamp": ["oklch(15% 0.019 240.1)", "oklch(25% 0.019 240.1)", "oklch(35% 0.019 240.1)", "oklch(45% 0.019 240.1)", "oklch(55% 0.019 240.1)", "oklch(68% 0.019 240.1)", "oklch(82% 0.019 240.1)", "oklch(95% 0.019 240.1)"]},
+      "dock-muted": {"role": "neutral", "displayName": "ドックミュート", "canonical": "#98a4ad", "tonalRamp": ["oklch(15% 0.019 240.1)", "oklch(25% 0.019 240.1)", "oklch(35% 0.019 240.1)", "oklch(45% 0.019 240.1)", "oklch(55% 0.019 240.1)", "oklch(68% 0.019 240.1)", "oklch(82% 0.019 240.1)", "oklch(95% 0.019 240.1)"]}
+    },
+    "typographyMeta": {
+      "ui-title": {"displayName": "UI Title", "purpose": "生成ケースなど作業面の見出し。"},
+      "ui-identity": {"displayName": "UI Identity", "purpose": "仮称の製品表示。"},
+      "ui-body": {"displayName": "UI Body", "purpose": "日本語の説明と通常操作。"},
+      "ui-label": {"displayName": "UI Label", "purpose": "軸ラベル、フィールド名、状態、メタ情報。"},
+      "ui-micro": {"displayName": "UI Micro", "purpose": "狭い面の状態と補助説明。"},
+      "ui-compact": {"displayName": "UI Compact", "purpose": "小型ボタンと密度の高い操作。"},
+      "ui-input": {"displayName": "UI Input", "purpose": "変数名の中央揃え入力。"},
+      "ui-title-mobile": {"displayName": "UI Title Mobile", "purpose": "単一作業面でのモバイル見出し。"},
+      "ui-action": {"displayName": "UI Action", "purpose": "主要生成操作のラベル。"},
+      "math-notation": {"displayName": "Math Notation", "purpose": "デスクトップの入力形式を問題文の数式として表示する。"},
+      "math-notation-mobile": {"displayName": "Math Notation Mobile", "purpose": "狭い作業面で入力形式の読み順を保つ。"},
+      "math-notation-small": {"displayName": "Math Notation Small", "purpose": "430px以下でも入力記号を判読できる大きさに保つ。"},
+      "sample-mono": {"displayName": "Sample Mono", "purpose": "生成された標準入力を行と桁のまま読む。"},
+      "mono-control": {"displayName": "Mono Control", "purpose": "名前入力補助と短い技術値。"},
+      "mono-axis": {"displayName": "Mono Axis", "purpose": "横方向と縦方向の反復参照。"},
+      "mono-bound": {"displayName": "Mono Bound", "purpose": "区間の正確な下限と上限。"},
+      "mono-micro": {"displayName": "Mono Micro", "purpose": "文字集合候補と短い文字プレビュー。"}
+    },
+    "shadows": [
+      {"name": "notation-popover", "value": "0 18px 48px rgb(35 55 68 / 17%)", "purpose": "変数追加、選択記号の編集、高度な構造を記法へ接続した一時面として浮上させる。"},
+      {"name": "range-thumb", "value": "0 2px 7px rgb(23 54 62 / 28%)", "purpose": "二つの区間つまみを軌道から識別する。"},
+      {"name": "error-toast", "value": "0 12px 34px rgb(69 18 26 / 28%)", "purpose": "画面端の一時的な失敗通知を作業面から分離する。"}
+    ],
+    "motion": [
+      {"name": "inspector-arrive", "value": "260ms cubic-bezier(.18,.84,.24,1)", "purpose": "選択記号の直下からインスペクタを短く展開する。"},
+      {"name": "token-selection", "value": "background-color 140ms ease, color 140ms ease", "purpose": "投影記号のhoverと選択を読み順を乱さず伝える。"},
+      {"name": "regenerate-spin", "value": "transform 320ms ease-out", "purpose": "再計算のたびに更新アイコンを一回転させ、aria-busyと併せて短い処理中状態を伝える。"}
+    ],
+    "breakpoints": [
+      {"name": "workspace-compact", "value": "1120px"},
+      {"name": "single-surface", "value": "820px"},
+      {"name": "phone-compact", "value": "430px"}
+    ]
+  },
+  "components": [
+    {
+      "name": "再生成ボタン",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Rust投影のcan_generateが真の時だけ現在の定義を再計算する。seed固定中は値を保ち、固定解除中だけseedも更新し、aria-busyと一回転する更新アイコンで短い処理中状態を伝える。",
+      "html": "<div class=\"ds-generation-controls\"><label class=\"ds-seed-lock\"><input type=\"checkbox\" checked><span aria-hidden=\"true\">✓</span><span class=\"ds-visually-hidden\">シードを固定</span></label><button class=\"ds-regenerate ds-is-regenerating\" type=\"button\" aria-busy=\"true\"><svg class=\"ds-regenerate-icon\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M20 7v5h-5M4 17v-5h5M18.2 9A7 7 0 0 0 6.3 6.3L4 9m2 6a7 7 0 0 0 11.7 2.7L20 15\" /></svg><span>生成し直す</span></button></div>",
+      "css": ".ds-generation-controls{display:grid;grid-template-columns:42px 1fr;gap:10px}.ds-seed-lock{position:relative;display:grid;width:42px;height:48px;place-items:center;border:1px solid #82939f;border-radius:10px;background:#e2f0f2;color:#005565;cursor:pointer}.ds-seed-lock input{position:absolute;opacity:0}.ds-seed-lock:focus-within{outline:2px solid #006a7a;outline-offset:2px}.ds-visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}.ds-regenerate{display:inline-flex;width:100%;min-height:48px;align-items:center;justify-content:center;gap:9px;padding:0 16px;border:0;border-radius:10px;background:#006a7a;color:#fff;font:720 15px/1.4 -apple-system,BlinkMacSystemFont,\"Noto Sans JP\",\"Yu Gothic UI\",sans-serif;cursor:pointer}.ds-regenerate:hover:not(:disabled){background:#005565}.ds-regenerate:focus-visible{outline:2px solid #006a7a;outline-offset:2px}.ds-regenerate:disabled{background:#d7dfe4;color:#657582;cursor:not-allowed}.ds-regenerate-icon{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.ds-regenerate.ds-is-regenerating .ds-regenerate-icon{animation:ds-regenerate-spin 320ms ease-out}@keyframes ds-regenerate-spin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.ds-regenerate.ds-is-regenerating .ds-regenerate-icon{animation:none}}"
+    },
+    {
+      "name": "履歴ツールバー",
+      "kind": "button",
+      "refersTo": "button-quiet",
+      "description": "最大100件の取り消し／やり直しを静かな対で示し、履歴またはfutureが空なら対応操作をdisabledにする。",
+      "html": "<nav class=\"ds-history\" aria-label=\"ドキュメント操作\"><button type=\"button\" aria-label=\"取り消す\">↶<span>取り消す</span></button><button type=\"button\" aria-label=\"やり直す\" disabled>↷<span>やり直す</span></button></nav>",
+      "css": ".ds-history{display:flex;align-items:center;gap:4px}.ds-history button{display:inline-flex;min-height:40px;align-items:center;gap:7px;padding:0 10px;border:0;border-radius:8px;background:transparent;color:#344252;font:650 13px/1.4 -apple-system,BlinkMacSystemFont,\"Noto Sans JP\",\"Yu Gothic UI\",sans-serif;cursor:pointer}.ds-history button:hover:not(:disabled){background:#edf2f4;color:#005565}.ds-history button:focus-visible{outline:2px solid #006a7a;outline-offset:2px}.ds-history button:disabled{color:#a9b4bd;cursor:not-allowed}"
+    },
+    {
+      "name": "二段階削除",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "最初のクリックで対象名と取消操作を開き、同じ削除ボタンの二回目で確定する。確定後も履歴から取り消せる。",
+      "html": "<div class=\"ds-delete-zone ds-is-armed\"><button type=\"button\" aria-label=\"A を削除する\"><span aria-hidden=\"true\">⌫</span><span>A</span></button><button type=\"button\" aria-label=\"削除を取り消す\">×</button></div>",
+      "css": ".ds-delete-zone{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px;border-radius:10px;background:#fff0f1;color:#b92f40}.ds-delete-zone button{min-height:38px;padding:0 13px;border:0;border-radius:8px;background:transparent;color:inherit;font:720 11px/1.4 -apple-system,BlinkMacSystemFont,\"Noto Sans JP\",sans-serif;cursor:pointer}.ds-delete-zone button:first-child{display:inline-flex;align-items:center;gap:7px}.ds-delete-zone button:hover{background:#fff;color:#8f2432}.ds-delete-zone button:focus-visible{outline:2px solid #006a7a;outline-offset:2px}"
+    },
+    {
+      "name": "意味的な名前補助",
+      "kind": "chip",
+      "refersTo": "name-chip",
+      "description": "N／M／H／W／A／B／S／T／Qは識別子draftだけを一クリックで埋める。チェックまたは名前欄のEnterが構造を確定し、チップ自体は型、軸、入力全体を選ぶテンプレートでも確定操作でもない。",
+      "html": "<div class=\"ds-name-composer\"><input class=\"ds-name-input\" value=\"A\" aria-label=\"名前\"><div class=\"ds-name-helpers\" aria-label=\"名前候補\"><button type=\"button\">N</button><button type=\"button\">M</button><button type=\"button\">H</button><button type=\"button\">W</button><button class=\"ds-is-active\" type=\"button\" aria-pressed=\"true\">A</button><button type=\"button\">B</button><button type=\"button\">S</button><button type=\"button\">T</button><button type=\"button\">Q</button></div><button class=\"ds-name-commit\" type=\"button\" aria-label=\"追加\">✓</button></div>",
+      "css": ".ds-name-composer{display:flex;align-items:center;gap:10px}.ds-name-input{width:70px;height:40px;padding:0 9px;border:1px solid #82939f;border-radius:8px;background:#fff;color:#101827;text-align:center;font:720 15px/1.4 \"SFMono-Regular\",Consolas,monospace}.ds-name-helpers{display:flex;flex:1;flex-wrap:wrap;gap:5px}.ds-name-helpers button{width:34px;height:38px;padding:0 7px;border:1px solid #82939f;border-radius:7px;background:#fff;color:#344252;font:690 12px/1.4 \"SFMono-Regular\",Consolas,monospace;cursor:pointer}.ds-name-helpers button:hover,.ds-name-helpers button.ds-is-active{border-color:#006a7a;background:#006a7a;color:#fff}.ds-name-commit{width:42px;height:42px;border:0;border-radius:8px;background:#006a7a;color:#fff;cursor:pointer}.ds-name-composer button:focus-visible,.ds-name-input:focus-visible{outline:2px solid #006a7a;outline-offset:2px}@media(max-width:820px){.ds-name-composer{flex-wrap:wrap}.ds-name-helpers{display:grid;flex-basis:100%;grid-template-columns:repeat(5,minmax(44px,1fr))}.ds-name-helpers button{width:auto;min-height:44px}}"
+    },
+    {
+      "name": "構造の三軸",
+      "kind": "input",
+      "refersTo": "axis-control",
+      "description": "Rustが投影する合法な基本型 × 横方向の反復 × 縦方向の反復を合成し、scalar／array／matrixへ解決する。軸候補は投影されたNumber scalarで、横が未指定なら縦をdisabledにする。",
+      "html": "<div class=\"ds-structure-composer\"><div class=\"ds-type-switch\" role=\"group\" aria-label=\"基本型\"><button class=\"ds-is-active\" type=\"button\" aria-pressed=\"true\"><span>#</span>Number</button><button type=\"button\"><span>&quot;…&quot;</span>String</button><button type=\"button\"><span>'a'</span>Char</button></div><div class=\"ds-structure-axes\"><label class=\"ds-axis\"><span>横方向</span><select><option>N</option></select></label><b aria-hidden=\"true\">×</b><label class=\"ds-axis\"><span>縦方向</span><select><option>—</option><option>M</option></select></label></div></div>",
+      "css": ".ds-structure-composer{display:grid;gap:12px}.ds-type-switch{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.ds-type-switch button{min-height:40px;padding:0 12px;border:1px solid #82939f;border-radius:7px;background:#fff;color:#344252;font:650 12px/1.4 -apple-system,BlinkMacSystemFont,\"Noto Sans JP\",sans-serif;cursor:pointer}.ds-type-switch button span{margin-right:5px;font-family:KaTeX_Main,\"Times New Roman\",serif}.ds-type-switch button:hover{border-color:#006a7a}.ds-type-switch button.ds-is-active{border-color:#101827;background:#101827;color:#fff}.ds-structure-axes{display:grid;grid-template-columns:minmax(110px,1fr) 20px minmax(110px,1fr);gap:8px;align-items:stretch}.ds-axis{display:flex;min-width:0;flex-direction:column;gap:5px;padding:8px 10px 9px;border:1px solid #82939f;border-radius:10px;background:#fbfcfd}.ds-axis span{color:#526273;font:720 10px/1.4 -apple-system,BlinkMacSystemFont,\"Noto Sans JP\",sans-serif}.ds-axis select{min-height:30px;border:0;background:transparent;color:#101827;font:720 14px/1.4 \"SFMono-Regular\",Consolas,monospace}.ds-structure-composer button:focus-visible,.ds-axis select:focus-visible{outline:2px solid #006a7a;outline-offset:2px}.ds-structure-axes>b{display:grid;place-items:center;color:#006a7a;font:400 20px/1 KaTeX_Main,serif}@media(max-width:820px){.ds-type-switch,.ds-structure-axes{grid-template-columns:1fr}.ds-structure-axes>b{min-height:18px}}"
+    },
+    {
+      "name": "正確な区間制約",
+      "kind": "input",
+      "refersTo": "interval-field",
+      "description": "Numberの値域とStringの長さを、実値のaria-valuetextを持つ二つまみsliderと正確な下限／上限フィールドで扱う。どちらかの正確値がblurすると組を原子的に保存し、下限Enterは上限へ進めてそのblurで確定する。",
+      "html": "<fieldset class=\"ds-interval\"><legend>Range</legend><div class=\"ds-range-track\"><input type=\"range\" aria-label=\"下限\" aria-valuetext=\"1\" value=\"15\"><input type=\"range\" aria-label=\"上限\" aria-valuetext=\"1000000000\" value=\"78\"></div><div class=\"ds-bound-pair\"><label><span>min</span><input value=\"1\" inputmode=\"numeric\" aria-label=\"下限の正確な値\"></label><span>≤ A ≤</span><label><span>max</span><input value=\"1000000000\" inputmode=\"numeric\" aria-label=\"上限の正確な値\"></label></div></fieldset>",
+      "css": ".ds-interval{margin:0;padding:14px;border:1px solid #e8edf1;border-radius:10px}.ds-interval legend{padding:0 6px;color:#526273;font:720 11px/1.4 -apple-system,BlinkMacSystemFont,\"Noto Sans JP\",sans-serif}.ds-range-track{position:relative;height:28px}.ds-range-track input{position:absolute;inset:0;width:100%;margin:0;accent-color:#006a7a}.ds-range-track input::-webkit-slider-thumb{box-shadow:0 2px 7px rgb(23 54 62 / 28%)}.ds-bound-pair{display:flex;align-items:end;justify-content:space-between;gap:8px;color:#344252;font:400 13px/1.4 KaTeX_Main,serif}.ds-bound-pair label{display:flex;flex-direction:column;gap:3px}.ds-bound-pair label span{color:#526273;font:720 10px/1.4 -apple-system,BlinkMacSystemFont,\"Noto Sans JP\",sans-serif}.ds-bound-pair input{width:76px;height:34px;padding:0 7px;border:1px solid #82939f;border-radius:7px;background:#fff;color:#101827;font:400 12px/1.4 \"SFMono-Regular\",Consolas,monospace}.ds-range-track input:focus-visible,.ds-bound-pair input:focus-visible{outline:2px solid #006a7a;outline-offset:2px}"
+    },
+    {
+      "name": "文字集合制約",
+      "kind": "input",
+      "refersTo": "charset-option",
+      "description": "String／Charの文字集合をlowercase、uppercase、alpha、digit、alphanumeric、Customから選ぶ。Customは直接入力を開き、重複除去後の文字をプレビューする。",
+      "html": "<fieldset class=\"ds-charset\"><legend>CharSet</legend><div class=\"ds-charset-options\"><button type=\"button\">lowercase</button><button type=\"button\">uppercase</button><button type=\"button\">alpha</button><button type=\"button\">digit</button><button type=\"button\">alphanumeric</button><button class=\"ds-is-active\" type=\"button\" aria-pressed=\"true\">Custom</button></div><label class=\"ds-custom-chars\"><span>chars</span><input value=\"abc!?\"><output>a b c ! ?</output></label></fieldset>",
+      "css": ".ds-charset{margin:0;padding:14px;border:1px solid #e8edf1;border-radius:10px}.ds-charset legend{padding:0 6px;color:#526273;font:720 11px/1.4 -apple-system,BlinkMacSystemFont,\"Noto Sans JP\",sans-serif}.ds-charset-options{display:flex;flex-wrap:wrap;gap:5px}.ds-charset-options button{min-height:35px;padding:0 9px;border:1px solid #82939f;border-radius:7px;background:#fff;color:#344252;font:400 11px/1.4 \"SFMono-Regular\",Consolas,monospace;cursor:pointer}.ds-charset-options button:hover{border-color:#006a7a}.ds-charset-options button:focus-visible,.ds-custom-chars input:focus-visible{outline:2px solid #006a7a;outline-offset:2px}.ds-charset-options button.ds-is-active{border-color:#006a7a;background:#006a7a;color:#fff}.ds-custom-chars{display:grid;grid-template-columns:auto 98px 1fr;gap:8px;align-items:center;margin-top:10px;color:#526273;font:720 10px/1.4 -apple-system,BlinkMacSystemFont,\"Noto Sans JP\",sans-serif}.ds-custom-chars input{width:98px;height:34px;padding:0 7px;border:1px solid #82939f;border-radius:7px;font:400 12px/1.4 \"SFMono-Regular\",Consolas,monospace}.ds-custom-chars output{color:#344252;font:400 11px/1.4 \"SFMono-Regular\",Consolas,monospace}"
+    },
+    {
+      "name": "記法接続インスペクタ",
+      "kind": "custom",
+      "refersTo": "caret-inspector",
+      "description": "投影記号はTabでフォーカスでき、クリックまたはEnter／Spaceで選択する。アンカーは選択トークンの中心を実測し、CSSカスタムオフセットで同じ行の直下に接続する。非アクティブ制約行もEnter／Spaceで対象へ移る。",
+      "html": "<div class=\"ds-notation-group\"><p class=\"ds-format-line\"><button class=\"ds-notation-token ds-is-selected\" type=\"button\" aria-pressed=\"true\"><i>A</i><sub>1</sub></button><span><i>A</i><sub>2</sub></span><span>…</span><span><i>A</i><sub>N</sub></span></p><section class=\"ds-inspector\" aria-label=\"A の編集\"><span class=\"ds-inspector-anchor\" aria-hidden=\"true\"></span><header><strong>A</strong><button type=\"button\" aria-label=\"閉じる\">×</button></header><div class=\"ds-inspector-summary\"><span>Number</span><b>×</b><span>横 N</span><b>×</b><span>縦 —</span></div><div class=\"ds-constraint-row\" role=\"button\" tabindex=\"0\" aria-label=\"B の制約を編集\">1 ≤ B ≤ 100</div></section></div>",
+      "css": ".ds-notation-group{color:#101827}.ds-format-line{display:flex;align-items:center;gap:22px;margin:0 0 14px;font:400 42px/1.18 KaTeX_Main,\"STIX Two Math\",\"Times New Roman\",serif}.ds-format-line i{font-style:italic}.ds-format-line sub{font-size:.52em}.ds-notation-token{position:relative;min-width:48px;min-height:52px;padding:5px 7px 7px;border:0;border-radius:5px;background:#e2f0f2;color:#08282e;box-shadow:inset 2px 0 #006a7a,inset -2px 0 #006a7a;font:inherit;cursor:pointer}.ds-notation-token::before,.ds-notation-token::after{position:absolute;left:0;width:12px;height:2px;background:#006a7a;content:\"\"}.ds-notation-token::before{top:0}.ds-notation-token::after{bottom:0}.ds-notation-token:focus-visible,.ds-inspector button:focus-visible,.ds-constraint-row:focus-visible{outline:2px solid #006a7a;outline-offset:2px}.ds-inspector{position:relative;border-radius:14px;background:#fff;box-shadow:0 18px 48px rgb(35 55 68 / 17%);animation:ds-inspector-arrive 260ms cubic-bezier(.18,.84,.24,1)}.ds-inspector-anchor{position:absolute;top:-10px;left:var(--ds-inspector-anchor-x,50%);width:20px;height:20px;background:#fff;transform:rotate(45deg)}.ds-inspector header{position:relative;display:flex;min-height:58px;align-items:center;justify-content:space-between;padding:0 16px 0 20px;border-bottom:1px solid #e8edf1;font:760 15px/1.4 -apple-system,BlinkMacSystemFont,\"Noto Sans JP\",sans-serif}.ds-inspector header button{width:40px;height:40px;border:0;border-radius:8px;background:transparent;color:#526273;font-size:18px}.ds-inspector-summary{display:flex;align-items:center;gap:10px;padding:18px 20px;font:720 13px/1.4 -apple-system,BlinkMacSystemFont,\"Noto Sans JP\",sans-serif}.ds-inspector-summary span{padding:8px 10px;border:1px solid #82939f;border-radius:10px;background:#fbfcfd}.ds-inspector-summary b{color:#006a7a;font:400 18px/1 KaTeX_Main,serif}.ds-constraint-row{margin:0 20px 18px;padding:10px 12px;border-radius:10px;color:#344252;font:400 14px/1.4 KaTeX_Main,serif;cursor:pointer}.ds-constraint-row:hover{background:#f5f8f9}@keyframes ds-inspector-arrive{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}@media(prefers-reduced-motion:reduce){.ds-inspector{animation:none}}"
+    },
+    {
+      "name": "投影タブと生成回復",
+      "kind": "nav",
+      "refersTo": "preview-tab-active",
+      "description": "タブはroving focusで左右矢印／Home／Endを扱い、aria-controlsでtabpanelへ結ぶ。Rust投影で生成不能ならblockerを集約し、追加アイコンまたは対象名チップから入力面へ戻す。",
+      "html": "<section class=\"ds-output-projection\"><div class=\"ds-projection-tabs\" role=\"tablist\" aria-label=\"投影結果\"><button class=\"ds-is-active\" id=\"ds-tab-sample\" type=\"button\" role=\"tab\" aria-selected=\"true\" aria-controls=\"ds-panel-sample\" tabindex=\"0\">サンプル</button><button id=\"ds-tab-format\" type=\"button\" role=\"tab\" aria-selected=\"false\" aria-controls=\"ds-panel-format\" tabindex=\"-1\">入力形式</button><button id=\"ds-tab-constraints\" type=\"button\" role=\"tab\" aria-selected=\"false\" aria-controls=\"ds-panel-constraints\" tabindex=\"-1\">制約</button></div><div class=\"ds-projection-panel\" id=\"ds-panel-sample\" role=\"tabpanel\" aria-labelledby=\"ds-tab-sample\" tabindex=\"0\"><div class=\"ds-generation-blocked\"><span class=\"ds-add-icon\" aria-hidden=\"true\">＋</span><strong>2 未設定</strong><div class=\"ds-recovery\"><button type=\"button\" aria-label=\"入力形式を追加\">＋</button><button type=\"button\" aria-label=\"A の制約を設定\">A</button></div></div></div></section>",
+      "css": ".ds-output-projection{font-family:-apple-system,BlinkMacSystemFont,\"Noto Sans JP\",\"Yu Gothic UI\",sans-serif}.ds-projection-tabs{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid #cbd6dd}.ds-projection-tabs button{min-height:44px;border:0;border-bottom:2px solid transparent;background:transparent;color:#526273;font-size:12px;font-weight:720;cursor:pointer}.ds-projection-tabs button:hover{color:#101827}.ds-projection-tabs button.ds-is-active{border-bottom-color:#006a7a;color:#005565}.ds-projection-tabs button:focus-visible,.ds-projection-panel:focus-visible,.ds-recovery button:focus-visible{outline:2px solid #006a7a;outline-offset:2px}.ds-projection-panel{min-height:230px;margin-top:16px;border:1px solid #c7d3db;border-radius:12px;background:#fff}.ds-generation-blocked{display:flex;min-height:230px;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:28px;color:#526273}.ds-add-icon{display:grid;width:48px;height:48px;place-items:center;border:1px solid #82939f;border-radius:999px;background:#f5f8f9;color:#788995;font-size:22px}.ds-generation-blocked strong{color:#344252;font-size:13px}.ds-recovery{display:flex;gap:7px}.ds-recovery button{min-width:40px;min-height:40px;padding:0 11px;border:1px solid #82939f;border-radius:8px;background:#fff;color:#005565;font:720 13px/1 \"SFMono-Regular\",Consolas,monospace;cursor:pointer}.ds-recovery button:hover{border-color:#006a7a;background:#e2f0f2}"
+    },
+    {
+      "name": "モバイル作業面スイッチ",
+      "kind": "nav",
+      "refersTo": "mobile-switch-active",
+      "description": "820px以下で入力形式と生成ケースの片方だけを表示し、一回の操作で作業面を交換する。",
+      "html": "<div class=\"ds-mobile-switch\" role=\"group\" aria-label=\"表示内容\"><button class=\"ds-is-active\" type=\"button\" aria-pressed=\"true\">入力形式</button><button type=\"button\" aria-pressed=\"false\">生成ケース</button></div>",
+      "css": ".ds-mobile-switch{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:7px 10px;border-bottom:1px solid #dce3e8;background:rgb(247 248 250 / 98%)}.ds-mobile-switch button{min-height:44px;border:0;border-radius:8px;background:transparent;color:#526273;font:400 13px/1.4 -apple-system,BlinkMacSystemFont,\"Noto Sans JP\",\"Yu Gothic UI\",sans-serif;cursor:pointer}.ds-mobile-switch button:hover{background:#e8edf1;color:#101827}.ds-mobile-switch button:focus-visible{outline:2px solid #006a7a;outline-offset:2px}.ds-mobile-switch button.ds-is-active{background:#101827;color:#fff}"
+    }
+  ],
+  "narrative": {
+    "northStar": "問題文の上で考える精密作業台",
+    "overview": "入力形式は設定結果のプレビューではなく、利用者が直接読む・選ぶ・組み立てる中心オブジェクトである。冷たい白紙と濃紺のインクで競技プログラミングの問題文に近い静けさを保ち、同じ構造化ASTから入力形式、制約、生成ケースが一貫して投影されることを視覚上も明らかにする。画面の仕事は意味を飾ることではなく、改行、空白、反復位置を崩さず次の操作を最短距離に置くことにある。\n\n選択した記号だけをシアンの括弧で捉え、その直下へ構造インスペクタを接続する。方向はカーソル横インスペクタ（順序2、seed `1afe0fe6`）であり、現在の表現は`index.html`先頭のサーフェス契約に従う。インスペクタではNumber／String／Char、横方向、縦方向、型に応じた制約を同じ記号の文脈で編集する。合法な型・軸候補、構造の解決、生成可否と回復先はRustの投影を正本とする。日本語の操作文字、数式の入力形式、monospaceの生成値という三つの声を明確に分け、常設面は色差と細い罫線、局所編集だけは柔らかな奥行きで示す。",
+    "keyCharacteristics": [
+      "入力形式そのものを編集面にした、冷白の連続キャンバス",
+      "選択記号へ物理的に接続するカーソル横インスペクタ",
+      "Number／String／Charと横・縦の反復を独立して掛け合わせる構造編集",
+      "数値・文字列長の区間入力と、文字集合の選択／直接入力を備えた型別制約",
+      "Rustが合法な構造候補と生成可否／回復先を投影し、Webがそのまま操作へ結ぶ",
+      "入力形式は数式書体、操作は日本語システムサンセリフ、生成値はmonospace",
+      "シアン／ティールを選択、フォーカス、主要操作へ限定",
+      "デスクトップは入力形式64%／生成ケース36%、モバイルは一回の切り替えで片方を表示"
+    ],
+    "rules": [
+      {"name": "意味を持つシアン", "body": "シアン／ティールは選択、フォーカス、主要操作、現在地だけに使い、装飾面積を増やすためには使わない。", "section": "colors"},
+      {"name": "可読性床", "body": "通常サイズの文字は背景とのコントラスト比4.5:1以上、大きな文字と操作境界は3:1以上を保つ。補助文字は`muted`より薄くせず、罫線色を文字へ転用しない。", "section": "colors"},
+      {"name": "三つの声", "body": "操作は日本語サンセリフ、入力形式と値域は数式セリフ、生成された標準入力と短い識別子はmonospaceで表し、役割を交換しない。", "section": "typography"},
+      {"name": "記法優先", "body": "DOMやコントロールの都合で入力形式の改行、空白、下付き文字、反復末端を動かさない。画面上の配置は問題文としての読み順を正本にする。", "section": "layout"},
+      {"name": "一時層だけ", "body": "影は記法へ接続した一時ポップオーバー、操作中のrangeつまみ、エラートーストに限る。常設の入力面と出力面は紙色、余白、罫線で階層を表す。", "section": "elevation"}
+    ],
+    "dos": [
+      "Do 入力形式を問題文と同じ改行、空白、下付き文字で直接表示する。",
+      "Do 選択記号へシアン括弧を付け、その直下へアンカー付きインスペクタを接続する。",
+      "Do 名前チップは識別子draftだけを埋め、チェックまたはEnterで構造を明示的に確定する。",
+      "Do Rustが投影する合法候補からNumber／String／Charと`横方向の反復 × 縦方向の反復`を選び、scalar／array／matrixへの解決をRustに任せる。",
+      "Do NumberとString長には`aria-valuetext`付きsliderと正確な上下限、String／Charには文字集合候補とCustom入力を併置する。",
+      "Do 投影された記号をクリックだけでなくTabからEnter／Spaceでも選択できるようにする。",
+      "Do デスクトップの64%／36%と、モバイルの一回切り替えを保つ。",
+      "Do Rustが投影する生成blockerを種類別にまとめ、追加アイコンまたは対象名から回復先へ直接戻す。",
+      "Do 通常文字4.5:1、操作境界3:1のコントラスト床と、不透明な2pxティール＋2pxオフセットのキーボードフォーカスを守る。",
+      "Do 意味判断、編集の合法性、既定値、変換はRust側に置き、Web UIは投影と宣言的Actionに集中させる。"
+    ],
+    "donts": [
+      "Don't 入力形式をプロパティ表、レシピ帯、汎用カード群へ置き換えない。",
+      "Don't 名前入力補助のクリックを確定操作にしたり、構造や入力全体を選ぶテンプレートとして扱わない。",
+      "Don't 投影にない挿入点や編集可否をWeb UIだけで作らない。",
+      "Don't sliderだけで正確な制約値を代替せず、文字集合のCustom入力を候補の外へ追い出さない。",
+      "Don't 常設面へ影、グラデーション、装飾的な罫線を加えない。",
+      "Don't UI都合の折り返しで入力形式と生成ケースの行対応を崩さない。",
+      "Don't 生成条件の新しい意味論をWeb側だけで決めない。"
+    ]
+  }
+}

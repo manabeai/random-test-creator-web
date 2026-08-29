@@ -46,8 +46,8 @@ test.describe('可変長配列列: N / k_i A_{i,1}...A_{i,k_i}', () => {
     await editor.confirm();
 
     await editor.clickHotspotForNode('k', 'right');
-    await expect(editor.page.getByTestId('popup-option-scalar')).toBeVisible();
-    await expect(editor.page.getByTestId('popup-option-array')).toBeVisible();
+    await expect(editor.page.getByTestId('type-number')).toBeVisible();
+    await expect(editor.page.getByTestId('horizontal-axis').locator('option[value="k"]')).toHaveCount(1);
   });
 
   test('N 回の各行を k_i + A_{i,*} として構築できる', async () => {

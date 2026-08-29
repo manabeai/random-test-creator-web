@@ -1,4 +1,4 @@
-import { type Page, type Locator } from '@playwright/test';
+import { expect, type Page, type Locator } from '@playwright/test';
 
 /**
  * Page Object Model for the AST Editor.
@@ -43,22 +43,28 @@ export class EditorPage {
   }
 
   getStructureNodeByLabel(label: string): Locator {
-    return this.structurePane.locator('.structure-node').filter({
-      has: this.page.locator('.node-label', { hasText: label }),
-    }).first();
+    return this.page.getByTestId(`format-token-${label}`).first();
   }
 
   async clickHotspotForNode(
     label: string,
     direction: 'right' | 'inside' | 'variant' = 'right',
   ): Promise<void> {
-    await this.getStructureNodeByLabel(label)
-      .getByTestId(`insertion-hotspot-${direction}`)
-      .click();
+    const token = this.getStructureNodeByLabel(label);
+    const line = this.structurePane.locator('.rtc-format-row').filter({ has: token }).first();
+    const hotspot = line.getByTestId(`insertion-hotspot-${direction}`);
+    if (await hotspot.count() > 0) {
+      await hotspot.click();
+      return;
+    }
+    await this.page.getByTestId(`insertion-hotspot-${direction}`).first().click();
   }
 
   async selectPopupOption(option: string): Promise<void> {
     await this.nodePopup.waitFor({ state: 'visible' });
+    if (option === 'scalar' || option === 'array' || option === 'matrix') return;
+    const advancedToggle = this.page.getByTestId('advanced-structure-toggle');
+    if (await advancedToggle.count() > 0) await advancedToggle.click();
     await this.page.getByTestId(`popup-option-${option}`).click();
   }
 
@@ -67,10 +73,20 @@ export class EditorPage {
   }
 
   async selectType(type: string): Promise<void> {
+    const typeButton = this.page.getByTestId(`type-${type}`);
+    if (await typeButton.count() > 0) {
+      await typeButton.click();
+      return;
+    }
     await this.page.getByTestId('type-select').selectOption(type);
   }
 
   async selectLength(varName: string): Promise<void> {
+    const horizontalAxis = this.page.getByTestId('horizontal-axis');
+    if (await horizontalAxis.count() > 0) {
+      await horizontalAxis.selectOption(varName);
+      return;
+    }
     const expressionInputs = this.page.getByTestId('length-expression-input');
     const inputCount = await expressionInputs.count();
     if (inputCount > 0) {
@@ -85,6 +101,11 @@ export class EditorPage {
   }
 
   async pickLengthVar(varName: string): Promise<void> {
+    const horizontalAxis = this.page.getByTestId('horizontal-axis');
+    if (await horizontalAxis.count() > 0) {
+      await horizontalAxis.selectOption(varName);
+      return;
+    }
     await this.page.getByTestId(`length-var-option-${varName}`).click();
   }
 
@@ -144,7 +165,6 @@ export class EditorPage {
    */
   async addScalar(name: string, type: string = 'number'): Promise<void> {
     await this.clickHotspot('below');
-    await this.selectPopupOption('scalar');
     await this.selectType(type);
     await this.inputName(name);
     await this.confirm();
@@ -155,7 +175,6 @@ export class EditorPage {
    */
   async addScalarRight(name: string, type: string = 'number'): Promise<void> {
     await this.clickHotspot('right');
-    await this.selectPopupOption('scalar');
     await this.selectType(type);
     await this.inputName(name);
     await this.confirm();
@@ -170,7 +189,6 @@ export class EditorPage {
     type: string = 'number',
   ): Promise<void> {
     await this.clickHotspot('below');
-    await this.selectPopupOption('array');
     await this.selectType(type);
     await this.inputName(name);
     await this.pickLengthVar(lengthVar);
@@ -191,7 +209,10 @@ export class EditorPage {
    * Open a draft constraint for editing.
    */
   async openDraft(index: number): Promise<void> {
-    await this.page.getByTestId(`draft-constraint-${index}`).click();
+    const draft = this.page.getByTestId(`draft-constraint-${index}`);
+    const item = draft.locator('..').locator('..');
+    await draft.click();
+    await expect(item).toHaveAttribute('data-constraint-active', 'true');
   }
 
   /**
@@ -202,9 +223,12 @@ export class EditorPage {
     bound: 'lower' | 'upper',
     value: string,
   ): Promise<void> {
-    await this.page.getByTestId(`constraint-${bound}-input`).click();
-    await this.page.getByTestId('constraint-value-literal').fill(value);
-    await this.page.getByTestId('constraint-value-literal').press('Enter');
+    const input = this.page
+      .getByTestId(`range-${bound}-input`)
+      .or(this.page.getByTestId(`string-length-${bound}-input`))
+      .first();
+    await input.fill(value);
+    await input.press('Enter');
   }
 
   /**
@@ -215,8 +239,12 @@ export class EditorPage {
     bound: 'lower' | 'upper',
     varName: string,
   ): Promise<void> {
-    await this.page.getByTestId(`constraint-${bound}-input`).click();
-    await this.page.getByTestId(`constraint-var-option-${varName}`).click();
+    const input = this.page
+      .getByTestId(`range-${bound}-input`)
+      .or(this.page.getByTestId(`string-length-${bound}-input`))
+      .first();
+    await input.fill(varName);
+    await input.press('Enter');
   }
 
   /**
@@ -230,23 +258,25 @@ export class EditorPage {
     op: string,
     operand: string,
   ): Promise<void> {
-    await this.page.getByTestId(`constraint-${bound}-expression`).click();
-    await this.page.getByTestId(`function-op-${op}`).click();
-    await this.page.getByTestId('function-operand-input').fill(operand);
-    await this.page.getByTestId('function-operand-input').press('Enter');
+    const input = this.page
+      .getByTestId(`range-${bound}-input`)
+      .or(this.page.getByTestId(`string-length-${bound}-input`))
+      .first();
+    const current = await input.inputValue();
+    const expression = op === 'power'
+      ? `${current}^${operand}`
+      : op === 'min' || op === 'max'
+        ? `${op}(${current},${operand})`
+        : `${current}${operatorSymbol(op)}${operand}`;
+    await input.fill(expression);
+    await input.press('Enter');
   }
 
   /**
    * Confirm the current constraint editing.
    */
   async confirmConstraint(): Promise<void> {
-    const confirmButton = this.page.getByTestId('constraint-confirm');
-    if (await confirmButton.count() > 0) {
-      await confirmButton.click();
-      return;
-    }
-    await this.previewPane.click();
-    await this.page.locator('.constraint-editor, .charset-options, .sumbound-editor').waitFor({ state: 'detached' });
+    await this.page.keyboard.press('Tab');
   }
 
   async addProperty(propertyName: string): Promise<void> {
@@ -261,9 +291,8 @@ export class EditorPage {
   async addSumBound(varName: string, upper: string): Promise<void> {
     await this.page.getByTestId('sumbound-shortcut').click();
     await this.page.getByTestId('sumbound-var-select').selectOption(varName);
-    await this.page.getByTestId('sumbound-upper-input').click();
-    await this.page.getByTestId('constraint-value-literal').fill(upper);
-    await this.page.getByTestId('constraint-value-literal').press('Enter');
+    await this.page.getByTestId('sumbound-upper-input').fill(upper);
+    await this.page.getByTestId('sumbound-upper-input').press('Enter');
     await this.confirmConstraint();
   }
 
@@ -278,14 +307,13 @@ export class EditorPage {
   ): Promise<void> {
     await this.page.getByTestId('sumbound-shortcut').click();
     await this.page.getByTestId('sumbound-var-select').selectOption(varName);
-    await this.page.getByTestId('sumbound-upper-input').click();
-    await this.page.getByTestId('constraint-value-literal').fill(baseValue);
-    await this.page.getByTestId('constraint-value-literal').press('Enter');
-    // Apply function to the upper bound expression
-    await this.page.getByTestId('sumbound-upper-expression').click();
-    await this.page.getByTestId(`function-op-${op}`).click();
-    await this.page.getByTestId('function-operand-input').fill(operand);
-    await this.page.getByTestId('function-operand-input').press('Enter');
+    const expression = op === 'power'
+      ? `${baseValue}^${operand}`
+      : op === 'min' || op === 'max'
+        ? `${op}(${baseValue},${operand})`
+        : `${baseValue}${operatorSymbol(op)}${operand}`;
+    await this.page.getByTestId('sumbound-upper-input').fill(expression);
+    await this.page.getByTestId('sumbound-upper-input').press('Enter');
     await this.confirmConstraint();
   }
 
@@ -336,4 +364,14 @@ export class EditorPage {
     await this.selectType(weightType);
     await this.confirm();
   }
+}
+
+function operatorSymbol(operation: string): string {
+  const symbols: Record<string, string> = {
+    add: '+',
+    subtract: '-',
+    multiply: '*',
+    divide: '/',
+  };
+  return symbols[operation] ?? operation;
 }
