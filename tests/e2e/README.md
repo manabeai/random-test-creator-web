@@ -61,6 +61,7 @@ E2E テストは以下の `data-testid` に依存する。UI 実装時にこれ�
 |------------|------|
 | `structure-pane` | Structure ペインのルート要素 |
 | `insertion-hotspot-below` | 下に追加する hotspot |
+| `vertical-insertion-row` | 既存入力の最終行直下に置く縦追加行 |
 | `insertion-hotspot-right` | 右に追加する hotspot |
 | `insertion-hotspot-inside` | ブロック内に追加する hotspot |
 | `insertion-hotspot-variant` | variant 追加用 hotspot |
@@ -84,7 +85,8 @@ E2E テストは以下の `data-testid` に依存する。UI 実装時にこれ�
 | `popup-option-multi-testcase` | 複数テストケーステンプレート |
 | `popup-option-repeat` | repeat 選択 |
 | `popup-option-weighted-edge-list` | 重み付き辺リストテンプレート |
-| `name-input` | 変数名入力フィールド |
+| `name-input` | 変数名入力フィールド（直接作成では1文字で即確定） |
+| `name-helper-{name}` | 入力欄のhover／focusで現れ、選択した1文字で即追加する候補 |
 | `weight-name-input` | 重み変数名入力 |
 | `type-select` | 型選択ドロップダウン |
 | `length-select` | 長さ参照先選択（互換用の hidden select） |
@@ -97,7 +99,7 @@ E2E テストは以下の `data-testid` に依存する。UI 実装時にこれ�
 | `function-op-{op}` | 関数適用ポップアップの操作 (subtract, add, multiply, divide, min, max) |
 | `function-operand-input` | 関数 operand の自由入力欄 |
 | `variant-tag-input` | variant タグ入力 |
-| `confirm-button` | 確定ボタン |
+| `confirm-button` | 高度な構造ウィザードの確定ボタン（直接作成には置かない） |
 | `node-edit-kind-select` | 既存 Structure ノード編集時の Scalar/Array 選択 |
 | `node-edit-type-select` | 既存 Structure ノード編集時の型選択 |
 | `node-edit-length-var-option-{name}` | 既存 Array ノード編集時の length 候補 |

@@ -73,9 +73,9 @@ test.describe('基本配列: N + A_1...A_N', () => {
     await editor.clickHotspotForNode('N', 'right');
     await editor.selectPopupOption('array');
     await editor.selectType('number');
-    await editor.inputName('A');
     await expect(editor.page.getByTestId('horizontal-axis').locator('option[value="N"]')).toHaveCount(1);
     await editor.pickLengthVar('N');
+    await editor.inputName('A');
     await editor.confirm();
 
     const nLine = editor.structurePane.locator('.rtc-format-row').filter({
@@ -86,22 +86,19 @@ test.describe('基本配列: N + A_1...A_N', () => {
     await expect(nLine.getByTestId('insertion-hotspot-right')).toHaveCount(1);
   });
 
-  test('Array は必須項目が埋まるまで作成されない', async () => {
+  test('Array は軸を選んでから一文字を入れると即座に作成される', async () => {
     await editor.addScalar('N');
 
     await editor.clickHotspotForNode('N', 'right');
     await editor.selectPopupOption('array');
-    await expect(editor.page.getByTestId('confirm-button')).toBeDisabled();
-
-    await editor.inputName('A');
-    await editor.previewPane.click();
+    await expect(editor.page.getByTestId('vertical-axis')).toBeDisabled();
     await expect(editor.getStructureNodeByLabel('A')).toHaveCount(0);
 
-    await editor.clickHotspotForNode('N', 'right');
-    await editor.selectPopupOption('array');
-    await editor.inputName('A');
     await editor.pickLengthVar('N');
-    await editor.confirm();
+    await expect(editor.nodePopup).toBeVisible();
+    await editor.inputName('A');
+
+    await expect(editor.nodePopup).toHaveCount(0);
     await expect(editor.getStructureNodeByLabel('A')).toBeVisible();
   });
 

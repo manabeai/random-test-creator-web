@@ -68,9 +68,10 @@ test.describe('可変長配列列: N / k_i A_{i,1}...A_{i,k_i}', () => {
     await editor.clickHotspotForNode('k', 'right');
     await editor.selectPopupOption('array');
     await editor.selectType('number');
-    await editor.inputName('A');
     await editor.pickLengthVar('k');
+    await editor.inputName('A');
     await editor.confirm();
+    await editor.getStructureNodeByLabel('A').click();
 
     await expectStructureContains(editor, 'N');
     await expectStructureContains(editor, 'k');
@@ -99,9 +100,10 @@ test.describe('可変長配列列: N / k_i A_{i,1}...A_{i,k_i}', () => {
     await editor.clickHotspotForNode('k', 'right');
     await editor.selectPopupOption('array');
     await editor.selectType('number');
-    await editor.inputName('A');
     await editor.pickLengthVar('k');
+    await editor.inputName('A');
     await editor.confirm();
+    await editor.getStructureNodeByLabel('A').click();
 
     // N: 1 <= N <= 3
     await editor.openDraft(0);

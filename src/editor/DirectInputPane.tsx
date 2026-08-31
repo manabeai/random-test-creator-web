@@ -67,8 +67,6 @@ export function DirectInputPane() {
               <FormatLineGroup
                 key={`${index}-${line.tex}`}
                 line={line}
-                index={index}
-                rootHotspot={rootHotspot}
                 terminal={terminal}
                 selectedId={selectedId}
                 selectedNode={selectedNode}
@@ -78,6 +76,12 @@ export function DirectInputPane() {
               />
             );
           })}
+
+          {proj.input_format.lines.length > 0 && rootHotspot && (
+            <div class="rtc-below-insertion-row" data-testid="vertical-insertion-row">
+              <HotspotButton hotspot={rootHotspot} kind="below" />
+            </div>
+          )}
 
           {popup.step === 'candidates' && <VariableEditor hotspot={popup.hotspot} />}
           {popup.step === 'fields' && <div class="rtc-advanced-popover"><NodePopup /></div>}
@@ -97,8 +101,6 @@ export function DirectInputPane() {
 
 function FormatLineGroup({
   line,
-  index,
-  rootHotspot,
   terminal,
   selectedId,
   selectedNode,
@@ -107,8 +109,6 @@ function FormatLineGroup({
   onSelectFromKeyboard,
 }: {
   line: InputFormatLineProjection;
-  index: number;
-  rootHotspot?: Hotspot;
   terminal?: Hotspot;
   selectedId: string | null;
   selectedNode?: ProjectedNode;
@@ -143,11 +143,7 @@ function FormatLineGroup({
   return (
     <div class="rtc-format-group" ref={groupRef}>
       <div class="rtc-format-row" data-testid="input-format-line">
-        <div class="rtc-line-gutter">
-          {index === 0 && rootHotspot
-            ? <HotspotButton hotspot={rootHotspot} kind="gutter" />
-            : <span aria-hidden="true" />}
-        </div>
+        <div class="rtc-line-gutter" aria-hidden="true" />
         <div
           class="rtc-format-math"
           style={{ paddingLeft: `${line.depth * 22}px` }}
@@ -168,7 +164,7 @@ function FormatLineGroup({
   );
 }
 
-function HotspotButton({ hotspot, kind }: { hotspot: Hotspot; kind: 'gutter' | 'terminal' | 'nested' }) {
+function HotspotButton({ hotspot, kind }: { hotspot: Hotspot; kind: 'gutter' | 'below' | 'terminal' | 'nested' }) {
   const label = hotspot.direction === 'right'
     ? 'この行の末尾に値を追加'
     : hotspot.direction === 'inside'

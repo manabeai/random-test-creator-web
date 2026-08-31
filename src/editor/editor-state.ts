@@ -54,6 +54,7 @@ export interface AxisOptionProjection {
 
 export interface InputSurfaceProjection {
   name_helpers: string[];
+  name_max_chars: number;
   primitive_types: Array<'number' | 'string' | 'char'>;
   axis_options: AxisOptionProjection[];
 }
@@ -230,6 +231,7 @@ const emptyProjection: FullProjection = {
   input_format: { lines: [] },
   input_surface: {
     name_helpers: ['N', 'M', 'H', 'W', 'A', 'B', 'S', 'T', 'Q'],
+    name_max_chars: 1,
     primitive_types: ['number', 'string', 'char'],
     axis_options: [],
   },

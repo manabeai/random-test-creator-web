@@ -1,9 +1,8 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import type { AxisOptionProjection, Hotspot } from './editor-state';
 import { dispatchAction, projection } from './editor-state';
 import { buildDirectHotspotActionFromDraft } from './action-builder';
 import { closePopup, selectCandidate } from './popup-state';
-import { selectedNodeId } from './workbench-state';
 import { WorkbenchIcon } from './WorkbenchIcon';
 
 type BaseType = 'number' | 'string' | 'char';
@@ -19,13 +18,19 @@ export function VariableEditor({ hotspot }: { hotspot: Hotspot }) {
   const [horizontal, setHorizontal] = useState('none');
   const [vertical, setVertical] = useState('none');
   const [advancedOpen, setAdvancedOpen] = useState(false);
+  const composing = useRef(false);
+  const nameInputRef = useRef<HTMLInputElement>(null);
   const variables = projection.value.available_vars;
   const surface = projection.value.input_surface;
+  const anchorKind = projection.value.input_format.lines.length === 0 ? 'empty' : hotspot.direction;
+
+  useEffect(() => {
+    nameInputRef.current?.focus();
+  }, []);
 
   const commit = (nextName = name) => {
     const trimmedName = nextName.trim();
     if (!trimmedName) return;
-    const before = new Set(projection.value.nodes.map(node => node.id));
     const action = buildDirectHotspotActionFromDraft(hotspot, {
       name: trimmedName,
       type: baseType,
@@ -33,14 +38,21 @@ export function VariableEditor({ hotspot }: { hotspot: Hotspot }) {
       vertical,
     }, variables);
     if (!dispatchAction(action)) return;
-    const created = projection.value.nodes.find(node => !before.has(node.id) && node.edit?.name === trimmedName)
-      ?? projection.value.nodes.slice().reverse().find(node => node.edit?.name === trimmedName);
-    selectedNodeId.value = created?.id ?? null;
     closePopup();
   };
 
+  const normalizeName = (value: string) => (
+    Array.from(value.trim()).slice(0, surface.name_max_chars).join('')
+  );
+
+  const commitWhenComplete = (value: string) => {
+    const nextName = normalizeName(value);
+    setName(nextName);
+    if (Array.from(nextName).length === surface.name_max_chars) commit(nextName);
+  };
+
   return (
-    <section class="rtc-variable-popover" data-testid="node-popup" aria-label="変数を追加">
+    <section class={`rtc-variable-popover rtc-variable-popover--${anchorKind}`} data-testid="node-popup" aria-label="変数を追加">
       <div class="rtc-variable-editor" data-testid="variable-editor">
         <div class="rtc-popover-topline">
           <div class="rtc-type-switch" role="group" aria-label="型">
@@ -70,45 +82,6 @@ export function VariableEditor({ hotspot }: { hotspot: Hotspot }) {
         >
           {surface.primitive_types.map(value => <option key={value} value={value}>{value}</option>)}
         </select>
-
-        <div class="rtc-name-composer">
-          <WorkbenchIcon name="tag" />
-          <input
-            type="text"
-            value={name}
-            data-testid="name-input"
-            aria-label="名前"
-            autocomplete="off"
-            onInput={event => setName(event.currentTarget.value)}
-            onKeyDown={event => {
-              if (event.key === 'Enter') commit(event.currentTarget.value);
-              if (event.key === 'Escape') closePopup();
-            }}
-          />
-          <div class="rtc-name-chips" aria-label="名前候補">
-            {surface.name_helpers.map(helper => (
-              <button
-                type="button"
-                key={helper}
-                data-testid={`name-helper-${helper}`}
-                aria-label={`${helper} を入力`}
-                onClick={() => { setName(helper); }}
-              >
-                {helper}
-              </button>
-            ))}
-          </div>
-          <button
-            class="rtc-commit-icon"
-            type="button"
-            data-testid="confirm-button"
-            disabled={!name.trim() || (vertical !== 'none' && horizontal === 'none')}
-            onClick={() => commit()}
-            aria-label="追加"
-          >
-            <WorkbenchIcon name="check" />
-          </button>
-        </div>
 
         <div class="rtc-axis-composer" aria-label="構造">
           <AxisSelect
@@ -140,6 +113,52 @@ export function VariableEditor({ hotspot }: { hotspot: Hotspot }) {
           >
             <WorkbenchIcon name="more" />
           </button>
+        </div>
+
+        <div class="rtc-name-composer">
+          <WorkbenchIcon name="tag" />
+          <input
+            ref={nameInputRef}
+            type="text"
+            value={name}
+            maxLength={surface.name_max_chars}
+            data-testid="name-input"
+            aria-label="名前を1文字入力すると追加"
+            autocomplete="off"
+            autoFocus
+            onCompositionStart={() => { composing.current = true; }}
+            onCompositionEnd={event => {
+              composing.current = false;
+              commitWhenComplete(event.currentTarget.value);
+            }}
+            onInput={event => {
+              const nextName = normalizeName(event.currentTarget.value);
+              setName(nextName);
+              if (!composing.current && Array.from(nextName).length === surface.name_max_chars) {
+                commit(nextName);
+              }
+            }}
+            onKeyDown={event => {
+              if (event.key === 'Enter') commit(event.currentTarget.value);
+              if (event.key === 'Escape') closePopup();
+            }}
+          />
+          <div class="rtc-name-chips rtc-name-chips--create" aria-label="名前候補">
+            {surface.name_helpers.map(helper => (
+              <button
+                type="button"
+                key={helper}
+                data-testid={`name-helper-${helper}`}
+                aria-label={`${helper} で追加`}
+                onClick={() => {
+                  setName(helper);
+                  commit(helper);
+                }}
+              >
+                {helper}
+              </button>
+            ))}
+          </div>
         </div>
 
         {advancedOpen && (

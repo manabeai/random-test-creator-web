@@ -1,4 +1,9 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
+
+async function chooseName(page: Page, name: string) {
+  await page.getByTestId('name-input').focus();
+  await page.getByTestId(`name-helper-${name}`).click();
+}
 
 test.describe('direct input workbench', () => {
   test.beforeEach(async ({ page }) => {
@@ -16,6 +21,66 @@ test.describe('direct input workbench', () => {
     await expect(addPoint).toHaveCSS('color', 'rgb(255, 255, 255)');
   });
 
+  test('places the next vertical insertion point below the existing notation', async ({ page }) => {
+    await page.getByTestId('insertion-hotspot-below').click();
+    await page.getByTestId('name-input').fill('N');
+
+    const line = page.getByTestId('input-format-line').first();
+    const notation = line.locator('.rtc-format-math');
+    const addPoint = page.getByTestId('insertion-hotspot-below');
+    const [lineBox, notationBox, addBox] = await Promise.all([
+      line.boundingBox(),
+      notation.boundingBox(),
+      addPoint.boundingBox(),
+    ]);
+
+    expect(lineBox).not.toBeNull();
+    expect(notationBox).not.toBeNull();
+    expect(addBox).not.toBeNull();
+    expect(addBox!.y).toBeGreaterThanOrEqual(lineBox!.y + lineBox!.height - 2);
+    expect(addBox!.x).toBeGreaterThanOrEqual(notationBox!.x - 2);
+
+    await addPoint.click();
+    const popup = page.getByTestId('node-popup');
+    const popupBox = await popup.boundingBox();
+    const arrowLeft = await popup.evaluate(element => (
+      Number.parseFloat(getComputedStyle(element, '::before').left)
+    ));
+    expect(popupBox).not.toBeNull();
+    const arrowCenter = popupBox!.x + arrowLeft + 11;
+    const addCenter = addBox!.x + addBox!.width / 2;
+    expect(Math.abs(arrowCenter - addCenter)).toBeLessThanOrEqual(2);
+  });
+
+  test('commits one typed character without a check or an automatic inspector transition', async ({ page }) => {
+    await page.getByTestId('insertion-hotspot-below').click();
+
+    const nameInput = page.getByTestId('name-input');
+    await expect(nameInput).toHaveAttribute('maxlength', '1');
+    await expect(page.getByTestId('confirm-button')).toHaveCount(0);
+    await nameInput.fill('N');
+
+    await expect(page.getByTestId('variable-editor')).toHaveCount(0);
+    await expect(page.getByTestId('format-token-N')).toBeVisible();
+    await expect(page.getByTestId('node-inspector')).toHaveCount(0);
+  });
+
+  test('reveals compact name helpers from the name field and commits a helper immediately', async ({ page }) => {
+    await page.getByTestId('insertion-hotspot-below').click();
+    await page.getByTestId('type-number').click();
+
+    const nameInput = page.getByTestId('name-input');
+    const helper = page.getByTestId('name-helper-N');
+    await expect(helper).toBeHidden();
+    await nameInput.hover();
+    await expect(helper).toBeVisible();
+    await helper.click();
+
+    await expect(page.getByTestId('format-token-N')).toBeVisible();
+    await expect(page.getByTestId('variable-editor')).toHaveCount(0);
+    await expect(page.getByTestId('node-inspector')).toHaveCount(0);
+  });
+
   test('builds N and A directly from the competitive-programming notation surface', async ({ page }) => {
     await expect(page.getByTestId('editor-workbench')).toBeVisible();
     await expect(page.getByTestId('format-pane')).toBeVisible();
@@ -29,17 +94,14 @@ test.describe('direct input workbench', () => {
     await expect(page.getByTestId('type-string')).toContainText('String');
     await expect(page.getByTestId('type-char')).toContainText('Char');
 
-    await page.getByTestId('name-helper-N').click();
-    await expect(page.getByTestId('variable-editor')).toBeVisible();
-    await expect(page.getByTestId('name-input')).toHaveValue('N');
-    await page.getByTestId('confirm-button').click();
+    await page.getByTestId('name-input').fill('N');
+    await expect(page.getByTestId('variable-editor')).toHaveCount(0);
     await expect(page.getByTestId('format-token-N')).toBeVisible();
 
     await page.getByTestId('insertion-hotspot-right').click();
-    await page.getByTestId('name-helper-A').click();
-    await expect(page.getByTestId('variable-editor')).toBeVisible();
     await page.getByTestId('horizontal-axis').selectOption('N');
-    await page.getByTestId('confirm-button').click();
+    await chooseName(page, 'A');
+    await expect(page.getByTestId('variable-editor')).toHaveCount(0);
 
     const firstLine = page.getByTestId('input-format-line').first();
     await expect(firstLine).toContainText('N');
@@ -49,8 +111,7 @@ test.describe('direct input workbench', () => {
 
   test('uses an interval slider for Number constraints and exact numeric inputs', async ({ page }) => {
     await page.getByTestId('insertion-hotspot-below').first().click();
-    await page.getByTestId('name-helper-N').click();
-    await page.getByTestId('confirm-button').click();
+    await chooseName(page, 'N');
     await page.getByTestId('format-token-N').click();
 
     await expect(page.getByTestId('node-inspector')).toBeVisible();
@@ -68,8 +129,7 @@ test.describe('direct input workbench', () => {
 
   test('persists an exact lower bound when that field loses focus', async ({ page }) => {
     await page.getByTestId('insertion-hotspot-below').first().click();
-    await page.getByTestId('name-helper-N').click();
-    await page.getByTestId('confirm-button').click();
+    await chooseName(page, 'N');
     await page.getByTestId('format-token-N').click();
 
     await page.getByTestId('range-lower-input').fill('2');
@@ -83,8 +143,7 @@ test.describe('direct input workbench', () => {
   test('switches String and Char to a character-set editor without Number range controls', async ({ page }) => {
     await page.getByTestId('insertion-hotspot-below').first().click();
     await page.getByTestId('type-string').click();
-    await page.getByTestId('name-helper-S').click();
-    await page.getByTestId('confirm-button').click();
+    await chooseName(page, 'S');
     await page.getByTestId('format-token-S').click();
 
     await expect(page.getByTestId('charset-control')).toBeVisible();
@@ -115,20 +174,36 @@ test.describe('direct input workbench', () => {
     await expect(page.getByTestId('format-pane')).not.toBeVisible();
   });
 
+  test('reveals tap-sized name helpers on focus for mobile', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.reload();
+    await page.getByTestId('insertion-hotspot-below').click();
+    await page.getByTestId('type-number').click();
+
+    const helper = page.getByTestId('name-helper-N');
+    await expect(helper).toBeHidden();
+    await page.getByTestId('name-input').focus();
+    await expect(helper).toBeVisible();
+    const helperBox = await helper.boundingBox();
+    expect(helperBox).not.toBeNull();
+    expect(helperBox!.height).toBeGreaterThanOrEqual(44);
+
+    await helper.click();
+    await expect(page.getByTestId('format-token-N')).toBeVisible();
+  });
+
   test('forms a vertical matrix from the same primitive × axes editor', async ({ page }) => {
     await page.getByTestId('insertion-hotspot-below').first().click();
-    await page.getByTestId('name-helper-H').click();
-    await page.getByTestId('confirm-button').click();
+    await chooseName(page, 'H');
     await page.getByTestId('insertion-hotspot-right').click();
-    await page.getByTestId('name-helper-W').click();
-    await page.getByTestId('confirm-button').click();
+    await chooseName(page, 'W');
 
     await page.getByTestId('insertion-hotspot-below').first().click();
-    await page.getByTestId('name-helper-A').click();
     await page.getByTestId('horizontal-axis').selectOption('W');
     await page.getByTestId('vertical-axis').selectOption('H');
-    await page.getByTestId('confirm-button').click();
+    await chooseName(page, 'A');
 
+    await page.getByTestId('format-token-A').first().click();
     await expect(page.getByTestId('node-horizontal-axis')).toHaveValue('W');
     await expect(page.getByTestId('node-vertical-axis')).toHaveValue('H');
     await expect(page.getByTestId('input-format-line')).toHaveCount(5);
@@ -136,13 +211,12 @@ test.describe('direct input workbench', () => {
 
   test('undoes, redoes, and removes a variable from its line-attached inspector', async ({ page }) => {
     await page.getByTestId('insertion-hotspot-below').first().click();
-    await page.getByTestId('name-helper-N').click();
-    await page.getByTestId('confirm-button').click();
+    await chooseName(page, 'N');
     await page.getByTestId('insertion-hotspot-right').click();
-    await page.getByTestId('name-helper-A').click();
     await page.getByTestId('horizontal-axis').selectOption('N');
-    await page.getByTestId('confirm-button').click();
+    await chooseName(page, 'A');
 
+    await page.getByTestId('format-token-A').first().click();
     await page.getByTestId('node-name-helper-B').click();
     await expect(page.getByTestId('node-edit-input')).toHaveValue('B');
     await page.getByTestId('node-name-confirm').click();
@@ -164,8 +238,7 @@ test.describe('direct input workbench', () => {
 
   test('regenerates with feedback while respecting the seed lock', async ({ page }) => {
     await page.getByTestId('insertion-hotspot-below').first().click();
-    await page.getByTestId('name-helper-N').click();
-    await page.getByTestId('confirm-button').click();
+    await chooseName(page, 'N');
     await page.getByTestId('format-token-N').click();
     await page.getByTestId('range-lower-input').fill('1');
     await page.getByTestId('range-upper-input').fill('10');
@@ -201,8 +274,7 @@ test.describe('direct input workbench', () => {
 
   test('selects projected notation tokens from the keyboard', async ({ page }) => {
     await page.getByTestId('insertion-hotspot-below').first().click();
-    await page.getByTestId('name-helper-N').click();
-    await page.getByTestId('confirm-button').click();
+    await chooseName(page, 'N');
 
     const token = page.getByTestId('format-token-N');
     await token.focus();
@@ -213,8 +285,7 @@ test.describe('direct input workbench', () => {
 
   test('announces real interval values instead of slider stop indices', async ({ page }) => {
     await page.getByTestId('insertion-hotspot-below').first().click();
-    await page.getByTestId('name-helper-N').click();
-    await page.getByTestId('confirm-button').click();
+    await chooseName(page, 'N');
     await page.getByTestId('format-token-N').click();
 
     await expect(page.getByTestId('range-lower-slider')).toHaveAttribute('aria-valuetext', '1');
@@ -223,12 +294,10 @@ test.describe('direct input workbench', () => {
 
   test('opens an inactive constraint row with the keyboard', async ({ page }) => {
     await page.getByTestId('insertion-hotspot-below').first().click();
-    await page.getByTestId('name-helper-N').click();
-    await page.getByTestId('confirm-button').click();
+    await chooseName(page, 'N');
     await page.getByTestId('insertion-hotspot-right').click();
-    await page.getByTestId('name-helper-A').click();
     await page.getByTestId('horizontal-axis').selectOption('N');
-    await page.getByTestId('confirm-button').click();
+    await chooseName(page, 'A');
 
     await page.getByTestId('format-token-N').click();
     const aConstraint = page.getByTestId('constraint-item-1');
@@ -247,8 +316,7 @@ test.describe('direct input workbench', () => {
     await expect(page.getByTestId('insertion-hotspot-below').first()).toBeFocused();
 
     await page.getByTestId('insertion-hotspot-below').first().click();
-    await page.getByTestId('name-helper-N').click();
-    await page.getByTestId('confirm-button').click();
+    await chooseName(page, 'N');
 
     const blocker = page.getByTestId('generation-blocked');
     await expect(blocker).toHaveAttribute('data-blocker-kind', 'constraints');

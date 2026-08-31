@@ -68,6 +68,7 @@ export function NodeInspector({ node, anchorOffset }: { node: ProjectedNode; anc
         <input
           type="text"
           value={name}
+          maxLength={projection.value.input_surface.name_max_chars}
           data-testid="node-edit-input"
           aria-label="名前"
           autocomplete="off"

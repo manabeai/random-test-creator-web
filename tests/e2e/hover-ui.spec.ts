@@ -25,17 +25,19 @@ test.describe('direct workbench interactions', () => {
     await expect(page.getByTestId('range-lower-input')).toBeVisible();
   });
 
-  test('a name helper fills only the identifier and leaves structure editable', async ({ page }) => {
+  test('a focused name field reveals helpers and a helper commits immediately', async ({ page }) => {
     await page.getByTestId('insertion-hotspot-below').first().click();
-    await page.getByTestId('name-helper-N').click();
+    await page.getByTestId('type-number').click();
 
-    await expect(editor.nodePopup).toBeVisible();
-    await expect(page.getByTestId('name-input')).toHaveValue('N');
-    await expect(page.getByTestId('format-token-N')).toHaveCount(0);
+    const helper = page.getByTestId('name-helper-N');
+    await expect(helper).toBeHidden();
+    await page.getByTestId('name-input').focus();
+    await expect(helper).toBeVisible();
+    await helper.click();
 
-    await page.getByTestId('confirm-button').click();
     await expect(editor.nodePopup).toHaveCount(0);
     await expect(page.getByTestId('format-token-N')).toBeVisible();
+    await expect(page.getByTestId('node-inspector')).toHaveCount(0);
   });
 
   test('constraint editor commits a range when both bounds are filled without a confirm button', async ({ page }) => {

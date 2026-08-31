@@ -144,6 +144,7 @@ export class EditorPage {
   }
 
   async confirm(): Promise<void> {
+    if (await this.nodePopup.count() === 0) return;
     const confirmButton = this.page.getByTestId('confirm-button');
     if (await confirmButton.count() > 0) {
       await confirmButton.click();
@@ -168,6 +169,7 @@ export class EditorPage {
     await this.selectType(type);
     await this.inputName(name);
     await this.confirm();
+    await this.getStructureNodeByLabel(name).click();
   }
 
   /**
@@ -178,6 +180,7 @@ export class EditorPage {
     await this.selectType(type);
     await this.inputName(name);
     await this.confirm();
+    await this.getStructureNodeByLabel(name).click();
   }
 
   /**
@@ -190,9 +193,10 @@ export class EditorPage {
   ): Promise<void> {
     await this.clickHotspot('below');
     await this.selectType(type);
-    await this.inputName(name);
     await this.pickLengthVar(lengthVar);
+    await this.inputName(name);
     await this.confirm();
+    await this.getStructureNodeByLabel(name).click();
   }
 
   // ── Constraint operations ─────────────────────────────────────────
