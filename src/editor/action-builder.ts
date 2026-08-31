@@ -106,14 +106,6 @@ export function buildRemoveNodeAction(route: RemoveNodeProjection): string {
   });
 }
 
-export function buildAddConstraintProperty(targetId: string, tag: string): string {
-  return JSON.stringify({
-    action: 'AddConstraint',
-    target: targetId,
-    constraint: { kind: 'Property', tag },
-  });
-}
-
 export function buildRemoveConstraint(constraintId: string): string {
   return JSON.stringify({
     action: 'RemoveConstraint',

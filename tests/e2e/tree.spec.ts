@@ -8,8 +8,8 @@
  * - scalar N 作成
  * - 辺リストテンプレート（count = N-1 式）
  * - u_i, v_i の range 自動生成
- * - Tree property 追加
- * - 右ペイン TeX + sample tree 生成
+ * - 未完成の graph property 作成UIは非表示
+ * - 右ペイン TeX + edge-list sample 生成
  */
 import { test, expect } from '@playwright/test';
 import { EditorPage } from './fixtures/editor-page';
@@ -55,7 +55,7 @@ test.describe('木入力: N / u_1 v_1...u_{N-1} v_{N-1}', () => {
     expect(count).toBeGreaterThanOrEqual(3);
   });
 
-  test('Tree property を追加する', async () => {
+  test('未完成の graph property 作成UIを表示しない', async () => {
     await editor.addScalar('N');
 
     await editor.clickHotspot('below');
@@ -63,13 +63,9 @@ test.describe('木入力: N / u_1 v_1...u_{N-1} v_{N-1}', () => {
     await editor.buildCountExpression('N', 'subtract', '1');
     await editor.confirm();
 
-    // Tree property を追加
-    await editor.addProperty('tree');
-
-    // completed constraint に Tree が表示
-    const completed = editor.getCompletedConstraints();
-    const texts = await completed.allTextContents();
-    expect(texts.some((t) => t.toLowerCase().includes('tree'))).toBeTruthy();
+    await expect(editor.page.getByTestId('sumbound-shortcut')).toBeVisible();
+    await expect(editor.page.getByTestId('property-shortcut')).toHaveCount(0);
+    await expect(editor.page.getByTestId(/^property-option-/)).toHaveCount(0);
   });
 
   test('完成状態: 木入力 + 制約 + 右ペイン検証', async () => {
@@ -100,9 +96,6 @@ test.describe('木入力: N / u_1 v_1...u_{N-1} v_{N-1}', () => {
     await editor.fillBoundVar('upper', 'N');
     await editor.confirmConstraint();
 
-    // Tree property
-    await editor.addProperty('tree');
-
     // draft が全て消えている
     const drafts = editor.getDraftConstraints();
     await expect(drafts).toHaveCount(0);
@@ -111,7 +104,7 @@ test.describe('木入力: N / u_1 v_1...u_{N-1} v_{N-1}', () => {
     await expect(editor.getTexInputFormat()).toContainText('N');
     await expect(editor.getTexInputFormat()).toContainText('u');
 
-    // TeX 制約に Tree が含まれる
+    // TeX 制約が生成される
     await expect(editor.getTexConstraints()).not.toBeEmpty();
 
     // sample: N 行 + (N-1) 辺行 = N 行以上

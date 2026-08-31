@@ -9,7 +9,6 @@ import {
   type IntervalSliderProjection,
 } from './editor-state';
 import {
-  buildAddConstraintProperty,
   buildConstraintActionsFromDraft,
   buildRemoveConstraint,
 } from './action-builder';
@@ -20,7 +19,6 @@ export function TypedConstraintControls({ selectedId, onSelectNode }: {
   onSelectNode: (nodeId: string) => void;
 }) {
   const items = projection.value.constraints.items;
-  const [propertyOpen, setPropertyOpen] = useState(false);
   const [sumOpen, setSumOpen] = useState(false);
   const [sumVar, setSumVar] = useState('');
   const [sumUpper, setSumUpper] = useState('');
@@ -47,48 +45,16 @@ export function TypedConstraintControls({ selectedId, onSelectNode }: {
       <div class="rtc-constraint-toolbar">
         <button
           type="button"
-          data-testid="property-shortcut"
-          aria-label="性質を追加"
-          aria-expanded={propertyOpen}
-          onClick={() => {
-            setPropertyOpen(open => !open);
-            setSumOpen(false);
-          }}
-        >
-          <WorkbenchIcon name="property" />
-        </button>
-        <button
-          type="button"
           data-testid="sumbound-shortcut"
           aria-label="総和制約を追加"
           aria-expanded={sumOpen}
           onClick={() => {
             setSumOpen(open => !open);
-            setPropertyOpen(false);
           }}
         >
           <WorkbenchIcon name="sigma" />
         </button>
       </div>
-
-      {propertyOpen && (
-        <div class="rtc-property-options">
-          {['tree', 'connected', 'simple'].map(property => (
-            <button
-              type="button"
-              key={property}
-              data-testid={`property-option-${property}`}
-              onClick={() => {
-                const rootTarget = projection.value.nodes[0]?.id ?? selectedId;
-                dispatchAction(buildAddConstraintProperty(rootTarget, capitalize(property)));
-                setPropertyOpen(false);
-              }}
-            >
-              {capitalize(property)}
-            </button>
-          ))}
-        </div>
-      )}
 
       {sumOpen && (
         <div class="rtc-sum-control">
@@ -417,8 +383,4 @@ function charsetTestId(value: CharSetChoiceProjection['value']): string {
     Custom: 'custom',
   };
   return `charset-option-${suffix[value] ?? value.toLowerCase()}`;
-}
-
-function capitalize(value: string): string {
-  return value.charAt(0).toUpperCase() + value.slice(1);
 }

@@ -569,16 +569,14 @@ body:has(.rtc-workbench) {
   color: var(--rtc-focus-deep);
 }
 
-.rtc-advanced-structures,
-.rtc-property-options {
+.rtc-advanced-structures {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 12px;
 }
 
-.rtc-advanced-structures button,
-.rtc-property-options button {
+.rtc-advanced-structures button {
   min-height: 36px;
   padding: 0 11px;
   border: 1px solid var(--rtc-control);
@@ -590,8 +588,7 @@ body:has(.rtc-workbench) {
   cursor: pointer;
 }
 
-.rtc-advanced-structures button:hover,
-.rtc-property-options button:hover {
+.rtc-advanced-structures button:hover {
   border-color: var(--rtc-focus);
   color: var(--rtc-focus-deep);
 }

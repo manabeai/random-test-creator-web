@@ -279,11 +279,6 @@ export class EditorPage {
     await this.page.keyboard.press('Tab');
   }
 
-  async addProperty(propertyName: string): Promise<void> {
-    await this.page.getByTestId('property-shortcut').click();
-    await this.page.getByTestId(`property-option-${propertyName}`).click();
-  }
-
   /**
    * Add a SumBound constraint.
    * The upper bound uses the same structured value input as constraint bounds.

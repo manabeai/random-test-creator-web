@@ -118,8 +118,6 @@ E2E テストは以下の `data-testid` に依存する。UI 実装時にこれ�
 | `constraint-lower-expression` | 下限内のクリック可能な式要素（関数適用用） |
 | `constraint-upper-expression` | 上限内のクリック可能な式要素（関数適用用） |
 | `constraint-confirm` | 制約確定ボタン |
-| `property-shortcut` | Property ショートカットボタン |
-| `property-option-{name}` | Property 選択肢 (tree, simple, etc.) |
 | `sumbound-shortcut` | SumBound ショートカットボタン |
 | `sumbound-var-select` | SumBound 対象変数選択 |
 | `sumbound-upper-input` | SumBound 上界エリア（クリックで値ピッカー表示） |
