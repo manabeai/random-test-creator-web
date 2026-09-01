@@ -107,9 +107,8 @@ test.describe('グリッド: H W / S_1...S_H', () => {
 
     await editor.openDraft(0);
     await editor.page.getByTestId('charset-option-custom').click();
-    await editor.page.getByTestId('charset-char-input-0').fill('.');
-    await editor.page.getByTestId('charset-add-char').click();
-    await editor.page.getByTestId('charset-char-input-1').fill('#');
+    await editor.page.getByTestId('charset-custom-input').fill('.#');
+    await editor.page.getByTestId('charset-custom-input').press('Enter');
     await editor.confirmConstraint();
 
     const sample = await editor.getSampleOutput().textContent();

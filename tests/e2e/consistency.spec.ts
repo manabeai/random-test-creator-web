@@ -9,9 +9,44 @@ test.describe('Web editor consistency', () => {
     await editor.goto();
   });
 
-  test('app title and header use the Random Test Creator name', async () => {
-    await expect(editor.page).toHaveTitle('Random Test Creator');
-    await expect(editor.page.getByRole('heading', { level: 1 })).toHaveText('Random Test Creator');
+  test('app title and workbench identity are exposed accessibly', async () => {
+    const description = '競プロのランダムテストノーコードで作ろう';
+    const siteUrl = 'https://random-test-creator.matsu-devtool.workers.dev/';
+    const ogImageUrl = `${siteUrl}ogp.png`;
+
+    await expect(editor.page).toHaveTitle('ランダムテスト');
+    await expect(editor.page.getByRole('heading', { level: 1 })).toHaveText('ランダムテスト');
+    await expect(editor.page.locator('meta[name="application-name"]')).toHaveAttribute('content', 'ランダムテスト');
+    await expect(editor.page.locator('meta[name="description"]')).toHaveAttribute('content', description);
+    await expect(editor.page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#f7fafb');
+    await expect(editor.page.locator('link[rel="canonical"]')).toHaveAttribute('href', siteUrl);
+    await expect(editor.page.locator('link[rel="icon"]')).toHaveAttribute('href', '/favicon.svg');
+
+    await expect(editor.page.locator('meta[property="og:type"]')).toHaveAttribute('content', 'website');
+    await expect(editor.page.locator('meta[property="og:locale"]')).toHaveAttribute('content', 'ja_JP');
+    await expect(editor.page.locator('meta[property="og:site_name"]')).toHaveAttribute('content', 'ランダムテスト');
+    await expect(editor.page.locator('meta[property="og:title"]')).toHaveAttribute('content', 'ランダムテスト');
+    await expect(editor.page.locator('meta[property="og:description"]')).toHaveAttribute('content', description);
+    await expect(editor.page.locator('meta[property="og:url"]')).toHaveAttribute('content', siteUrl);
+    await expect(editor.page.locator('meta[property="og:image"]')).toHaveAttribute('content', ogImageUrl);
+    await expect(editor.page.locator('meta[property="og:image:type"]')).toHaveAttribute('content', 'image/png');
+    await expect(editor.page.locator('meta[property="og:image:width"]')).toHaveAttribute('content', '1200');
+    await expect(editor.page.locator('meta[property="og:image:height"]')).toHaveAttribute('content', '630');
+    await expect(editor.page.locator('meta[property="og:image:alt"]')).toHaveAttribute('content', description);
+
+    await expect(editor.page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
+    await expect(editor.page.locator('meta[name="twitter:title"]')).toHaveAttribute('content', 'ランダムテスト');
+    await expect(editor.page.locator('meta[name="twitter:description"]')).toHaveAttribute('content', description);
+    await expect(editor.page.locator('meta[name="twitter:image"]')).toHaveAttribute('content', ogImageUrl);
+    await expect(editor.page.locator('meta[name="twitter:image:alt"]')).toHaveAttribute('content', description);
+
+    const ogImage = await editor.page.request.get('/ogp.png');
+    expect(ogImage.ok()).toBe(true);
+    expect(ogImage.headers()['content-type']).toBe('image/png');
+
+    const favicon = await editor.page.request.get('/favicon.svg');
+    expect(favicon.ok()).toBe(true);
+    expect(favicon.headers()['content-type']).toContain('image/svg+xml');
   });
 
   test('shared state with min expression restores and shows sample', async () => {
@@ -39,7 +74,7 @@ test.describe('Web editor consistency', () => {
 
     await expect(editor.getDraftConstraints()).toHaveCount(1);
     await expect(editor.getSampleOutput()).toBeEmpty();
-    await expect(editor.getSampleStatus()).toContainText('1 draft constraint is still incomplete');
+    await expect(editor.page.getByTestId('generation-blocked')).toHaveAttribute('data-blocker-count', '1');
 
     await editor.openDraft(0);
     await editor.fillBoundLiteral('lower', '2');
@@ -47,7 +82,7 @@ test.describe('Web editor consistency', () => {
     await editor.confirmConstraint();
 
     await expect(editor.getSampleOutput()).not.toBeEmpty();
-    await expect(editor.getSampleStatus()).toHaveCount(0);
+    await expect(editor.page.getByTestId('generation-blocked')).toHaveCount(0);
   });
 
   test('length and count variable pickers only show Int scalar variables', async () => {
@@ -64,8 +99,8 @@ test.describe('Web editor consistency', () => {
 
     await editor.clickHotspot('below');
     await editor.selectPopupOption('array');
-    await expect(editor.page.getByTestId('length-var-option-N')).toBeVisible();
-    await expect(editor.page.getByTestId('length-var-option-C')).toHaveCount(0);
+    await expect(editor.page.getByTestId('horizontal-axis').locator('option[value="N"]')).toHaveCount(1);
+    await expect(editor.page.getByTestId('horizontal-axis').locator('option[value="C"]')).toHaveCount(0);
     await editor.closePopupByEscape();
 
     await editor.clickHotspot('below');
@@ -84,10 +119,8 @@ test.describe('Web editor consistency', () => {
     await expect(editor.page.getByTestId('constraint-item-0')).toHaveAttribute('data-constraint-status', 'completed');
 
     await editor.page.getByTestId('completed-constraint-0').click();
-    await editor.page.getByTestId('constraint-lower-expression').click();
-    await editor.page.getByTestId('function-op-add').click();
-    await editor.page.getByTestId('function-operand-input').fill('1');
-    await editor.page.getByTestId('function-operand-input').press('Enter');
+    await editor.page.getByTestId('range-lower-input').fill('2');
+    await editor.page.getByTestId('range-lower-input').press('Enter');
     await editor.confirmConstraint();
 
     await expect(editor.page.getByTestId('constraint-item-0')).toContainText('2');
@@ -95,7 +128,7 @@ test.describe('Web editor consistency', () => {
     await editor.page.getByTestId('delete-constraint-0').click();
     await expect(editor.page.getByTestId('constraint-item-0')).toHaveAttribute('data-constraint-status', 'draft');
     await expect(editor.getSampleOutput()).toBeEmpty();
-    await expect(editor.getSampleStatus()).toContainText('1 draft constraint is still incomplete');
+    await expect(editor.page.getByTestId('generation-blocked')).toHaveAttribute('data-blocker-count', '1');
   });
 
   test('function expressions in constraints still allow sample generation', async () => {
@@ -136,9 +169,14 @@ test.describe('Web editor consistency', () => {
     await editor.addScalar('N');
     await expect(editor.structurePane).toContainText('N');
 
-    await editor.page.getByTestId('reset-document-button').click();
+    const resetButton = editor.page.getByTestId('reset-document-button');
+    await expect(resetButton).toHaveAccessibleName('リセット');
+    await resetButton.click();
 
     await expect(editor.structurePane).not.toContainText('N');
     await expect(editor.insertionHotspots.first()).toBeVisible();
+
+    await editor.page.getByTestId('undo-button').click();
+    await expect(editor.structurePane).toContainText('N');
   });
 });

@@ -10,9 +10,16 @@ import {
   build_hotspot_action_from_draft,
   build_replace_action_from_draft,
 } from '../wasm';
-import type { CharSetSpec, ExprCandidate, Hotspot } from './editor-state';
+import type { CharSetSpec, ExprCandidate, Hotspot, RemoveNodeProjection } from './editor-state';
 
 export type HotspotDraftFields = Record<string, string>;
+
+export interface DirectNodeDraft {
+  name: string;
+  type: 'number' | 'string' | 'char';
+  horizontal: string;
+  vertical: string;
+}
 
 export function buildHotspotActionFromDraft(
   hotspot: Hotspot,
@@ -26,6 +33,19 @@ export function buildHotspotActionFromDraft(
     fields,
     variables: availableVars,
   }));
+}
+
+export function buildDirectHotspotActionFromDraft(
+  hotspot: Hotspot,
+  draft: DirectNodeDraft,
+  availableVars: ExprCandidate[],
+): string {
+  return buildHotspotActionFromDraft(hotspot, 'direct', {
+    name: draft.name,
+    type: draft.type,
+    horizontal: draft.horizontal,
+    vertical: draft.vertical,
+  }, availableVars);
 }
 
 export interface ConstraintActionDraft {
@@ -52,7 +72,7 @@ export function buildConstraintActionsFromDraft(draft: ConstraintActionDraft): s
 
 export function buildReplaceActionFromDraft(
   targetId: string,
-  candidate: 'scalar' | 'array',
+  candidate: 'scalar' | 'array' | 'matrix',
   fields: HotspotDraftFields,
   availableVars: ExprCandidate[],
 ): string {
@@ -64,11 +84,25 @@ export function buildReplaceActionFromDraft(
   }));
 }
 
-export function buildAddConstraintProperty(targetId: string, tag: string): string {
+export function buildDirectReplaceActionFromDraft(
+  targetId: string,
+  draft: DirectNodeDraft,
+  availableVars: ExprCandidate[],
+): string {
+  return build_replace_action_from_draft(JSON.stringify({
+    target_id: targetId,
+    candidate: 'direct',
+    fields: draft,
+    variables: availableVars,
+  }));
+}
+
+export function buildRemoveNodeAction(route: RemoveNodeProjection): string {
   return JSON.stringify({
-    action: 'AddConstraint',
-    target: targetId,
-    constraint: { kind: 'Property', tag },
+    action: 'RemoveSlotElement',
+    parent: route.parent_id,
+    slot_name: route.slot_name,
+    child: route.child_id,
   });
 }
 
