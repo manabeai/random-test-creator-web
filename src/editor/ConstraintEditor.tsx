@@ -13,7 +13,6 @@ import {
   openBoundFnSelect,
   selectBoundFnOp,
   applyBoundFnOperand,
-  closeConstraintEditor,
   type ValueInputTarget,
 } from './popup-state';
 import { ValueInput, isValueInputOpen } from './ValueInput';
@@ -23,10 +22,9 @@ interface ConstraintEditorProps {
   targetId: string;
   targetName: string;
   onConfirm: (lower: string, upper: string) => void;
-  onMouseEnter?: () => void;
 }
 
-export function ConstraintEditor({ targetId, targetName, onConfirm, onMouseEnter }: ConstraintEditorProps) {
+export function ConstraintEditor({ targetId, targetName, onConfirm }: ConstraintEditorProps) {
   const lower = constraintLower.value;
   const upper = constraintUpper.value;
   const initialLower = useRef(lower);
@@ -46,18 +44,6 @@ export function ConstraintEditor({ targetId, targetName, onConfirm, onMouseEnter
 
   const bothFilled = lower && upper;
 
-  const commitIfChanged = () => {
-    if (!bothFilled) {
-      closeConstraintEditor();
-      return;
-    }
-    if (lower === initialLower.current && upper === initialUpper.current) {
-      closeConstraintEditor();
-      return;
-    }
-    onConfirm(lower, upper);
-  };
-
   useEffect(() => {
     if (!bothFilled) return;
     if (lower === initialLower.current && upper === initialUpper.current) return;
@@ -71,7 +57,7 @@ export function ConstraintEditor({ targetId, targetName, onConfirm, onMouseEnter
   }, [bothFilled, lower, upper, onConfirm]);
 
   return (
-    <div class="constraint-editor my-2 rounded-lg border border-[#2a2f3a] bg-[#151922] p-3 shadow-xl shadow-black/25" onMouseEnter={onMouseEnter} onMouseLeave={commitIfChanged}>
+    <div class="constraint-editor rounded-lg border border-[#2a2f3a] bg-[#151922] p-3 shadow-xl shadow-black/25">
       <div class="constraint-editor-label mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
         Constraint for <strong>{targetName}</strong>
       </div>

@@ -33,6 +33,40 @@ test.describe('PC hover interactions', () => {
     await expect(page.locator('.constraint-editor')).toHaveCount(0);
   });
 
+  test('draft constraint editor stays open while the pointer crosses into it', async ({ page }) => {
+    await editor.addScalar('N');
+    await editor.addArray('A', 'N');
+
+    const constraintRow = page.getByTestId('constraint-item-0');
+    const constraintEditor = page.locator('.constraint-editor');
+    await constraintRow.hover();
+    await expect(constraintEditor).toBeVisible();
+    await expect(constraintEditor).toContainText('Constraint for N');
+
+    const rowBox = await constraintRow.boundingBox();
+    const editorBox = await constraintEditor.boundingBox();
+    expect(rowBox).not.toBeNull();
+    expect(editorBox).not.toBeNull();
+
+    const transitX = Math.max(
+      editorBox!.x + 1,
+      Math.min(rowBox!.x + rowBox!.width / 2, editorBox!.x + editorBox!.width - 1),
+    );
+    const transitY = (rowBox!.y + rowBox!.height + editorBox!.y) / 2;
+
+    await page.mouse.move(transitX, transitY);
+    await page.waitForTimeout(500);
+    await expect(constraintEditor).toBeVisible();
+    await expect(constraintEditor).toContainText('Constraint for N');
+
+    await page.mouse.move(
+      editorBox!.x + editorBox!.width / 2,
+      editorBox!.y + editorBox!.height / 2,
+    );
+    await expect(constraintEditor).toBeVisible();
+    await expect(constraintEditor).toContainText('Constraint for N');
+  });
+
   test('structure popup commits a scalar when the name input loses focus', async ({ page }) => {
     await page.getByTestId('insertion-hotspot-below').first().hover();
     await page.getByTestId('popup-option-scalar').click();

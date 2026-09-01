@@ -38,27 +38,21 @@ import { FunctionOpsPanel, FunctionOperandInput } from './ExpressionBuilder';
 import { constraintFolded, toggleConstraintFold } from './fold-state';
 
 const showPropertyOptions = signal(false);
-let hoverDismissTimer: ReturnType<typeof setTimeout> | null = null;
-
-function clearHoverDismissTimer() {
-  if (hoverDismissTimer) {
-    clearTimeout(hoverDismissTimer);
-    hoverDismissTimer = null;
-  }
-}
 
 export function ConstraintPane() {
   const proj = projection.value;
   const editState = constraintEditState.value;
   const folded = constraintFolded.value;
   const paneRef = useRef<HTMLDivElement>(null);
+  const hoverDismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleRangeConfirm = (lower: string, upper: string) => {
-    if (editState.step === 'editing') {
+    const current = constraintEditState.value;
+    if (current.step === 'editing') {
       const actions = buildConstraintActionsFromDraft({
-        targetId: editState.targetId,
-        template: editState.template === 'StringLength' ? 'StringLength' : 'Range',
-        existingConstraintId: editState.constraintId,
+        targetId: current.targetId,
+        template: current.template === 'StringLength' ? 'StringLength' : 'Range',
+        existingConstraintId: current.constraintId,
         lower,
         upper,
       });
@@ -90,7 +84,8 @@ export function ConstraintPane() {
   };
 
   const handleCharSetConfirm = () => {
-    if (editState.step === 'charset' && charSetSelection.value) {
+    const current = constraintEditState.value;
+    if (current.step === 'charset' && charSetSelection.value) {
       let charset: CharSetSpec;
       if (charSetSelection.value === 'Custom') {
         // Build custom charset from individual chars
@@ -101,9 +96,9 @@ export function ConstraintPane() {
         charset = { kind: charSetSelection.value as CharSetSpec['kind'] } as CharSetSpec;
       }
       buildConstraintActionsFromDraft({
-        targetId: editState.targetId,
+        targetId: current.targetId,
         template: 'CharSet',
-        existingConstraintId: editState.constraintId,
+        existingConstraintId: current.constraintId,
         charset,
       }).forEach(dispatchAction);
       closeConstraintEditor();
@@ -130,6 +125,23 @@ export function ConstraintPane() {
     closeConstraintEditor();
     showPropertyOptions.value = false;
   };
+
+  const clearHoverDismissTimer = () => {
+    if (hoverDismissTimerRef.current) {
+      clearTimeout(hoverDismissTimerRef.current);
+      hoverDismissTimerRef.current = null;
+    }
+  };
+
+  const scheduleHoverDismiss = () => {
+    clearHoverDismissTimer();
+    hoverDismissTimerRef.current = setTimeout(() => {
+      dismissEditor();
+      hoverDismissTimerRef.current = null;
+    }, 400);
+  };
+
+  useEffect(() => () => clearHoverDismissTimer(), []);
 
   useEffect(() => {
     const handlePointerDown = (event: PointerEvent) => {
@@ -185,73 +197,90 @@ export function ConstraintPane() {
         )}
 
         {/* Constraint rows keep projection order, regardless of draft/completed status. */}
-        {proj.constraints.items.map(item => (
-          <div
-            key={`constraint-item-${item.index}`}
-            class={`constraint-item group flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[13px] transition hover:bg-[#151922] ${item.status === 'draft' ? 'draft text-slate-500' : 'completed text-slate-100'} ${editState.step !== 'closed' && editState.step !== 'sumbound' && editState.targetId === item.target_id ? 'active bg-[#202633] ring-1 ring-cyan-300/15' : ''}`}
-            data-testid={`constraint-item-${item.index}`}
-            data-constraint-status={item.status}
-            onClick={() => {
-              if (!item.edit) return;
-              showPropertyOptions.value = false;
-              openConstraintEditor(item.target_id, item.target_name, item.edit.kind, item.edit);
-            }}
-            onMouseEnter={() => {
-              clearHoverDismissTimer();
-              if (!item.edit) return;
-              showPropertyOptions.value = false;
-              openConstraintEditor(item.target_id, item.target_name, item.edit.kind, item.edit);
-            }}
-            onMouseLeave={() => {
-              hoverDismissTimer = setTimeout(() => {
-                closeConstraintEditor();
-              }, 120);
-            }}
-          >
-            <span class="constraint-icon font-mono text-[11px]">{item.status === 'draft' ? '○' : '●'}</span>
-            <span
-              class="constraint-display flex-1 font-mono"
-              data-testid={
-                item.status === 'draft' && item.draft_index !== undefined
-                  ? `draft-constraint-${item.draft_index}`
-                  : item.status === 'completed' && item.completed_index !== undefined
-                    ? `completed-constraint-${item.completed_index}`
-                    : undefined
-              }
+        {proj.constraints.items.map(item => {
+          const isActiveItem = item.edit !== undefined
+            && editState.step !== 'closed'
+            && editState.step !== 'sumbound'
+            && editState.targetId === item.target_id
+            && (editState.step === 'charset'
+              ? item.edit.kind === 'CharSet'
+              : editState.template === item.edit.kind)
+            && (!editState.constraintId || editState.constraintId === item.constraint_id);
+
+          return (
+            <div
+              key={`constraint-item-${item.index}`}
+              class={`constraint-interaction-region ${isActiveItem ? 'grid gap-2 pb-2' : ''}`}
+              onMouseEnter={isActiveItem ? clearHoverDismissTimer : undefined}
+              onMouseLeave={isActiveItem ? scheduleHoverDismiss : undefined}
             >
-              {item.display}
-            </span>
-            {item.status === 'completed' && item.constraint_id && (
-              <button
-                class="constraint-delete-btn text-slate-500 opacity-0 transition hover:text-rose-300 group-hover:opacity-100"
-                data-testid={`delete-constraint-${item.completed_index ?? item.index}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  const actionJson = buildRemoveConstraint(item.constraint_id!);
-                  dispatchAction(actionJson);
+              <div
+                class={`constraint-item group flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[13px] transition hover:bg-[#151922] ${item.status === 'draft' ? 'draft text-slate-500' : 'completed text-slate-100'} ${isActiveItem ? 'active bg-[#202633] ring-1 ring-cyan-300/15' : ''}`}
+                data-testid={`constraint-item-${item.index}`}
+                data-constraint-status={item.status}
+                onClick={() => {
+                  if (!item.edit) return;
+                  showPropertyOptions.value = false;
+                  openConstraintEditor(item.target_id, item.target_name, item.edit.kind, item.edit);
                 }}
-                title="Delete constraint"
+                onMouseEnter={() => {
+                  if (!item.edit) return;
+                  const current = constraintEditState.value;
+                  const anotherEditorIsOpen = current.step !== 'closed'
+                    && current.step !== 'sumbound'
+                    && (current.targetId !== item.target_id
+                      || (current.step === 'charset'
+                        ? item.edit.kind !== 'CharSet'
+                        : current.template !== item.edit.kind));
+                  if (anotherEditorIsOpen) return;
+                  clearHoverDismissTimer();
+                  showPropertyOptions.value = false;
+                  openConstraintEditor(item.target_id, item.target_name, item.edit.kind, item.edit);
+                }}
               >
-                ×
-              </button>
-            )}
-          </div>
-        ))}
+                <span class="constraint-icon font-mono text-[11px]">{item.status === 'draft' ? '○' : '●'}</span>
+                <span
+                  class="constraint-display flex-1 font-mono"
+                  data-testid={
+                    item.status === 'draft' && item.draft_index !== undefined
+                      ? `draft-constraint-${item.draft_index}`
+                      : item.status === 'completed' && item.completed_index !== undefined
+                        ? `completed-constraint-${item.completed_index}`
+                        : undefined
+                  }
+                >
+                  {item.display}
+                </span>
+                {item.status === 'completed' && item.constraint_id && (
+                  <button
+                    class="constraint-delete-btn text-slate-500 opacity-0 transition hover:text-rose-300 group-hover:opacity-100"
+                    data-testid={`delete-constraint-${item.completed_index ?? item.index}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const actionJson = buildRemoveConstraint(item.constraint_id!);
+                      dispatchAction(actionJson);
+                    }}
+                    title="Delete constraint"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
 
-        {/* Constraint Editor */}
-        {editState.step === 'editing' && (
-          <ConstraintEditor
-            targetId={editState.targetId}
-            targetName={editState.targetName}
-            onConfirm={handleRangeConfirm}
-            onMouseEnter={clearHoverDismissTimer}
-          />
-        )}
+              {isActiveItem && editState.step === 'editing' && (
+                <ConstraintEditor
+                  targetId={editState.targetId}
+                  targetName={editState.targetName}
+                  onConfirm={handleRangeConfirm}
+                />
+              )}
 
-        {/* CharSet Editor: select charset then confirm */}
-        {editState.step === 'charset' && (
-          <CharSetEditor onConfirm={handleCharSetConfirm} />
-        )}
+              {isActiveItem && editState.step === 'charset' && (
+                <CharSetEditor onConfirm={handleCharSetConfirm} />
+              )}
+            </div>
+          );
+        })}
 
         {/* SumBound Editor */}
         {editState.step === 'sumbound' && (
@@ -292,6 +321,14 @@ function PropertyOptions({ onSelect }: { onSelect: (tag: string) => void }) {
   );
 }
 
+const charSetOptionBase = 'charset-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] transition hover:border-cyan-300 hover:text-cyan-200';
+
+function charSetOptionClass(isSelected: boolean): string {
+  return isSelected
+    ? `${charSetOptionBase} active selected border-cyan-300 bg-cyan-300 font-semibold text-[#0f1115]`
+    : `${charSetOptionBase} text-slate-200`;
+}
+
 function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
   const selected = charSetSelection.value;
   const customChars = customCharSetChars.value;
@@ -318,7 +355,7 @@ function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
       <div class="constraint-editor-label mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Select Character Set</div>
       <div class="charset-presets flex flex-wrap gap-1.5">
         <button
-          class={`charset-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200 ${selected === 'LowerAlpha' ? 'active selected border-cyan-300 bg-cyan-300 font-semibold text-[#0f1115]' : ''}`}
+          class={charSetOptionClass(selected === 'LowerAlpha')}
           data-testid="charset-option-lowercase"
           onClick={() => {
             charSetSelection.value = 'LowerAlpha';
@@ -328,7 +365,7 @@ function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
           a-z (lowercase)
         </button>
         <button
-          class={`charset-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200 ${selected === 'UpperAlpha' ? 'active selected border-cyan-300 bg-cyan-300 font-semibold text-[#0f1115]' : ''}`}
+          class={charSetOptionClass(selected === 'UpperAlpha')}
           data-testid="charset-option-uppercase"
           onClick={() => {
             charSetSelection.value = 'UpperAlpha';
@@ -338,7 +375,7 @@ function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
           A-Z (uppercase)
         </button>
         <button
-          class={`charset-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200 ${selected === 'Digit' ? 'active selected border-cyan-300 bg-cyan-300 font-semibold text-[#0f1115]' : ''}`}
+          class={charSetOptionClass(selected === 'Digit')}
           data-testid="charset-option-digit"
           onClick={() => {
             charSetSelection.value = 'Digit';
@@ -348,7 +385,7 @@ function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
           0-9 (digit)
         </button>
         <button
-          class={`charset-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200 ${selected === 'Alpha' ? 'active selected border-cyan-300 bg-cyan-300 font-semibold text-[#0f1115]' : ''}`}
+          class={charSetOptionClass(selected === 'Alpha')}
           data-testid="charset-option-alpha"
           onClick={() => {
             charSetSelection.value = 'Alpha';
@@ -358,7 +395,7 @@ function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
           a-zA-Z (letters)
         </button>
         <button
-          class={`charset-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200 ${selected === 'AlphaNumeric' ? 'active selected border-cyan-300 bg-cyan-300 font-semibold text-[#0f1115]' : ''}`}
+          class={charSetOptionClass(selected === 'AlphaNumeric')}
           data-testid="charset-option-alphanumeric"
           onClick={() => {
             charSetSelection.value = 'AlphaNumeric';
@@ -368,7 +405,7 @@ function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
           a-zA-Z0-9
         </button>
         <button
-          class={`charset-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200 ${selected === 'Custom' ? 'active selected border-cyan-300 bg-cyan-300 font-semibold text-[#0f1115]' : ''}`}
+          class={charSetOptionClass(selected === 'Custom')}
           data-testid="charset-option-custom"
           onClick={() => { charSetSelection.value = 'Custom'; }}
         >
