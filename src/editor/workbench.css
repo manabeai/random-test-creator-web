@@ -481,7 +481,7 @@ body:has(.rtc-workbench) {
 }
 
 .rtc-name-composer {
-  position: relative;
+  max-width: 100%;
   width: max-content;
 }
 
@@ -530,22 +530,19 @@ body:has(.rtc-workbench) {
 }
 
 .rtc-name-chips--create {
-  position: absolute;
-  z-index: 20;
-  top: calc(100% + 7px);
-  left: 28px;
+  position: static;
   width: max-content;
   grid-template-columns: repeat(9, 34px);
   flex: none;
   gap: 4px;
-  padding: 6px;
-  border: 1px solid var(--rtc-rule);
-  border-radius: 10px;
-  background: var(--rtc-paper-raised);
-  box-shadow: 0 12px 30px rgb(35 55 68 / 16%);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
   opacity: 0;
   pointer-events: none;
-  transform: translateY(-4px);
+  transform: translateX(-4px);
   visibility: hidden;
   transition: opacity 130ms ease, transform 160ms cubic-bezier(.18, .84, .24, 1), visibility 130ms;
 }
@@ -554,7 +551,7 @@ body:has(.rtc-workbench) {
 .rtc-name-composer:focus-within > .rtc-name-chips--create {
   opacity: 1;
   pointer-events: auto;
-  transform: translateY(0);
+  transform: translateX(0);
   visibility: visible;
 }
 

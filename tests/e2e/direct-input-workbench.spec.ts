@@ -70,10 +70,23 @@ test.describe('direct input workbench', () => {
     await page.getByTestId('type-number').click();
 
     const nameInput = page.getByTestId('name-input');
+    const editor = page.getByTestId('variable-editor');
+    const helpers = page.getByLabel('名前候補');
     const helper = page.getByTestId('name-helper-N');
     await expect(helper).toBeHidden();
     await nameInput.hover();
     await expect(helper).toBeVisible();
+    await expect(helpers).toHaveCSS('box-shadow', 'none');
+    await expect(helpers).toHaveCSS('border-top-width', '0px');
+
+    const editorBox = await editor.boundingBox();
+    const helpersBox = await helpers.boundingBox();
+    expect(editorBox).not.toBeNull();
+    expect(helpersBox).not.toBeNull();
+    expect(helpersBox!.x).toBeGreaterThanOrEqual(editorBox!.x);
+    expect(helpersBox!.x + helpersBox!.width).toBeLessThanOrEqual(editorBox!.x + editorBox!.width);
+    expect(helpersBox!.y + helpersBox!.height).toBeLessThanOrEqual(editorBox!.y + editorBox!.height);
+
     await helper.click();
 
     await expect(page.getByTestId('format-token-N')).toBeVisible();
@@ -181,11 +194,22 @@ test.describe('direct input workbench', () => {
     await page.getByTestId('type-number').click();
 
     const helper = page.getByTestId('name-helper-N');
+    const editor = page.getByTestId('variable-editor');
+    const helpers = page.getByLabel('名前候補');
     await expect(helper).toBeHidden();
     await page.getByTestId('name-input').focus();
     await expect(helper).toBeVisible();
-    const helperBox = await helper.boundingBox();
+    const [editorBox, helpersBox, helperBox] = await Promise.all([
+      editor.boundingBox(),
+      helpers.boundingBox(),
+      helper.boundingBox(),
+    ]);
+    expect(editorBox).not.toBeNull();
+    expect(helpersBox).not.toBeNull();
     expect(helperBox).not.toBeNull();
+    expect(helpersBox!.x).toBeGreaterThanOrEqual(editorBox!.x);
+    expect(helpersBox!.x + helpersBox!.width).toBeLessThanOrEqual(editorBox!.x + editorBox!.width);
+    expect(helpersBox!.y + helpersBox!.height).toBeLessThanOrEqual(editorBox!.y + editorBox!.height);
     expect(helperBox!.height).toBeGreaterThanOrEqual(44);
 
     await helper.click();
