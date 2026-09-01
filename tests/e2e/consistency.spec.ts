@@ -9,9 +9,45 @@ test.describe('Web editor consistency', () => {
     await editor.goto();
   });
 
-  test('app title and header use the Random Test Creator name', async () => {
+  test('app title, metadata, and header use the Random Test Creator identity', async () => {
+    const title = 'Random Test Creator';
+    const description = '競プロのランダムテストノーコードで作ろう';
+    const siteUrl = 'https://random-test-creator.matsu-devtool.workers.dev/';
+    const ogImageUrl = `${siteUrl}ogp.png`;
+
     await expect(editor.page).toHaveTitle('Random Test Creator');
     await expect(editor.page.getByRole('heading', { level: 1 })).toHaveText('Random Test Creator');
+    await expect(editor.page.locator('meta[name="application-name"]')).toHaveAttribute('content', title);
+    await expect(editor.page.locator('meta[name="description"]')).toHaveAttribute('content', description);
+    await expect(editor.page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#151922');
+    await expect(editor.page.locator('link[rel="canonical"]')).toHaveAttribute('href', siteUrl);
+    await expect(editor.page.locator('link[rel="icon"]')).toHaveAttribute('href', '/favicon.svg');
+
+    await expect(editor.page.locator('meta[property="og:type"]')).toHaveAttribute('content', 'website');
+    await expect(editor.page.locator('meta[property="og:locale"]')).toHaveAttribute('content', 'ja_JP');
+    await expect(editor.page.locator('meta[property="og:site_name"]')).toHaveAttribute('content', title);
+    await expect(editor.page.locator('meta[property="og:title"]')).toHaveAttribute('content', title);
+    await expect(editor.page.locator('meta[property="og:description"]')).toHaveAttribute('content', description);
+    await expect(editor.page.locator('meta[property="og:url"]')).toHaveAttribute('content', siteUrl);
+    await expect(editor.page.locator('meta[property="og:image"]')).toHaveAttribute('content', ogImageUrl);
+    await expect(editor.page.locator('meta[property="og:image:type"]')).toHaveAttribute('content', 'image/png');
+    await expect(editor.page.locator('meta[property="og:image:width"]')).toHaveAttribute('content', '1200');
+    await expect(editor.page.locator('meta[property="og:image:height"]')).toHaveAttribute('content', '630');
+    await expect(editor.page.locator('meta[property="og:image:alt"]')).toHaveAttribute('content', description);
+
+    await expect(editor.page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
+    await expect(editor.page.locator('meta[name="twitter:title"]')).toHaveAttribute('content', title);
+    await expect(editor.page.locator('meta[name="twitter:description"]')).toHaveAttribute('content', description);
+    await expect(editor.page.locator('meta[name="twitter:image"]')).toHaveAttribute('content', ogImageUrl);
+    await expect(editor.page.locator('meta[name="twitter:image:alt"]')).toHaveAttribute('content', description);
+
+    const ogImage = await editor.page.request.get('/ogp.png');
+    expect(ogImage.ok()).toBe(true);
+    expect(ogImage.headers()['content-type']).toBe('image/png');
+
+    const favicon = await editor.page.request.get('/favicon.svg');
+    expect(favicon.ok()).toBe(true);
+    expect(favicon.headers()['content-type']).toContain('image/svg+xml');
   });
 
   test('shared state with min expression restores and shows sample', async () => {
