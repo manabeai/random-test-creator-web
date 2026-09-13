@@ -3,6 +3,8 @@ import {
   dispatchAction,
   dispatchActions,
   projection,
+  documentJson,
+  editorError,
   type CharSetChoiceProjection,
   type CharSetSpec,
   type ConstraintItem,
@@ -13,6 +15,8 @@ import {
   buildRemoveConstraint,
 } from './action-builder';
 import { WorkbenchIcon } from './WorkbenchIcon';
+import { ConstraintExpressionTools } from './ConstraintExpressionTools';
+import { SumBoundControl } from './SumBoundControl';
 
 export function TypedConstraintControls({ selectedId, onSelectNode }: {
   selectedId: string;
@@ -20,69 +24,27 @@ export function TypedConstraintControls({ selectedId, onSelectNode }: {
 }) {
   const items = projection.value.constraints.items;
   const [sumOpen, setSumOpen] = useState(false);
-  const [sumVar, setSumVar] = useState('');
-  const [sumUpper, setSumUpper] = useState('');
-  const numberVars = projection.value.available_vars.filter(
-    variable => variable.value_type === 'number' && variable.node_kind === 'scalar',
-  );
-
-  const commitSum = (nextUpper = sumUpper) => {
-    if (!sumVar || !nextUpper.trim()) return;
-    const variable = numberVars.find(candidate => candidate.name === sumVar);
-    if (!variable) return;
-    dispatchActions(buildConstraintActionsFromDraft({
-      targetId: variable.node_id,
-      template: 'SumBound',
-      overVar: sumVar,
-      upper: nextUpper.trim(),
-    }));
-    setSumOpen(false);
-    setSumUpper('');
-  };
 
   return (
     <section class="rtc-constraint-pane" data-testid="constraint-pane" aria-label="制約">
       <div class="rtc-constraint-toolbar">
+        <span>制約</span>
         <button
           type="button"
           data-testid="sumbound-shortcut"
           aria-label="総和制約を追加"
           aria-expanded={sumOpen}
+          disabled={projection.value.constraints.sum_bound_targets.length === 0}
           onClick={() => {
             setSumOpen(open => !open);
           }}
         >
           <WorkbenchIcon name="sigma" />
+          総和を追加
         </button>
       </div>
 
-      {sumOpen && (
-        <div class="rtc-sum-control">
-          <select
-            data-testid="sumbound-var-select"
-            aria-label="総和対象"
-            value={sumVar}
-            onChange={event => setSumVar(event.currentTarget.value)}
-          >
-            <option value="">Σ</option>
-            {numberVars.map(variable => (
-              <option key={variable.node_id} value={variable.name}>{variable.name}</option>
-            ))}
-          </select>
-          <span aria-hidden="true">≤</span>
-          <input
-            data-testid="sumbound-upper-input"
-            aria-label="総和の上限"
-            value={sumUpper}
-            inputMode="numeric"
-            onInput={event => setSumUpper(event.currentTarget.value)}
-            onKeyDown={event => {
-              if (event.key === 'Enter') event.currentTarget.blur();
-            }}
-            onBlur={event => commitSum(event.currentTarget.value)}
-          />
-        </div>
-      )}
+      {sumOpen && <SumBoundControl onCommitted={() => setSumOpen(false)} />}
 
       <div class="rtc-constraint-list">
         {items.map(item => {
@@ -147,6 +109,7 @@ export function TypedConstraintControls({ selectedId, onSelectNode }: {
 
 function TypedControl({ item }: { item: ConstraintItem }) {
   if (!item.edit) return null;
+  if (item.edit.kind === 'SumBound') return <SumBoundControl item={item} />;
   if (item.edit.kind === 'Range') {
     return (
       <IntervalControl
@@ -192,20 +155,30 @@ function IntervalControl({ item, lower: projectedLower, upper: projectedUpper, s
   const [upper, setUpper] = useState(projectedUpper || slider.stops[slider.upper_index]?.value || '100');
   const [lowerIndex, setLowerIndex] = useState(slider.lower_index);
   const [upperIndex, setUpperIndex] = useState(slider.upper_index);
+  const [expressionMode, setExpressionMode] = useState(!slider.enabled);
+  const [activeBound, setActiveBound] = useState<'lower' | 'upper'>('upper');
+  const [error, setError] = useState('');
   const committing = useRef(false);
   const focusUpperAfterCommit = useRef(false);
 
   const commit = (nextLower = lower, nextUpper = upper) => {
-    if (committing.current || !nextLower.trim() || !nextUpper.trim()) return;
+    if (committing.current) return;
+    if (!expressionMode && (!nextLower.trim() || !nextUpper.trim())) return;
+    if (item.status === 'completed' && nextLower === projectedLower && nextUpper === projectedUpper) return;
     committing.current = true;
-    const dispatched = dispatchActions(buildConstraintActionsFromDraft({
-      targetId: item.target_id,
-      template,
-      existingConstraintId: item.constraint_id,
-      lower: nextLower.trim(),
-      upper: nextUpper.trim(),
-    }));
-    if (!dispatched) committing.current = false;
+    try {
+      const dispatched = dispatchActions(buildConstraintActionsFromDraft({
+        targetId: item.target_id, template, existingConstraintId: item.constraint_id,
+        lower: nextLower.trim(), upper: nextUpper.trim(),
+      }, documentJson.value));
+      if (!dispatched) {
+        setError(editorError.value);
+        committing.current = false;
+      } else { setError(''); }
+    } catch (error) {
+      setError(error instanceof Error ? error.message : String(error));
+      committing.current = false;
+    }
   };
 
   const updateLowerFromSlider = (index: number, shouldCommit: boolean) => {
@@ -225,9 +198,15 @@ function IntervalControl({ item, lower: projectedLower, upper: projectedUpper, s
   const rangeTestPrefix = template === 'Range' ? 'range' : 'string-length';
 
   return (
-    <div class="rtc-interval-control" data-testid={testId} onClick={event => event.stopPropagation()}>
-      <WorkbenchIcon name="range" />
-      <div
+    <div class={`rtc-interval-control ${expressionMode ? 'is-expression' : ''}`} data-testid={testId} onClick={event => event.stopPropagation()}>
+      <div class="rtc-interval-heading">
+        <span>{template === 'StringLength' ? '文字列の長さ' : '値の範囲'}</span>
+        <button type="button" class="rtc-expression-toggle" data-testid={`${rangeTestPrefix}-expression-toggle`}
+          aria-expanded={expressionMode} onClick={() => setExpressionMode(open => !open)}>
+          {expressionMode ? 'スライダーを表示' : '数式で編集'}
+        </button>
+      </div>
+      {!expressionMode && <div
         class="rtc-double-range"
         style={`--rtc-range-start:${(lowerIndex / (slider.stops.length - 1)) * 100}%;--rtc-range-end:${(upperIndex / (slider.stops.length - 1)) * 100}%`}
       >
@@ -254,21 +233,26 @@ function IntervalControl({ item, lower: projectedLower, upper: projectedUpper, s
           onInput={event => updateUpperFromSlider(Number(event.currentTarget.value), false)}
           onChange={event => updateUpperFromSlider(Number(event.currentTarget.value), true)}
         />
-      </div>
+      </div>}
       <div class="rtc-bound-pair">
         <label data-testid="constraint-lower-input">
+          {expressionMode && <span>下限</span>}
           <input
             value={lower}
             data-testid={`${rangeTestPrefix}-lower-input`}
             aria-label="下限の正確な値"
-            onInput={event => setLower(event.currentTarget.value)}
+            aria-invalid={!!error}
+            onFocus={() => setActiveBound('lower')}
+            onInput={event => { setLower(event.currentTarget.value); setError(''); }}
             onKeyDown={event => {
               if (event.key !== 'Enter') return;
               event.preventDefault();
+              if (expressionMode) { commit(); return; }
               focusUpperAfterCommit.current = true;
               event.currentTarget.blur();
             }}
             onBlur={event => {
+              if (expressionMode) return;
               const shouldFocusUpper = focusUpperAfterCommit.current;
               focusUpperAfterCommit.current = false;
               commit(event.currentTarget.value, upper);
@@ -284,18 +268,36 @@ function IntervalControl({ item, lower: projectedLower, upper: projectedUpper, s
         </label>
         <span aria-hidden="true">≤ {item.target_name} ≤</span>
         <label data-testid="constraint-upper-input">
+          {expressionMode && <span>上限</span>}
           <input
             value={upper}
             data-testid={`${rangeTestPrefix}-upper-input`}
             aria-label="上限の正確な値"
-            onInput={event => setUpper(event.currentTarget.value)}
+            aria-invalid={!!error}
+            onFocus={() => setActiveBound('upper')}
+            onInput={event => { setUpper(event.currentTarget.value); setError(''); }}
             onKeyDown={event => {
-              if (event.key === 'Enter') event.currentTarget.blur();
+              if (event.key === 'Enter') {
+                if (expressionMode) { event.preventDefault(); commit(); }
+                else event.currentTarget.blur();
+              }
             }}
-            onBlur={event => commit(lower, event.currentTarget.value)}
+            onBlur={event => { if (!expressionMode) commit(lower, event.currentTarget.value); }}
           />
         </label>
       </div>
+      {expressionMode && <>
+        <ConstraintExpressionTools key={activeBound}
+          label={activeBound === 'lower' ? '下限' : '上限'}
+          value={activeBound === 'lower' ? lower : upper}
+          onChange={value => { (activeBound === 'lower' ? setLower : setUpper)(value); setError(''); }}
+          variables={item.expression_variables} />
+        <div class="rtc-expression-actions">
+          <span>例: N - 1、2 * 10^5、min(N, 100)</span>
+          <button type="button" class="rtc-expression-commit" data-testid="constraint-expression-apply" onClick={() => commit()}>制約を適用</button>
+        </div>
+      </>}
+      {error && <p class="rtc-expression-error" role="alert" data-testid="constraint-expression-error">{error}</p>}
     </div>
   );
 }

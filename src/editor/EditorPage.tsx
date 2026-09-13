@@ -29,6 +29,7 @@ export function EditorPage() {
         clearWorkbenchSelection();
       }
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'z') {
+        if (event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"])')) return;
         event.preventDefault();
         if (event.shiftKey) redoDocument();
         else undoDocument();

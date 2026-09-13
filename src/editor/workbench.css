@@ -713,11 +713,13 @@ body:has(.rtc-workbench) {
 }
 
 .rtc-constraint-toolbar {
-  position: absolute;
-  top: 12px;
-  right: 20px;
   display: flex;
-  gap: 3px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  color: var(--rtc-muted);
+  font-size: 12px;
 }
 
 .rtc-constraint-toolbar button,
@@ -744,7 +746,6 @@ body:has(.rtc-workbench) {
 .rtc-constraint-list {
   display: grid;
   gap: 7px;
-  padding-right: 80px;
 }
 
 .rtc-constraint-item {
@@ -806,8 +807,131 @@ body:has(.rtc-workbench) {
 }
 
 .rtc-interval-control {
-  grid-template-columns: 22px minmax(150px, 1fr) auto;
+  grid-template-columns: minmax(120px, 1fr) auto;
 }
+
+.rtc-interval-heading,
+.rtc-expression-actions {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--rtc-muted);
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.rtc-expression-toggle,
+.rtc-constraint-toolbar button {
+  width: auto;
+  min-height: 36px;
+  gap: 6px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--rtc-focus-deep);
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.rtc-expression-toggle:hover { background: var(--rtc-focus-wash); }
+.rtc-constraint-toolbar button:disabled { color: var(--rtc-muted); cursor: default; opacity: .6; }
+.rtc-constraint-toolbar .rtc-icon { width: 16px; height: 16px; }
+
+.rtc-interval-control.is-expression { grid-template-columns: minmax(0, 1fr); }
+.rtc-interval-control.is-expression .rtc-bound-pair {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: end;
+}
+.rtc-interval-control.is-expression .rtc-bound-pair > span { padding-bottom: 12px; }
+.rtc-interval-control.is-expression .rtc-bound-pair label,
+.rtc-sum-control label {
+  display: grid;
+  min-width: 0;
+  gap: 6px;
+  color: var(--rtc-muted);
+  font-family: -apple-system, BlinkMacSystemFont, "Noto Sans JP", sans-serif;
+  font-size: 12px;
+}
+.rtc-interval-control.is-expression .rtc-bound-pair input {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  text-align: left;
+}
+
+.rtc-expression-tools {
+  display: grid;
+  grid-column: 1 / -1;
+  min-width: 0;
+  gap: 8px;
+  padding: 12px 0;
+  border-top: 1px solid var(--rtc-rule);
+  border-bottom: 1px solid var(--rtc-rule);
+}
+.rtc-expression-label { color: var(--rtc-body); font-size: 12px; }
+.rtc-expression-choices { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+.rtc-expression-choices > span { min-width: 34px; color: var(--rtc-muted); font-size: 12px; }
+.rtc-expression-choices button,
+.rtc-expression-operand button {
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--rtc-control);
+  border-radius: 7px;
+  background: var(--rtc-paper-raised);
+  color: var(--rtc-body);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 13px;
+  cursor: pointer;
+}
+.rtc-expression-choices button:hover,
+.rtc-expression-choices button[aria-pressed="true"],
+.rtc-expression-operand button:hover {
+  border-color: var(--rtc-focus-deep);
+  background: var(--rtc-focus-wash);
+  color: var(--rtc-focus-deep);
+}
+.rtc-expression-operand { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.rtc-expression-base { max-width: 30%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rtc-expression-operand input {
+  width: 0;
+  min-width: 60px;
+  min-height: 40px;
+  flex: 1;
+  padding: 0 10px;
+  border: 1px solid var(--rtc-control);
+  border-radius: 7px;
+  background: var(--rtc-paper-raised);
+  color: var(--rtc-ink);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 13px;
+}
+.rtc-expression-operand input::placeholder,
+.rtc-sum-control input::placeholder { color: var(--rtc-muted); }
+.rtc-expression-operand button { flex-shrink: 0; font-family: inherit; font-size: 12px; }
+.rtc-expression-commit {
+  flex-shrink: 0;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 7px;
+  background: var(--rtc-focus-deep);
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+.rtc-expression-commit:hover { background: var(--rtc-ink); }
+.rtc-expression-error { grid-column: 1 / -1; margin: 0; color: var(--rtc-danger); font-size: 13px; overflow-wrap: anywhere; }
+.rtc-interval-control input[aria-invalid="true"],
+.rtc-sum-control input[aria-invalid="true"] { border-color: var(--rtc-danger); }
+.rtc-sum-editor { display: grid; gap: 12px; padding: 10px 0; }
+.rtc-sum-target { display: flex; align-items: center; min-height: 40px; color: var(--rtc-ink); font-family: KaTeX_Main, serif; font-size: 18px; }
 
 .rtc-double-range {
   --rtc-range-start: 50%;
@@ -938,24 +1062,25 @@ body:has(.rtc-workbench) {
 }
 
 .rtc-sum-control {
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: minmax(0, 140px) auto minmax(0, 1fr);
+  align-items: end;
   gap: 8px;
-  margin: 0 80px 10px 0;
-  padding: 8px;
-  border-radius: 8px;
-  background: #f5f8f9;
 }
+.rtc-sum-control > span { padding-bottom: 10px; }
 
 .rtc-sum-control select,
 .rtc-sum-control input {
-  min-height: 34px;
+  min-height: 40px;
+  width: 100%;
+  min-width: 0;
+  padding: 0 8px;
   border: 1px solid var(--rtc-control);
   border-radius: 7px;
   background: #fff;
 }
 
-.rtc-sum-control input { width: 100px; padding: 0 8px; }
+.rtc-sum-control input { font-family: "SFMono-Regular", Consolas, monospace; font-size: 13px; }
 
 .rtc-delete-zone {
   display: flex;
@@ -1326,8 +1451,8 @@ body:has(.rtc-workbench) {
   .rtc-name-chips { grid-template-columns: repeat(5, minmax(36px, 1fr)); }
   .rtc-structure-equation { flex-wrap: wrap; }
   .rtc-type-switch--inspector { flex: 1 1 100%; }
-  .rtc-interval-control { grid-template-columns: 22px 1fr; }
-  .rtc-bound-pair { grid-column: 2; }
+  .rtc-interval-control { grid-template-columns: minmax(0, 1fr); }
+  .rtc-bound-pair { grid-column: 1; }
 }
 
 @media (max-width: 820px) {
@@ -1513,13 +1638,24 @@ body:has(.rtc-workbench) {
   .rtc-structure-equation { padding-right: 15px; padding-left: 15px; }
   .rtc-type-switch--inspector { width: 100%; }
   .rtc-constraint-pane { padding-right: 15px; padding-left: 15px; }
-  .rtc-constraint-list { padding-top: 38px; padding-right: 0; }
-  .rtc-constraint-toolbar { right: 15px; }
   .rtc-constraint-item.is-active { padding: 9px; }
 
-  .rtc-interval-control { grid-template-columns: 22px 1fr; }
+  .rtc-interval-control { grid-template-columns: minmax(0, 1fr); }
   .rtc-bound-pair { grid-column: 1 / -1; justify-content: center; }
   .rtc-bound-pair input { width: 72px; }
+  .rtc-interval-control.is-expression .rtc-bound-pair { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .rtc-interval-control.is-expression .rtc-bound-pair > span { display: none; }
+  .rtc-expression-actions { flex-wrap: wrap; }
+  .rtc-expression-actions > span { width: 100%; }
+  .rtc-expression-choices button,
+  .rtc-expression-toggle,
+  .rtc-expression-operand button,
+  .rtc-expression-commit { min-height: 44px; }
+  .rtc-expression-choices button { min-width: 44px; }
+  .rtc-expression-operand { flex-wrap: wrap; }
+  .rtc-expression-base { max-width: 100%; }
+  .rtc-sum-control { grid-template-columns: minmax(0, 1fr); }
+  .rtc-sum-control > span { display: none; }
   .rtc-charset-control { grid-template-columns: 22px 1fr; }
   .rtc-charset-custom-input,
   .rtc-charset-preview { grid-column: 2; }

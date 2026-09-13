@@ -17,6 +17,7 @@ export {
   apply_action,
   build_hotspot_action_from_draft,
   build_constraint_actions_from_draft,
+  compose_constraint_expression,
   build_replace_action_from_draft,
   canonicalize_document_for_share,
   get_hole_candidates,

@@ -128,6 +128,8 @@ export interface ProjectedConstraints {
   items: ConstraintItem[];
   drafts: DraftConstraint[];
   completed: CompletedConstraint[];
+  sum_bound_targets: ExprCandidate[];
+  expression_operations: { value: string; label: string }[];
 }
 
 export interface ConstraintItem {
@@ -141,14 +143,17 @@ export interface ConstraintItem {
   draft_index?: number;
   completed_index?: number;
   edit?: ConstraintEditProjection;
+  expression_variables: ExprCandidate[];
 }
 
 export type ConstraintEditProjection =
   | { kind: 'Range'; lower: string; upper: string; constraint_id?: string; slider: IntervalSliderProjection }
   | { kind: 'CharSet'; charset: CharSetSpec; constraint_id?: string; choices: CharSetChoiceProjection[] }
-  | { kind: 'StringLength'; min: string; max: string; constraint_id?: string; slider: IntervalSliderProjection };
+  | { kind: 'StringLength'; min: string; max: string; constraint_id?: string; slider: IntervalSliderProjection }
+  | { kind: 'SumBound'; upper: string; constraint_id?: string };
 
 export interface IntervalSliderProjection {
+  enabled: boolean;
   stops: { value: string; label: string }[];
   lower_index: number;
   upper_index: number;
@@ -238,7 +243,7 @@ const emptyProjection: FullProjection = {
   nodes: [],
   structure_lines: [],
   hotspots: [],
-  constraints: { items: [], drafts: [], completed: [] },
+  constraints: { items: [], drafts: [], completed: [], sum_bound_targets: [], expression_operations: [] },
   available_vars: [],
   completeness: { total_holes: 0, filled_slots: 0, unsatisfied_constraints: 0, is_complete: false },
   generation: {

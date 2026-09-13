@@ -58,8 +58,8 @@ export interface ConstraintActionDraft {
   charset?: CharSetSpec;
 }
 
-export function buildConstraintActionsFromDraft(draft: ConstraintActionDraft): string[] {
-  return JSON.parse(build_constraint_actions_from_draft(JSON.stringify({
+export function buildConstraintActionsFromDraft(draft: ConstraintActionDraft, document?: string): string[] {
+  const json = JSON.stringify({
     target_id: draft.targetId,
     template: draft.template,
     existing_constraint_id: draft.existingConstraintId,
@@ -67,7 +67,10 @@ export function buildConstraintActionsFromDraft(draft: ConstraintActionDraft): s
     upper: draft.upper,
     over_var: draft.overVar,
     charset: draft.charset,
-  }))) as string[];
+  });
+  return JSON.parse(document === undefined
+    ? build_constraint_actions_from_draft(json)
+    : build_constraint_actions_from_draft(json, document)) as string[];
 }
 
 export function buildReplaceActionFromDraft(
