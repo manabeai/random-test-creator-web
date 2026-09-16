@@ -23,7 +23,7 @@ export type NodeEditPhase =
 
 export const nodeEditState = signal<NodeEditPhase>({ step: 'closed' });
 export const nodeEditName = signal('');
-export const nodeEditKind = signal<'scalar' | 'array'>('scalar');
+export const nodeEditKind = signal<'scalar' | 'array' | 'matrix'>('scalar');
 export const nodeEditType = signal('number');
 export const nodeEditLength = signal('');
 

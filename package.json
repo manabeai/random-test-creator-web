@@ -13,7 +13,7 @@
     "preview": "vite preview",
     "prepare": "husky",
     "test:unit": "npm run build:wasm && vitest run",
-    "test:e2e": "playwright test --config tests/e2e/playwright.config.ts",
+    "test:e2e": "npm run build:wasm && playwright test --config tests/e2e/playwright.config.ts",
     "test:e2e:ui": "playwright test --config tests/e2e/playwright.config.ts --ui"
   },
   "dependencies": {

@@ -26,6 +26,7 @@ import {
   buildHotspotActionFromDraft,
 } from './action-builder';
 import { CountField, getCountExprValue } from './ExpressionBuilder';
+import { selectedNodeId } from './workbench-state';
 
 export function NodePopup() {
   const state = popupState.value;
@@ -112,13 +113,18 @@ function VariantFieldsPanel() {
     if (popupCommitted.value) return;
     if (!isVariantValid()) return;
     popupCommitted.value = true;
+    const before = new Set(projection.value.nodes.map(node => node.id));
     const actionJson = buildHotspotActionFromDraft(
       state.hotspot,
       'variant',
       { tag: popupVariantTag.value, name: popupName.value },
       projection.value.available_vars,
     );
-    dispatchAction(actionJson);
+    if (dispatchAction(actionJson)) {
+      selectedNodeId.value = projection.value.nodes.find(node => !before.has(node.id) && node.edit)?.id
+        ?? projection.value.nodes.find(node => node.edit)?.id
+        ?? null;
+    }
     closePopup();
   };
 
@@ -180,6 +186,7 @@ function FieldsPanel() {
     if (popupCommitted.value) return;
     if (!isValid()) return;
     popupCommitted.value = true;
+    const before = new Set(proj.nodes.map(node => node.id));
     const countExpr = needsCountExpr ? (getCountExprValue() || popupLengthVar.value) : '';
     try {
       const actionJson = buildHotspotActionFromDraft(
@@ -196,7 +203,11 @@ function FieldsPanel() {
         }),
         availableVars,
       );
-      dispatchAction(actionJson);
+      if (dispatchAction(actionJson)) {
+        selectedNodeId.value = projection.value.nodes.find(node => !before.has(node.id) && node.edit)?.id
+          ?? projection.value.nodes.find(node => node.edit)?.id
+          ?? null;
+      }
       closePopup();
     } catch (error) {
       console.error('Draft action build failed:', error);

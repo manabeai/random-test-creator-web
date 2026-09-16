@@ -16,7 +16,6 @@ vi.mock('../../src/wasm', () => ({
 }));
 
 import {
-  buildAddConstraintProperty,
   buildConstraintActionsFromDraft,
   buildHotspotActionFromDraft,
   buildRemoveConstraint,
@@ -94,12 +93,7 @@ describe('action-builder wasm bridge', () => {
     }));
   });
 
-  it('keeps simple property and delete action helpers declarative', () => {
-    expect(JSON.parse(buildAddConstraintProperty('0', 'Tree'))).toEqual({
-      action: 'AddConstraint',
-      target: '0',
-      constraint: { kind: 'Property', tag: 'Tree' },
-    });
+  it('keeps delete action helpers declarative', () => {
     expect(JSON.parse(buildRemoveConstraint('7'))).toEqual({
       action: 'RemoveConstraint',
       constraint_id: '7',

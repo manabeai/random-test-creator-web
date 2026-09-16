@@ -28,6 +28,8 @@ function handleResetDocument(): void {
 export function App() {
   const page = currentPage.value;
 
+  if (page === 'editor') return <EditorPage />;
+
   return (
     <div class="app flex h-screen flex-col bg-[#0f1115] text-slate-200 antialiased">
       <header class="header flex min-h-12 items-center justify-between border-b border-[#2a2f3a] bg-[#151922] px-4 text-sm shadow-[0_1px_0_rgba(255,255,255,0.03)]">
@@ -35,7 +37,7 @@ export function App() {
         <nav class="header-nav flex items-center gap-1.5">
           <a
             href="#/"
-            class={`nav-link rounded-md px-3 py-1.5 text-[12px] font-medium text-slate-400 transition hover:bg-[#202633] hover:text-slate-100 ${page === 'editor' ? 'active bg-[#202633] text-cyan-300 shadow-[inset_0_0_0_1px_rgba(103,232,249,0.18)]' : ''}`}
+            class="nav-link rounded-md px-3 py-1.5 text-[12px] font-medium text-slate-400 transition hover:bg-[#202633] hover:text-slate-100"
           >
             Editor
           </a>
@@ -68,7 +70,6 @@ export function App() {
         </nav>
       </header>
       <main class="main flex-1 overflow-hidden bg-[#0f1115]">
-        {page === 'editor' && <EditorPage />}
         {page === 'viewer' && <ViewerPage />}
         {page === 'preview' && <PreviewPage />}
       </main>

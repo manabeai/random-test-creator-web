@@ -11,16 +11,16 @@ test.describe('Structure node editing', () => {
 
   test('existing Scalar can be converted to Array with length variable', async () => {
     await editor.addScalar('N');
+    await editor.addScalar('M');
 
-    await editor.getStructureNodeByLabel('N').getByText('N').click();
-    await editor.page.getByTestId('node-edit-kind-select').selectOption('array');
+    await editor.getStructureNodeByLabel('M').click();
+    await editor.page.getByTestId('node-horizontal-axis').selectOption('N');
     await editor.page.getByTestId('node-edit-input').fill('A');
-    await editor.page.getByTestId('node-edit-length-var-option-N').click();
-    await editor.page.getByTestId('node-edit-confirm').click();
+    await editor.page.getByTestId('node-edit-input').press('Enter');
 
     await expect(editor.structurePane).toContainText('A');
-    await expect(editor.structurePane).not.toContainText('N');
-    await expect(editor.getDraftConstraints()).toHaveCount(1);
+    await expect(editor.structurePane).toContainText('N');
+    await expect(editor.getDraftConstraints()).toHaveCount(2);
   });
 
   test('changing ranged Int scalar to Char removes range and creates CharSet draft', async () => {
@@ -30,10 +30,10 @@ test.describe('Structure node editing', () => {
     await editor.fillBoundLiteral('upper', '10');
     await editor.confirmConstraint();
 
-    await editor.getStructureNodeByLabel('N').getByText('N').click();
+    await editor.getStructureNodeByLabel('N').click();
     await editor.page.getByTestId('node-edit-type-select').selectOption('char');
     await editor.page.getByTestId('node-edit-input').fill('c');
-    await editor.page.getByTestId('node-edit-confirm').click();
+    await editor.page.getByTestId('node-edit-input').press('Enter');
 
     await expect(editor.getCompletedConstraints()).toHaveCount(0);
     await expect(editor.page.getByTestId('constraint-item-0')).toHaveAttribute('data-constraint-status', 'draft');

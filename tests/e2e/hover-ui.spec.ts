@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { EditorPage } from './fixtures/editor-page';
 
-test.describe('PC hover interactions', () => {
+test.describe('direct workbench interactions', () => {
   let editor: EditorPage;
 
   test.beforeEach(async ({ page }) => {
@@ -9,84 +9,78 @@ test.describe('PC hover interactions', () => {
     await editor.goto();
   });
 
-  test('structure hotspot opens the node popup on hover and dismisses when pointer leaves', async ({ page }) => {
+  test('structure hotspot is deliberate: hover previews nothing and click opens the editor', async ({ page }) => {
     await page.getByTestId('insertion-hotspot-below').first().hover();
-
-    await expect(editor.nodePopup).toBeVisible();
-    await expect(page.getByTestId('popup-option-scalar')).toBeVisible();
-
-    await editor.previewPane.hover();
-
     await expect(editor.nodePopup).toHaveCount(0);
+
+    await page.getByTestId('insertion-hotspot-below').first().click();
+    await expect(editor.nodePopup).toBeVisible();
+    await expect(page.getByTestId('type-number')).toBeVisible();
   });
 
-  test('draft constraint opens its editor on hover and dismisses when pointer leaves', async ({ page }) => {
+  test('a selected variable exposes its type-specific constraint controls', async ({ page }) => {
     await editor.addScalar('N');
-
-    await page.getByTestId('draft-constraint-0').hover();
-
-    await expect(page.locator('.constraint-editor')).toBeVisible();
-    await expect(page.getByTestId('constraint-lower-input')).toBeVisible();
-
-    await editor.previewPane.hover();
-
-    await expect(page.locator('.constraint-editor')).toHaveCount(0);
+    await page.getByTestId('draft-constraint-0').click();
+    await expect(page.getByTestId('number-range-control')).toBeVisible();
+    await expect(page.getByTestId('range-lower-input')).toBeVisible();
   });
 
-  test('draft constraint editor stays open while the pointer crosses into it', async ({ page }) => {
+  test('constraint controls stay attached while the pointer crosses into them or another row', async ({ page }) => {
     await editor.addScalar('N');
     await editor.addArray('A', 'N');
 
-    const constraintRow = page.getByTestId('constraint-item-0');
-    const constraintEditor = page.locator('.constraint-editor');
-    await constraintRow.hover();
-    await expect(constraintEditor).toBeVisible();
-    await expect(constraintEditor).toContainText('Constraint for N');
+    const inspector = page.getByTestId('node-inspector');
+    const constraintSummary = page.getByTestId('draft-constraint-0');
+    await constraintSummary.click();
+    await expect(inspector).toHaveAttribute('aria-label', 'N の編集');
 
-    const rowBox = await constraintRow.boundingBox();
-    const editorBox = await constraintEditor.boundingBox();
-    expect(rowBox).not.toBeNull();
-    expect(editorBox).not.toBeNull();
-
-    const transitX = Math.max(
-      editorBox!.x + 1,
-      Math.min(rowBox!.x + rowBox!.width / 2, editorBox!.x + editorBox!.width - 1),
-    );
-    const transitY = (rowBox!.y + rowBox!.height + editorBox!.y) / 2;
-
-    await page.mouse.move(transitX, transitY);
-    await page.waitForTimeout(500);
-    await expect(constraintEditor).toBeVisible();
-    await expect(constraintEditor).toContainText('Constraint for N');
+    const summaryBox = await constraintSummary.boundingBox();
+    const lowerInput = page.getByTestId('range-lower-input');
+    const inputBox = await lowerInput.boundingBox();
+    expect(summaryBox).not.toBeNull();
+    expect(inputBox).not.toBeNull();
 
     await page.mouse.move(
-      editorBox!.x + editorBox!.width / 2,
-      editorBox!.y + editorBox!.height / 2,
+      inputBox!.x + inputBox!.width / 2,
+      (summaryBox!.y + summaryBox!.height + inputBox!.y) / 2,
+      { steps: 8 },
     );
-    await expect(constraintEditor).toBeVisible();
-    await expect(constraintEditor).toContainText('Constraint for N');
+    await page.waitForTimeout(500);
+    await expect(lowerInput).toBeVisible();
+    await expect(inspector).toHaveAttribute('aria-label', 'N の編集');
+
+    await lowerInput.hover();
+    await page.getByTestId('constraint-item-1').hover();
+    await page.waitForTimeout(500);
+    await expect(lowerInput).toBeVisible();
+    await expect(inspector).toHaveAttribute('aria-label', 'N の編集');
+
+    await lowerInput.fill('2');
+    await lowerInput.press('Enter');
+    await expect(page.getByTestId('completed-constraint-0')).toContainText('2');
   });
 
-  test('structure popup commits a scalar when the name input loses focus', async ({ page }) => {
-    await page.getByTestId('insertion-hotspot-below').first().hover();
-    await page.getByTestId('popup-option-scalar').click();
-    await page.getByTestId('name-input').fill('N');
+  test('a focused name field reveals helpers and a helper commits immediately', async ({ page }) => {
+    await page.getByTestId('insertion-hotspot-below').first().click();
+    await page.getByTestId('type-number').click();
 
-    await editor.previewPane.click();
+    const helper = page.getByTestId('name-helper-N');
+    await expect(helper).toBeHidden();
+    await page.getByTestId('name-input').focus();
+    await expect(helper).toBeVisible();
+    await helper.click();
 
     await expect(editor.nodePopup).toHaveCount(0);
-    await expect(editor.structurePane).toContainText('N');
-    await expect(page.getByTestId('confirm-button')).toHaveCount(0);
+    await expect(page.getByTestId('format-token-N')).toBeVisible();
+    await expect(page.getByTestId('node-inspector')).toHaveCount(0);
   });
 
   test('constraint editor commits a range when both bounds are filled without a confirm button', async ({ page }) => {
     await editor.addScalar('N');
-    await page.getByTestId('draft-constraint-0').hover();
+    await page.getByTestId('draft-constraint-0').click();
 
     await editor.fillBoundLiteral('lower', '1');
     await editor.fillBoundLiteral('upper', '1000');
-    await editor.previewPane.click();
-
     await expect(page.getByTestId('constraint-confirm')).toHaveCount(0);
     await expect(editor.getCompletedConstraints()).toHaveCount(1);
     await expect(editor.getTexConstraints()).toContainText('N');

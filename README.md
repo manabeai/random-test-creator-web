@@ -32,12 +32,27 @@ For frontend-only iteration without rebuilding wasm:
 npm run dev:fast
 ```
 
+## 数式による制約編集
+
+入力形式の変数を選び、値の範囲・文字列長の「数式で編集」を開くと、上下限を式で指定できます。
+`N - 1`、`(N - 1) * 2`、`2 * 10^5`、`min(N, 100)` などを直接入力するか、変数候補と演算ボタンで組み立てます。
+演算は選択中の下限または上限の式全体に適用され、「制約を適用」で上下限をまとめて確定します。
+通常の数値入力では従来どおりスライダーとフォーカスを外したときの保存が使えます。
+
+「総和を追加」から数値変数と上限を指定できます。追加済みの総和は制約行から再編集でき、変更・削除は取り消せます。
+式の解析・合成、参照候補、スコープと循環依存の判定、定数区間の検証は Rust が担当します。
+入力エラーは編集欄に表示され、確定済みの制約と生成結果を保持したまま修正できます。
+
 ## Test
 
 ```bash
 npm run test:unit
 npm run test:e2e
 ```
+
+数式のブラウザ操作は `tests/e2e/constraint-expressions.spec.ts`、解析・再投影・TeX・候補の検証は
+`cp-ast-ecosystems/crates/cp-ast-core/tests/expression_editing.rs` にあります。
+Rust 全体のテストは `cargo test --workspace --manifest-path cp-ast-ecosystems/Cargo.toml` で実行します。
 
 ## Deployment
 

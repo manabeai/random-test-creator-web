@@ -68,9 +68,10 @@ test.describe('複数テストケース: T / (N / A) x T', () => {
     await editor.clickHotspot('below');
     await editor.selectPopupOption('array');
     await editor.selectType('number');
-    await editor.inputName('A');
     await editor.selectLength('N');
+    await editor.inputName('A');
     await editor.confirm();
+    await editor.getStructureNodeByLabel('A').click();
 
     // Structure にマルチケース表示
     await expectStructureContains(editor, 'T');
@@ -97,6 +98,7 @@ test.describe('複数テストケース: T / (N / A) x T', () => {
     await editor.selectType('number');
     await editor.inputName('N');
     await editor.confirm();
+    await editor.getStructureNodeByLabel('N').click();
 
     // SumBound 追加
     await editor.addSumBound('N', '2 * 10^5');
@@ -124,9 +126,10 @@ test.describe('複数テストケース: T / (N / A) x T', () => {
     await editor.clickHotspot('below');
     await editor.selectPopupOption('array');
     await editor.selectType('number');
-    await editor.inputName('A');
     await editor.selectLength('N');
+    await editor.inputName('A');
     await editor.confirm();
+    await editor.getStructureNodeByLabel('A').click();
 
     // 制約を埋める
     // T: 1 <= T <= 3

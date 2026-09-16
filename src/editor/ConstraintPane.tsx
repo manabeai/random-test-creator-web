@@ -3,11 +3,9 @@
  *
  * Supports:
  * - Draft constraint editing (Range, CharSet)
- * - Property shortcut
  * - SumBound shortcut
  * - Constraint deletion and re-editing
  */
-import { signal } from '@preact/signals';
 import { useEffect, useRef } from 'preact/hooks';
 import { projection, dispatchAction, type CharSetSpec } from './editor-state';
 import {
@@ -29,7 +27,6 @@ import {
 } from './popup-state';
 import {
   buildConstraintActionsFromDraft,
-  buildAddConstraintProperty,
   buildRemoveConstraint,
 } from './action-builder';
 import { ConstraintEditor } from './ConstraintEditor';
@@ -37,7 +34,6 @@ import { ValueInput, isValueInputOpen } from './ValueInput';
 import { FunctionOpsPanel, FunctionOperandInput } from './ExpressionBuilder';
 import { constraintFolded, toggleConstraintFold } from './fold-state';
 
-const showPropertyOptions = signal(false);
 
 export function ConstraintPane() {
   const proj = projection.value;
@@ -59,14 +55,6 @@ export function ConstraintPane() {
       actions.forEach(dispatchAction);
       closeConstraintEditor();
     }
-  };
-
-  const handlePropertySelect = (tag: string) => {
-    // Property applies to the root structure node
-    const targetId = proj.nodes[0]?.id ?? '0';
-    const actionJson = buildAddConstraintProperty(targetId, tag);
-    dispatchAction(actionJson);
-    showPropertyOptions.value = false;
   };
 
   const handleSumBoundConfirm = () => {
@@ -123,7 +111,6 @@ export function ConstraintPane() {
   const dismissEditor = () => {
     commitOpenEditor();
     closeConstraintEditor();
-    showPropertyOptions.value = false;
   };
 
   const clearHoverDismissTimer = () => {
@@ -166,19 +153,8 @@ export function ConstraintPane() {
           <div class="constraint-shortcuts flex gap-1.5">
             <button
               class="shortcut-btn rounded-md border border-[#384152] bg-transparent px-2.5 py-1 text-[12px] font-medium text-slate-400 transition hover:border-cyan-300 hover:text-cyan-200"
-              data-testid="property-shortcut"
-              onClick={() => {
-                closeConstraintEditor();
-                showPropertyOptions.value = !showPropertyOptions.value;
-              }}
-            >
-              Property
-            </button>
-            <button
-              class="shortcut-btn rounded-md border border-[#384152] bg-transparent px-2.5 py-1 text-[12px] font-medium text-slate-400 transition hover:border-cyan-300 hover:text-cyan-200"
               data-testid="sumbound-shortcut"
               onClick={() => {
-                showPropertyOptions.value = false;
                 openSumBound();
               }}
             >
@@ -191,11 +167,6 @@ export function ConstraintPane() {
         </div>
       </div>
       <div class={`pane-content-scroll flex-1 overflow-auto p-3 max-md:max-h-[2000px] max-md:overflow-hidden max-md:transition-[max-height,opacity] max-md:duration-300 ${folded ? 'max-md:max-h-0 max-md:py-0 max-md:opacity-0' : 'max-md:opacity-100'}`}>
-        {/* Property options (signal-driven visibility) */}
-        {showPropertyOptions.value && (
-          <PropertyOptions onSelect={handlePropertySelect} />
-        )}
-
         {/* Constraint rows keep projection order, regardless of draft/completed status. */}
         {proj.constraints.items.map(item => {
           const isActiveItem = item.edit !== undefined
@@ -220,7 +191,6 @@ export function ConstraintPane() {
                 data-constraint-status={item.status}
                 onClick={() => {
                   if (!item.edit) return;
-                  showPropertyOptions.value = false;
                   openConstraintEditor(item.target_id, item.target_name, item.edit.kind, item.edit);
                 }}
                 onMouseEnter={() => {
@@ -234,7 +204,6 @@ export function ConstraintPane() {
                         : current.template !== item.edit.kind));
                   if (anotherEditorIsOpen) return;
                   clearHoverDismissTimer();
-                  showPropertyOptions.value = false;
                   openConstraintEditor(item.target_id, item.target_name, item.edit.kind, item.edit);
                 }}
               >
@@ -289,34 +258,6 @@ export function ConstraintPane() {
           />
         )}
       </div>
-    </div>
-  );
-}
-
-function PropertyOptions({ onSelect }: { onSelect: (tag: string) => void }) {
-  return (
-    <div class="property-options visible mb-2 flex flex-wrap gap-1.5 p-2">
-      <button
-        class="property-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200"
-        data-testid="property-option-tree"
-        onClick={() => onSelect('Tree')}
-      >
-        Tree
-      </button>
-      <button
-        class="property-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200"
-        data-testid="property-option-connected"
-        onClick={() => onSelect('Connected')}
-      >
-        Connected
-      </button>
-      <button
-        class="property-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200"
-        data-testid="property-option-simple"
-        onClick={() => onSelect('Simple')}
-      >
-        Simple
-      </button>
     </div>
   );
 }
