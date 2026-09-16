@@ -26,11 +26,11 @@ interface FunctionOpsPanelProps {
 
 export function FunctionOpsPanel({ onSelectOp }: FunctionOpsPanelProps) {
   return (
-    <div class="fn-ops-panel flex flex-wrap gap-1.5">
+    <div class="fn-ops-panel flex flex-wrap gap:6px">
       {FUNCTION_OPS.map(op => (
         <button
           key={op.id}
-          class="fn-op-btn rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200"
+          class="fn-op-btn r:6px b:1px b:#384152 bg:#18202b px:10px py:4px text-left font-size:12px fg:legacy-slate-200 legacy-transition b:legacy-cyan-300:hover fg:legacy-cyan-200:hover"
           data-testid={`function-op-${op.id}`}
           onClick={() => onSelectOp(op.id)}
         >
@@ -48,7 +48,7 @@ interface FunctionOperandInputProps {
 export function FunctionOperandInput({ onConfirm }: FunctionOperandInputProps) {
   return (
     <input
-      class="fn-operand-input w-24 rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 font-mono text-[13px] text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
+      class="fn-operand-input w:96px r:6px b:1px b:#384152 bg:#18202b px:8px py:4px font:mono font-size:13px fg:legacy-slate-100 outline:none legacy-transition fg:legacy-slate-600::placeholder b:legacy-cyan-300:focus legacy-focus-ring "
       data-testid="function-operand-input"
       type="text"
       placeholder="operand"
@@ -82,15 +82,15 @@ export function CountField({ availableVars }: CountFieldProps) {
   const countVars = availableVars.filter(v => v.value_type === 'number' && v.node_kind === 'scalar');
 
   return (
-    <div class="count-field-container flex flex-1 flex-col gap-1.5">
+    <div class="count-field-container flex flex:1 flex-col gap:6px">
       <div
-        class="count-field flex min-h-8 cursor-pointer items-center rounded-md border border-[#384152] bg-[#18202b] px-2 py-1"
+        class="count-field flex min-h:32px cursor:pointer items-center r:6px b:1px b:#384152 bg:#18202b px:8px py:4px"
         data-testid="count-field"
       >
-        {state.step === 'idle' && <span class="count-placeholder text-[12px] text-slate-600">select count...</span>}
+        {state.step === 'idle' && <span class="count-placeholder font-size:12px fg:legacy-slate-600">select count...</span>}
         {(state.step === 'built' || state.step === 'fn-select' || state.step === 'fn-operand') && (
           <span
-            class="expression-element cursor-pointer rounded px-1 font-mono text-[13px] text-cyan-300 transition hover:bg-[#202633]"
+            class="expression-element cursor:pointer r:4px px:4px font:mono font-size:13px fg:legacy-cyan-300 legacy-transition bg:#202633:hover"
             data-testid={`expression-element-${state.varName}`}
             onClick={(e) => {
               e.stopPropagation();
@@ -103,12 +103,12 @@ export function CountField({ availableVars }: CountFieldProps) {
           </span>
         )}
       </div>
-      <div class="length-var-options flex flex-wrap gap-1.5">
+      <div class="length-var-options flex flex-wrap gap:6px">
         {countVars.map(v => (
           <button
             key={v.name}
             type="button"
-            class={`length-var-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200 ${value === v.name ? 'active selected border-cyan-300 bg-cyan-300 font-semibold text-[#0f1115]' : ''}`}
+            class={`length-var-option r:6px b:1px b:#384152 bg:#18202b px:10px py:4px text-left font-size:12px fg:legacy-slate-200 legacy-transition b:legacy-cyan-300:hover fg:legacy-cyan-200:hover ${value === v.name ? 'active selected b:legacy-cyan-300 bg:legacy-cyan-300 font-weight:600 fg:#0f1115' : ''}`}
             data-testid={`count-var-option-${v.name}`}
             onClick={() => selectCountVar(v)}
           >
@@ -117,7 +117,7 @@ export function CountField({ availableVars }: CountFieldProps) {
         ))}
       </div>
       <input
-        class="length-expression-input rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 font-mono text-[13px] text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
+        class="length-expression-input r:6px b:1px b:#384152 bg:#18202b px:8px py:4px font:mono font-size:13px fg:legacy-slate-100 outline:none legacy-transition fg:legacy-slate-600::placeholder b:legacy-cyan-300:focus legacy-focus-ring "
         data-testid="count-expression-input"
         type="text"
         placeholder="count expression"

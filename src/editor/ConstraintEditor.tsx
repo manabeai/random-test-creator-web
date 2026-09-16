@@ -57,14 +57,14 @@ export function ConstraintEditor({ targetId, targetName, onConfirm }: Constraint
   }, [bothFilled, lower, upper, onConfirm]);
 
   return (
-    <div class="constraint-editor rounded-lg border border-[#2a2f3a] bg-[#151922] p-3 shadow-xl shadow-black/25">
-      <div class="constraint-editor-label mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+    <div class="constraint-editor r:8px b:1px b:#2a2f3a bg:#151922 p:12px shadow:0|20px|25px|-5px|rgb(0|0|0/0.25),0|8px|10px|-6px|rgb(0|0|0/0.25) ">
+      <div class="constraint-editor-label mb:8px font-size:11px font-weight:600 uppercase letter-spacing:0.12em fg:legacy-slate-500">
         Constraint for <strong>{targetName}</strong>
       </div>
 
-      <div class="constraint-bound-row flex flex-wrap items-center gap-2">
+      <div class="constraint-bound-row flex flex-wrap items-center gap:8px">
         <BoundArea label="Lower" target="lower" value={lower} excludeNodeId={targetId} />
-        <span class="constraint-sep whitespace-nowrap text-[13px] text-slate-500">≤ {targetName} ≤</span>
+        <span class="constraint-sep white-space:nowrap font-size:13px fg:legacy-slate-500">≤ {targetName} ≤</span>
         <BoundArea label="Upper" target="upper" value={upper} excludeNodeId={targetId} />
       </div>
 
@@ -77,9 +77,9 @@ function BoundArea({ label, target, value, excludeNodeId }: { label: string; tar
   const isOpen = isValueInputOpen(target);
 
   return (
-    <div class="bound-area relative min-w-20 flex-1">
+    <div class="bound-area rel min-w:80px flex:1">
       <div
-        class="bound-input flex min-h-8 cursor-pointer items-center rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 transition hover:border-cyan-300/70"
+        class="bound-input flex min-h:32px cursor:pointer items-center r:6px b:1px b:#384152 bg:#18202b px:8px py:4px legacy-transition b:legacy-cyan-300/0.7:hover"
         data-testid={`constraint-${target}-input`}
         onClick={() => {
           if (!value) openValueInput(target);
@@ -87,7 +87,7 @@ function BoundArea({ label, target, value, excludeNodeId }: { label: string; tar
       >
         {value ? (
           <span
-            class="bound-expression font-mono text-[13px] text-cyan-300"
+            class="bound-expression font:mono font-size:13px fg:legacy-cyan-300"
             data-testid={`constraint-${target}-expression`}
             onClick={(e) => {
               e.stopPropagation();
@@ -97,7 +97,7 @@ function BoundArea({ label, target, value, excludeNodeId }: { label: string; tar
             {value}
           </span>
         ) : (
-          <span class="bound-placeholder text-[12px] text-slate-600">{label}...</span>
+          <span class="bound-placeholder font-size:12px fg:legacy-slate-600">{label}...</span>
         )}
       </div>
       {isOpen && <ValueInput target={target} excludeNodeId={excludeNodeId} />}
@@ -110,7 +110,7 @@ function BoundExpressionUI() {
   if (state.step === 'idle') return null;
 
   return (
-    <div class="bound-expr-ui mt-2">
+    <div class="bound-expr-ui mt:8px">
       {state.step === 'fn-select' && (
         <FunctionOpsPanel onSelectOp={selectBoundFnOp} />
       )}

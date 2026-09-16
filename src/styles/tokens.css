@@ -1,0 +1,33 @@
+/* Incumbent workbench and legacy-route palettes. No framework palette substitution. */
+@theme static {
+  --color-rtc-paper: #f7f8fa;
+  --color-rtc-paper-raised: #fff;
+  --color-rtc-canvas: #fbfcfd;
+  --color-rtc-output: #f1f4f5;
+  --color-rtc-ink: #101827;
+  --color-rtc-body: #344252;
+  --color-rtc-muted: #526273;
+  --color-rtc-control: #82939f;
+  --color-rtc-rule: #dce3e8;
+  --color-rtc-rule-soft: #e8edf1;
+  --color-rtc-focus: #006a7a;
+  --color-rtc-focus-deep: #005565;
+  --color-rtc-focus-wash: #e2f0f2;
+  --color-rtc-danger: #b92f40;
+  --color-rtc-danger-wash: #fff0f1;
+  --color-rtc-success: #137a54;
+
+  --color-legacy-slate-100: oklch(96.8% .007 247.896);
+  --color-legacy-slate-200: oklch(92.9% .013 255.508);
+  --color-legacy-slate-300: oklch(86.9% .022 252.894);
+  --color-legacy-slate-400: oklch(70.4% .04 256.788);
+  --color-legacy-slate-500: oklch(55.4% .046 257.417);
+  --color-legacy-slate-600: oklch(44.6% .043 257.281);
+  --color-legacy-cyan-200: oklch(91.7% .08 205.041);
+  --color-legacy-cyan-300: oklch(86.5% .127 207.078);
+  --color-legacy-sky-300: oklch(82.8% .111 230.318);
+  --color-legacy-rose-300: oklch(81% .117 11.638);
+
+  --font-family-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+}

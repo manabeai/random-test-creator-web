@@ -1,9 +1,9 @@
 import { defineConfig } from 'vite';
 import preact from '@preact/preset-vite';
-import tailwindcss from '@tailwindcss/vite';
+import masterCSS from '@master/css.vite';
 
 export default defineConfig({
-  plugins: [tailwindcss(), preact()],
+  plugins: [masterCSS({ mode: 'static', injectRuntime: false }), preact()],
   root: '.',
   base: '/',
   build: {

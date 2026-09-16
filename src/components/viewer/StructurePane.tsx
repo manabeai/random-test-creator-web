@@ -2,11 +2,11 @@ import { structureText, structureAstMode } from '../../state';
 
 export function StructurePane() {
   return (
-    <div class="pane flex min-w-0 flex-col overflow-hidden bg-[#0f1115]">
-      <div class="pane-header flex min-h-11 items-center justify-between border-b border-[#2a2f3a] bg-[#151922] px-3">
-        <span class="pane-title text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Input Format</span>
+    <div class="pane flex min-w:0 flex-col overflow:hidden bg:#0f1115">
+      <div class="pane-header flex min-h:44px items-center justify-between bb:1px b:#2a2f3a bg:#151922 px:12px">
+        <span class="pane-title font-size:11px font-weight:600 uppercase letter-spacing:0.16em fg:legacy-slate-400">Input Format</span>
         <button
-          class={`toggle-btn rounded-md border border-[#384152] bg-transparent px-2.5 py-1 text-[12px] font-medium text-slate-400 transition hover:border-cyan-300 hover:text-cyan-200 ${structureAstMode.value ? 'active border-cyan-300 bg-cyan-300 text-[#0f1115]' : ''}`}
+          class={`toggle-btn r:6px b:1px b:#384152 bg:transparent px:10px py:4px font-size:12px font-weight:500 fg:legacy-slate-400 legacy-transition b:legacy-cyan-300:hover fg:legacy-cyan-200:hover ${structureAstMode.value ? 'active b:legacy-cyan-300 bg:legacy-cyan-300 fg:#0f1115' : ''}`}
           onClick={() => {
             structureAstMode.value = !structureAstMode.value;
           }}
@@ -14,7 +14,7 @@ export function StructurePane() {
           AST
         </button>
       </div>
-      <pre class="pane-content flex-1 overflow-auto whitespace-pre-wrap break-words p-3 font-mono text-[13px] leading-6 text-slate-200">{structureText.value}</pre>
+      <pre class="pane-content flex:1 overflow:auto white-space:pre-wrap overflow-wrap:break-word p:12px font:mono font-size:13px line-height:24px fg:legacy-slate-200">{structureText.value}</pre>
     </div>
   );
 }
