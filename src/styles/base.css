@@ -1,0 +1,46 @@
+/* Keep the existing document metrics when replacing the framework reset.
+   Loaded after the generated Master CSS base; components/utilities still win. */
+@layer base {
+  *, ::before, ::after {
+    margin: 0;
+    padding: 0;
+    border-color: currentColor;
+    text-rendering: auto;
+  }
+
+  html, body {
+    height: auto;
+    line-height: 1.5;
+    tab-size: 4;
+  }
+
+  body {
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+  }
+
+  button, input, optgroup, select, textarea {
+    border-radius: 0;
+    opacity: 1;
+  }
+
+  button, input:where([type='button'], [type='reset'], [type='submit']) {
+    appearance: button;
+  }
+
+  input::placeholder, textarea::placeholder {
+    opacity: 1;
+    color: color-mix(in oklab, currentColor 50%, transparent);
+  }
+
+  [role='button'], summary, button, [type='button'] {
+    -webkit-user-select: auto;
+    user-select: auto;
+  }
+
+  img, svg, video, canvas, audio, iframe, embed, object {
+    vertical-align: middle;
+  }
+
+  svg, canvas, audio, iframe, embed, object { max-width: none; }
+}

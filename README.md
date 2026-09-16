@@ -32,6 +32,41 @@ For frontend-only iteration without rebuilding wasm:
 npm run dev:fast
 ```
 
+## Styling
+
+Master CSS **2.0.0-rc.88** is pinned with its Vite plugin and compiler. The plugin uses
+`mode: 'static'` with no browser CSS runtime. Vite 6 is the minimum supported major
+for this integration. Tailwind is no longer used.
+
+- `src/index.css` is the generated stylesheet entry. Source scanning is scoped to
+  application TS/TSX and `index.html`.
+- `src/styles/tokens.css` owns the existing workbench palette (`rtc-*`) and the
+  separate Viewer/Preview palette (`legacy-*`). For example, `bg:rtc-focus` and
+  `fg:legacy-slate-200` resolve through the Master CSS theme.
+- JSX uses complete Master CSS class strings, e.g. `flex gap:8px p:12px` or
+  `b:legacy-cyan-300:hover`. Conditional styles must select complete strings;
+  do not concatenate utility fragments.
+- `src/editor/workbench.css` uses `@reference` and rule-local `@compose` to retain
+  the notation editor's selectors, specificity and responsive rules. Complex
+  notation, native range controls, and dynamic geometry remain native declarations
+  or CSS variables. Native rules are preserved because some state classes and
+  KaTeX descendants are generated dynamically.
+- Keep a rule's composition and native declarations together. In this pinned
+  compiler, standalone native rules precede composed rules; responsive overrides
+  therefore also use `@compose`. Put longhands such as `border-bottom` after a
+  composed `border:0` reset. Use `flex-wrap`, not `flex-wrap:wrap` (a selector suffix).
+- `src/styles/base.css` retains existing reset metrics. KaTeX's vendor stylesheet
+  is imported separately from the Master entry so source pruning cannot remove
+  dynamically generated math classes.
+
+Compiler contracts are covered by `tests/unit/styles.test.ts`; cross-route,
+breakpoint, focus and notation contracts by `tests/e2e/style-contract.spec.ts`.
+CI runs the full E2E suite against the production build to catch static extraction
+regressions. Locally run `npm run test:e2e:production` for the same check.
+
+See the [Master CSS rendering modes](https://rc.css.master.co/guide/rendering-modes)
+and [directive reference](https://rc.css.master.co/guide/directives).
+
 ## 数式による制約編集
 
 入力形式の変数を選び、値の範囲・文字列長の「数式で編集」を開くと、上下限を式で指定できます。

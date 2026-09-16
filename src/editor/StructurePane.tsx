@@ -100,19 +100,19 @@ export function StructurePane() {
 
   return (
     <div
-      class={`pane flex min-w-0 flex-col overflow-hidden bg-[#0f1115] ${folded ? 'folded' : ''} max-md:flex-none max-md:overflow-visible`}
+      class={`pane flex min-w:0 flex-col overflow:hidden bg:#0f1115 ${folded ? 'folded' : ''} flex:none@<768px overflow:visible@<768px`}
       data-testid="structure-pane"
       onMouseLeave={closePopup}
     >
-      <div class="pane-header flex min-h-11 items-center justify-between border-b border-[#2a2f3a] bg-[#151922] px-3">
-        <span class="pane-title text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Structure</span>
-        <button class="fold-toggle hidden rounded-md border border-[#384152] bg-transparent px-2.5 py-1 text-[12px] font-medium text-slate-400 transition hover:border-cyan-300 hover:text-cyan-200 max-md:inline-flex" onClick={toggleStructureFold} aria-label={folded ? 'Expand' : 'Collapse'}>
+      <div class="pane-header flex min-h:44px items-center justify-between bb:1px b:#2a2f3a bg:#151922 px:12px">
+        <span class="pane-title font-size:11px font-weight:600 uppercase letter-spacing:0.16em fg:legacy-slate-400">Structure</span>
+        <button class="fold-toggle hide r:6px b:1px b:#384152 bg:transparent px:10px py:4px font-size:12px font-weight:500 fg:legacy-slate-400 legacy-transition b:legacy-cyan-300:hover fg:legacy-cyan-200:hover inline-flex@<768px" onClick={toggleStructureFold} aria-label={folded ? 'Expand' : 'Collapse'}>
           {folded ? '▶' : '▼'}
         </button>
       </div>
-      <div class={`pane-content-scroll flex-1 overflow-auto p-3 max-md:max-h-[2000px] max-md:overflow-hidden max-md:transition-[max-height,opacity] max-md:duration-300 ${folded ? 'max-md:max-h-0 max-md:py-0 max-md:opacity-0' : 'max-md:opacity-100'}`}>
+      <div class={`pane-content-scroll flex:1 overflow:auto p:12px max-h:2000px@<768px overflow:hidden@<768px transition-property:max-height,opacity@<768px transition-duration:300ms@<768px ${folded ? 'max-h:0px@<768px py:0px@<768px opacity:0@<768px' : 'opacity:1@<768px'}`}>
         {proj.nodes.length === 0 && (
-          <div class="structure-empty p-4 text-center">
+          <div class="structure-empty p:16px text-center">
             {proj.hotspots.filter(h => h.direction === 'below').map(h => (
               <HotspotButton key={`below-${h.parent_id}`} hotspot={h} />
             ))}
@@ -123,7 +123,7 @@ export function StructurePane() {
             return (
               <div
                 key={item.line.nodes.map(node => node.id).join('-')}
-                class="structure-line flex min-h-7 items-center gap-2 py-1 pr-2"
+                class="structure-line flex min-h:28px items-center gap:8px py:4px pr:8px"
                 style={{ paddingLeft: `${item.line.depth * 1.2}rem` }}
               >
                 {item.line.nodes.map(node => (
@@ -137,13 +137,13 @@ export function StructurePane() {
             );
           }
           return (
-            <div key={`below-${item.hotspot.parent_id}`} class="structure-node flex min-h-7 items-center gap-2" style={{ paddingLeft: `${item.depth * 1.2}rem` }}>
+            <div key={`below-${item.hotspot.parent_id}`} class="structure-node flex min-h:28px items-center gap:8px" style={{ paddingLeft: `${item.depth * 1.2}rem` }}>
               <HotspotButton hotspot={item.hotspot} />
             </div>
           );
         })}
         {proj.nodes.length > 0 && orphanBelowHotspots.map(h => (
-          <div key={`orphan-below-${h.parent_id}`} class="structure-node flex min-h-7 items-center gap-2">
+          <div key={`orphan-below-${h.parent_id}`} class="structure-node flex min-h:28px items-center gap:8px">
             <HotspotButton hotspot={h} />
           </div>
         ))}
@@ -160,7 +160,7 @@ function StructureNodeView({ node, hotspots }: { node: ProjectedNode; hotspots: 
 
   return (
     <div
-      class="structure-node flex min-h-7 items-center gap-2"
+      class="structure-node flex min-h:28px items-center gap:8px"
       data-testid={`structure-node-${node.id}`}
       data-node-id={node.id}
       data-node-label={node.label}
@@ -172,7 +172,7 @@ function StructureNodeView({ node, hotspots }: { node: ProjectedNode; hotspots: 
         />
       ) : (
         <span
-          class={`node-label font-mono text-[13px] text-slate-100 ${node.is_hole ? 'node-hole italic text-slate-500' : 'node-editable cursor-pointer rounded px-1 transition hover:bg-[#202633] hover:text-cyan-200'}`}
+          class={`node-label font:mono font-size:13px fg:legacy-slate-100 ${node.is_hole ? 'node-hole italic fg:legacy-slate-500' : 'node-editable cursor:pointer r:4px px:4px legacy-transition bg:#202633:hover fg:legacy-cyan-200:hover'}`}
           onClick={() => {
             if (node.edit) {
               openNodeEdit(node);
@@ -209,12 +209,12 @@ function NodeInlineEdit({ nodeId }: { nodeId: string; currentLabel: string }) {
   };
   
   return (
-    <span class="node-inline-edit node-popup inline-flex items-center rounded-lg border border-[#2a2f3a] bg-[#151922] p-3 shadow-2xl shadow-black/40">
-      <span class="popup-fields flex flex-col gap-2">
-        <span class="popup-field flex items-center gap-2">
-          <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Kind</label>
+    <span class="node-inline-edit node-popup inline-flex items-center r:8px b:1px b:#2a2f3a bg:#151922 p:12px shadow:0|25px|50px|-12px|rgb(0|0|0/0.4) ">
+      <span class="popup-fields flex flex-col gap:8px">
+        <span class="popup-field flex items-center gap:8px">
+          <label class="min-w:64px font-size:11px font-weight:600 uppercase letter-spacing:0.12em fg:legacy-slate-500">Kind</label>
           <select
-            class="node-edit-kind-select rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 text-[13px] text-slate-100 outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
+            class="node-edit-kind-select r:6px b:1px b:#384152 bg:#18202b px:8px py:4px font-size:13px fg:legacy-slate-100 outline:none legacy-transition b:legacy-cyan-300:focus legacy-focus-ring "
             data-testid="node-edit-kind-select"
             value={kind}
             onChange={(e) => { nodeEditKind.value = (e.target as HTMLSelectElement).value as 'scalar' | 'array'; }}
@@ -224,10 +224,10 @@ function NodeInlineEdit({ nodeId }: { nodeId: string; currentLabel: string }) {
             ))}
           </select>
         </span>
-        <span class="popup-field flex items-center gap-2">
-          <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Type</label>
+        <span class="popup-field flex items-center gap:8px">
+          <label class="min-w:64px font-size:11px font-weight:600 uppercase letter-spacing:0.12em fg:legacy-slate-500">Type</label>
           <select
-            class="node-edit-type-select rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 text-[13px] text-slate-100 outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
+            class="node-edit-type-select r:6px b:1px b:#384152 bg:#18202b px:8px py:4px font-size:13px fg:legacy-slate-100 outline:none legacy-transition b:legacy-cyan-300:focus legacy-focus-ring "
             data-testid="node-edit-type-select"
             value={nodeEditType.value}
             onChange={(e) => { nodeEditType.value = (e.target as HTMLSelectElement).value; }}
@@ -239,11 +239,11 @@ function NodeInlineEdit({ nodeId }: { nodeId: string; currentLabel: string }) {
             ))}
           </select>
         </span>
-        <span class="popup-field flex items-center gap-2">
-          <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Name</label>
+        <span class="popup-field flex items-center gap:8px">
+          <label class="min-w:64px font-size:11px font-weight:600 uppercase letter-spacing:0.12em fg:legacy-slate-500">Name</label>
           <input
             type="text"
-            class="node-edit-input w-24 rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 font-mono text-[13px] text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
+            class="node-edit-input w:96px r:6px b:1px b:#384152 bg:#18202b px:8px py:4px font:mono font-size:13px fg:legacy-slate-100 outline:none legacy-transition fg:legacy-slate-600::placeholder b:legacy-cyan-300:focus legacy-focus-ring "
             data-testid="node-edit-input"
             value={name}
             onInput={(e) => { nodeEditName.value = (e.target as HTMLInputElement).value; }}
@@ -255,12 +255,12 @@ function NodeInlineEdit({ nodeId }: { nodeId: string; currentLabel: string }) {
           />
         </span>
       {kind === 'array' && (
-        <span class="popup-field node-edit-length flex items-center gap-2">
-          <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Length</label>
+        <span class="popup-field node-edit-length flex items-center gap:8px">
+          <label class="min-w:64px font-size:11px font-weight:600 uppercase letter-spacing:0.12em fg:legacy-slate-500">Length</label>
           {lengthVars.map(v => (
             <button
               key={v.node_id}
-              class={`length-var-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200 ${length === v.name ? 'active selected border-cyan-300 bg-cyan-300 font-semibold text-[#0f1115]' : ''}`}
+              class={`length-var-option r:6px b:1px b:#384152 bg:#18202b px:10px py:4px text-left font-size:12px fg:legacy-slate-200 legacy-transition b:legacy-cyan-300:hover fg:legacy-cyan-200:hover ${length === v.name ? 'active selected b:legacy-cyan-300 bg:legacy-cyan-300 font-weight:600 fg:#0f1115' : ''}`}
               data-testid={`node-edit-length-var-option-${v.name}`}
               onClick={() => { nodeEditLength.value = v.name; }}
               type="button"
@@ -269,7 +269,7 @@ function NodeInlineEdit({ nodeId }: { nodeId: string; currentLabel: string }) {
             </button>
           ))}
           <input
-            class="length-expression-input rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 font-mono text-[13px] text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
+            class="length-expression-input r:6px b:1px b:#384152 bg:#18202b px:8px py:4px font:mono font-size:13px fg:legacy-slate-100 outline:none legacy-transition fg:legacy-slate-600::placeholder b:legacy-cyan-300:focus legacy-focus-ring "
             data-testid="node-edit-length-input"
             value={length}
             placeholder="length"
@@ -278,7 +278,7 @@ function NodeInlineEdit({ nodeId }: { nodeId: string; currentLabel: string }) {
         </span>
       )}
       <button
-        class="popup-confirm node-edit-confirm rounded-md border border-cyan-300 bg-cyan-300 px-3 py-1.5 text-[12px] font-semibold text-[#0f1115] transition hover:bg-sky-300 disabled:cursor-not-allowed disabled:border-[#384152] disabled:bg-[#202633] disabled:text-slate-500"
+        class="popup-confirm node-edit-confirm r:6px b:1px b:legacy-cyan-300 bg:legacy-cyan-300 px:12px py:6px font-size:12px font-weight:600 fg:#0f1115 legacy-transition bg:legacy-sky-300:hover cursor:not-allowed:disabled b:#384152:disabled bg:#202633:disabled fg:legacy-slate-500:disabled"
         data-testid="node-edit-confirm"
         disabled={!name.trim() || (kind === 'array' && !length.trim())}
         onClick={handleConfirm}
@@ -286,7 +286,7 @@ function NodeInlineEdit({ nodeId }: { nodeId: string; currentLabel: string }) {
       >
         Confirm
       </button>
-      <button class="node-edit-cancel rounded-md border border-[#384152] bg-transparent px-2.5 py-1 text-[12px] font-medium text-slate-400 transition hover:border-cyan-300 hover:text-cyan-200" onClick={closeNodeEdit} type="button">Cancel</button>
+      <button class="node-edit-cancel r:6px b:1px b:#384152 bg:transparent px:10px py:4px font-size:12px font-weight:500 fg:legacy-slate-400 legacy-transition b:legacy-cyan-300:hover fg:legacy-cyan-200:hover" onClick={closeNodeEdit} type="button">Cancel</button>
       </span>
     </span>
   );
@@ -295,7 +295,7 @@ function NodeInlineEdit({ nodeId }: { nodeId: string; currentLabel: string }) {
 function HotspotButton({ hotspot }: { hotspot: Hotspot }) {
   return (
     <button
-      class={`hotspot-btn hotspot-${hotspot.direction} rounded-md border border-dashed border-cyan-300/80 px-1.5 py-0.5 font-mono text-[11px] text-cyan-300 transition hover:bg-cyan-300 hover:text-[#0f1115]`}
+      class={`hotspot-btn hotspot-${hotspot.direction} r:6px b:1px border-style:dashed b:legacy-cyan-300/0.8 px:6px py:2px font:mono font-size:11px fg:legacy-cyan-300 legacy-transition bg:legacy-cyan-300:hover fg:#0f1115:hover`}
       data-testid={`insertion-hotspot-${hotspot.direction}`}
       data-parent-id={hotspot.parent_id}
       data-hotspot-direction={hotspot.direction}

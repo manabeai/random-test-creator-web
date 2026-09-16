@@ -5,6 +5,9 @@ import { initEditor, setDocumentJson } from './editor/editor-state';
 import { App } from './app';
 import { decodeShareState } from './share-state';
 import './index.css';
+import './styles/base.css';
+// KaTeX creates class names at runtime. Keep its vendor CSS outside source pruning.
+import 'katex/dist/katex.min.css';
 
 async function restoreStateFromUrl(): Promise<boolean> {
   const params = new URLSearchParams(window.location.search);
@@ -22,7 +25,7 @@ async function restoreStateFromUrl(): Promise<boolean> {
 }
 
 async function main() {
-  document.body.className = 'bg-[#0f1115] text-slate-200';
+document.body.className = 'bg:#0f1115 fg:legacy-slate-200';
   await initWasm();
   initEditor();
   if (!await restoreStateFromUrl()) {

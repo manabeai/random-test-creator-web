@@ -1,2 +1,33 @@
-@import "tailwindcss";
-@import "katex/dist/katex.min.css";
+@import '@master/css';
+@import './styles/tokens.css';
+
+/* Only application sources contribute utilities, never tests, docs or the Rust submodule. */
+@source './**/*.{ts,tsx}';
+@source '../index.html';
+
+@utilities {
+  antialiased {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  legacy-transition {
+    transition-property: color, background-color, border-color, outline-color, box-shadow, transform, translate, scale, rotate, opacity, filter;
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(.4, 0, .2, 1);
+  }
+
+  legacy-focus-ring {
+    &:focus {
+      box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-legacy-cyan-300) 15%, transparent);
+    }
+  }
+
+  legacy-selection-ring {
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-legacy-cyan-300) 15%, transparent);
+  }
+
+  legacy-group-reveal {
+    .group:hover & { opacity: 1; }
+  }
+}

@@ -38,9 +38,9 @@ export function ValueInput({ target, excludeNodeId }: ValueInputProps) {
   };
 
   return (
-    <div class="value-input-popup mt-1.5 rounded-lg border border-[#2a2f3a] bg-[#151922] p-2 shadow-xl shadow-black/30">
+    <div class="value-input-popup mt:6px r:8px b:1px b:#2a2f3a bg:#151922 p:8px shadow:0|20px|25px|-5px|rgb(0|0|0/0.3),0|8px|10px|-6px|rgb(0|0|0/0.3) ">
       <input
-        class="value-literal-input mb-2 w-full rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 font-mono text-[13px] text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
+        class="value-literal-input mb:8px w:100% r:6px b:1px b:#384152 bg:#18202b px:8px py:4px font:mono font-size:13px fg:legacy-slate-100 outline:none legacy-transition fg:legacy-slate-600::placeholder b:legacy-cyan-300:focus legacy-focus-ring "
         data-testid="constraint-value-literal"
         type="text"
         placeholder="integer"
@@ -56,11 +56,11 @@ export function ValueInput({ target, excludeNodeId }: ValueInputProps) {
           }
         }}
       />
-      <div class="value-var-options flex flex-wrap gap-1.5">
+      <div class="value-var-options flex flex-wrap gap:6px">
         {filteredVars.map(v => (
           <button
             key={v.name}
-            class="value-var-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200"
+            class="value-var-option r:6px b:1px b:#384152 bg:#18202b px:10px py:4px text-left font-size:12px fg:legacy-slate-200 legacy-transition b:legacy-cyan-300:hover fg:legacy-cyan-200:hover"
             data-testid={`constraint-var-option-${v.name}`}
             onClick={() => handleVarSelect(v.name)}
           >

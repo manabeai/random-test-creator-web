@@ -143,16 +143,16 @@ export function ConstraintPane() {
   return (
     <div
       ref={paneRef}
-      class={`pane flex min-w-0 flex-col overflow-hidden bg-[#0f1115] ${folded ? 'folded' : ''} max-md:flex-none max-md:overflow-visible`}
+      class={`pane flex min-w:0 flex-col overflow:hidden bg:#0f1115 ${folded ? 'folded' : ''} flex:none@<768px overflow:visible@<768px`}
       data-testid="constraint-pane"
       onMouseLeave={dismissEditor}
     >
-      <div class="pane-header flex min-h-11 items-center justify-between border-b border-[#2a2f3a] bg-[#151922] px-3">
-        <span class="pane-title text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Constraints</span>
-        <div class="pane-header-controls flex items-center gap-2">
-          <div class="constraint-shortcuts flex gap-1.5">
+      <div class="pane-header flex min-h:44px items-center justify-between bb:1px b:#2a2f3a bg:#151922 px:12px">
+        <span class="pane-title font-size:11px font-weight:600 uppercase letter-spacing:0.16em fg:legacy-slate-400">Constraints</span>
+        <div class="pane-header-controls flex items-center gap:8px">
+          <div class="constraint-shortcuts flex gap:6px">
             <button
-              class="shortcut-btn rounded-md border border-[#384152] bg-transparent px-2.5 py-1 text-[12px] font-medium text-slate-400 transition hover:border-cyan-300 hover:text-cyan-200"
+              class="shortcut-btn r:6px b:1px b:#384152 bg:transparent px:10px py:4px font-size:12px font-weight:500 fg:legacy-slate-400 legacy-transition b:legacy-cyan-300:hover fg:legacy-cyan-200:hover"
               data-testid="sumbound-shortcut"
               onClick={() => {
                 openSumBound();
@@ -161,12 +161,12 @@ export function ConstraintPane() {
               ΣBound
             </button>
           </div>
-          <button class="fold-toggle hidden rounded-md border border-[#384152] bg-transparent px-2.5 py-1 text-[12px] font-medium text-slate-400 transition hover:border-cyan-300 hover:text-cyan-200 max-md:inline-flex" onClick={toggleConstraintFold} aria-label={folded ? 'Expand' : 'Collapse'}>
+          <button class="fold-toggle hide r:6px b:1px b:#384152 bg:transparent px:10px py:4px font-size:12px font-weight:500 fg:legacy-slate-400 legacy-transition b:legacy-cyan-300:hover fg:legacy-cyan-200:hover inline-flex@<768px" onClick={toggleConstraintFold} aria-label={folded ? 'Expand' : 'Collapse'}>
             {folded ? '▶' : '▼'}
           </button>
         </div>
       </div>
-      <div class={`pane-content-scroll flex-1 overflow-auto p-3 max-md:max-h-[2000px] max-md:overflow-hidden max-md:transition-[max-height,opacity] max-md:duration-300 ${folded ? 'max-md:max-h-0 max-md:py-0 max-md:opacity-0' : 'max-md:opacity-100'}`}>
+      <div class={`pane-content-scroll flex:1 overflow:auto p:12px max-h:2000px@<768px overflow:hidden@<768px transition-property:max-height,opacity@<768px transition-duration:300ms@<768px ${folded ? 'max-h:0px@<768px py:0px@<768px opacity:0@<768px' : 'opacity:1@<768px'}`}>
         {/* Constraint rows keep projection order, regardless of draft/completed status. */}
         {proj.constraints.items.map(item => {
           const isActiveItem = item.edit !== undefined
@@ -181,12 +181,12 @@ export function ConstraintPane() {
           return (
             <div
               key={`constraint-item-${item.index}`}
-              class={`constraint-interaction-region ${isActiveItem ? 'grid gap-2 pb-2' : ''}`}
+              class={`constraint-interaction-region ${isActiveItem ? 'grid gap:8px pb:8px' : ''}`}
               onMouseEnter={isActiveItem ? clearHoverDismissTimer : undefined}
               onMouseLeave={isActiveItem ? scheduleHoverDismiss : undefined}
             >
               <div
-                class={`constraint-item group flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[13px] transition hover:bg-[#151922] ${item.status === 'draft' ? 'draft text-slate-500' : 'completed text-slate-100'} ${isActiveItem ? 'active bg-[#202633] ring-1 ring-cyan-300/15' : ''}`}
+                class={`constraint-item group flex cursor:pointer items-center gap:8px r:6px px:8px py:6px font-size:13px legacy-transition bg:#151922:hover ${item.status === 'draft' ? 'draft fg:legacy-slate-500' : 'completed fg:legacy-slate-100'} ${isActiveItem ? 'active bg:#202633 legacy-selection-ring ' : ''}`}
                 data-testid={`constraint-item-${item.index}`}
                 data-constraint-status={item.status}
                 onClick={() => {
@@ -207,9 +207,9 @@ export function ConstraintPane() {
                   openConstraintEditor(item.target_id, item.target_name, item.edit.kind, item.edit);
                 }}
               >
-                <span class="constraint-icon font-mono text-[11px]">{item.status === 'draft' ? '○' : '●'}</span>
+                <span class="constraint-icon font:mono font-size:11px">{item.status === 'draft' ? '○' : '●'}</span>
                 <span
-                  class="constraint-display flex-1 font-mono"
+                  class="constraint-display flex:1 font:mono"
                   data-testid={
                     item.status === 'draft' && item.draft_index !== undefined
                       ? `draft-constraint-${item.draft_index}`
@@ -222,7 +222,7 @@ export function ConstraintPane() {
                 </span>
                 {item.status === 'completed' && item.constraint_id && (
                   <button
-                    class="constraint-delete-btn text-slate-500 opacity-0 transition hover:text-rose-300 group-hover:opacity-100"
+                    class="constraint-delete-btn fg:legacy-slate-500 opacity:0 legacy-transition fg:legacy-rose-300:hover legacy-group-reveal"
                     data-testid={`delete-constraint-${item.completed_index ?? item.index}`}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -262,12 +262,12 @@ export function ConstraintPane() {
   );
 }
 
-const charSetOptionBase = 'charset-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] transition hover:border-cyan-300 hover:text-cyan-200';
+const charSetOptionBase = 'charset-option r:6px b:1px b:#384152 bg:#18202b px:10px py:4px text-left font-size:12px legacy-transition b:legacy-cyan-300:hover fg:legacy-cyan-200:hover';
 
 function charSetOptionClass(isSelected: boolean): string {
   return isSelected
-    ? `${charSetOptionBase} active selected border-cyan-300 bg-cyan-300 font-semibold text-[#0f1115]`
-    : `${charSetOptionBase} text-slate-200`;
+    ? `${charSetOptionBase} active selected b:legacy-cyan-300 bg:legacy-cyan-300 font-weight:600 fg:#0f1115`
+    : `${charSetOptionBase} fg:legacy-slate-200`;
 }
 
 function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
@@ -292,9 +292,9 @@ function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
   };
 
   return (
-    <div class="charset-options flex flex-col gap-2 p-2">
-      <div class="constraint-editor-label mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Select Character Set</div>
-      <div class="charset-presets flex flex-wrap gap-1.5">
+    <div class="charset-options flex flex-col gap:8px p:8px">
+      <div class="constraint-editor-label mb:8px font-size:11px font-weight:600 uppercase letter-spacing:0.12em fg:legacy-slate-500">Select Character Set</div>
+      <div class="charset-presets flex flex-wrap gap:6px">
         <button
           class={charSetOptionClass(selected === 'LowerAlpha')}
           data-testid="charset-option-lowercase"
@@ -355,14 +355,14 @@ function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
       </div>
 
       {selected === 'Custom' && (
-        <div class="charset-custom-editor mt-2 rounded-lg border border-[#2a2f3a] bg-[#151922] p-2">
-          <div class="charset-custom-label mb-2 text-[12px] text-slate-500">Enter characters:</div>
-          <div class="charset-custom-inputs flex flex-wrap items-center gap-1.5">
+        <div class="charset-custom-editor mt:8px r:8px b:1px b:#2a2f3a bg:#151922 p:8px">
+          <div class="charset-custom-label mb:8px font-size:12px fg:legacy-slate-500">Enter characters:</div>
+          <div class="charset-custom-inputs flex flex-wrap items-center gap:6px">
             {customChars.map((char, index) => (
-              <div key={index} class="charset-char-input-group flex items-center gap-1">
+              <div key={index} class="charset-char-input-group flex items-center gap:4px">
                 <input
                   type="text"
-                  class="charset-char-input h-8 w-8 rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 text-center font-mono text-[13px] text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
+                  class="charset-char-input h:32px w:32px r:6px b:1px b:#384152 bg:#18202b px:8px py:4px text-center font:mono font-size:13px fg:legacy-slate-100 outline:none legacy-transition fg:legacy-slate-600::placeholder b:legacy-cyan-300:focus legacy-focus-ring "
                   data-testid={`charset-char-input-${index}`}
                   value={char}
                   maxLength={1}
@@ -371,7 +371,7 @@ function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
                 />
                 {customChars.length > 1 && (
                   <button
-                    class="text-slate-500 opacity-0 transition hover:text-rose-300 group-hover:opacity-100"
+                    class="fg:legacy-slate-500 opacity:0 legacy-transition fg:legacy-rose-300:hover legacy-group-reveal"
                     onClick={() => removeCustomChar(index)}
                   >
                     ×
@@ -380,7 +380,7 @@ function CharSetEditor({ onConfirm }: { onConfirm: () => void }) {
               </div>
             ))}
             <button
-              class="h-8 w-8 rounded-md border border-dashed border-cyan-300/80 px-1.5 py-0.5 font-mono text-[11px] text-cyan-300 transition hover:bg-cyan-300 hover:text-[#0f1115]"
+              class="h:32px w:32px r:6px b:1px border-style:dashed b:legacy-cyan-300/0.8 px:6px py:2px font:mono font-size:11px fg:legacy-cyan-300 legacy-transition bg:legacy-cyan-300:hover fg:#0f1115:hover"
               data-testid="charset-add-char"
               onClick={addCustomChar}
             >
@@ -399,12 +399,12 @@ function SumBoundEditor({ onConfirm }: { onConfirm: () => void }) {
   const bExprState = boundExprState.value;
 
   return (
-    <div class="sumbound-editor my-2 rounded-lg border border-[#2a2f3a] bg-[#151922] p-3">
-      <div class="constraint-editor-label mb-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">SumBound</div>
-      <div class="sumbound-row mb-2 flex items-center gap-2">
-        <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Variable</label>
+    <div class="sumbound-editor my:8px r:8px b:1px b:#2a2f3a bg:#151922 p:12px">
+      <div class="constraint-editor-label mb:8px font-size:11px font-weight:600 uppercase letter-spacing:0.12em fg:legacy-slate-500">SumBound</div>
+      <div class="sumbound-row mb:8px flex items-center gap:8px">
+        <label class="min-w:64px font-size:11px font-weight:600 uppercase letter-spacing:0.12em fg:legacy-slate-500">Variable</label>
         <select
-          class="rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 text-[13px] text-slate-100 outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
+          class="r:6px b:1px b:#384152 bg:#18202b px:8px py:4px font-size:13px fg:legacy-slate-100 outline:none legacy-transition b:legacy-cyan-300:focus legacy-focus-ring "
           data-testid="sumbound-var-select"
           value={sumBoundVar.value}
           onChange={(e) => { sumBoundVar.value = (e.target as HTMLSelectElement).value; }}
@@ -415,10 +415,10 @@ function SumBoundEditor({ onConfirm }: { onConfirm: () => void }) {
           ))}
         </select>
       </div>
-      <div class="sumbound-row mb-2 flex items-center gap-2">
-        <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Upper Bound</label>
+      <div class="sumbound-row mb:8px flex items-center gap:8px">
+        <label class="min-w:64px font-size:11px font-weight:600 uppercase letter-spacing:0.12em fg:legacy-slate-500">Upper Bound</label>
         <div
-          class="bound-input flex min-h-8 cursor-pointer items-center rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 transition hover:border-cyan-300/70"
+          class="bound-input flex min-h:32px cursor:pointer items-center r:6px b:1px b:#384152 bg:#18202b px:8px py:4px legacy-transition b:legacy-cyan-300/0.7:hover"
           data-testid="sumbound-upper-input"
           onClick={() => {
             if (!upper) openValueInput('sumbound-upper');
@@ -426,7 +426,7 @@ function SumBoundEditor({ onConfirm }: { onConfirm: () => void }) {
         >
           {upper ? (
             <span
-              class="bound-expression font-mono text-[13px] text-cyan-300"
+              class="bound-expression font:mono font-size:13px fg:legacy-cyan-300"
               data-testid="sumbound-upper-expression"
               onClick={(e) => {
                 e.stopPropagation();
@@ -436,7 +436,7 @@ function SumBoundEditor({ onConfirm }: { onConfirm: () => void }) {
               {upper}
             </span>
           ) : (
-            <span class="bound-placeholder text-[12px] text-slate-600">upper...</span>
+            <span class="bound-placeholder font-size:12px fg:legacy-slate-600">upper...</span>
           )}
         </div>
         {isValueInputOpen('sumbound-upper') && <ValueInput target="sumbound-upper" />}

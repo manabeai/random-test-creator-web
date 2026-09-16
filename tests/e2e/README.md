@@ -157,3 +157,9 @@ Phase 3（UI 実装）でテストを通すことが目標。
 2. **右ペイン三要素は必須** — TeX 入力形式 + TeX 制約 + sample は全テストで検証
 3. **Structure → draft 自動生成** — ノード追加時に draft constraint が自動生成されることを検証
 4. **draft → completed 昇格** — 値入力後に constraint が completed に昇格することを検証
+## Production stylesheet verification
+
+`npm run test:e2e:production` builds the app and runs the same suite against Vite
+Preview. CI uses this mode to exercise statically generated Master CSS, including
+conditional classes and responsive variants. `npm run test:e2e` still uses the
+development server for local iteration.

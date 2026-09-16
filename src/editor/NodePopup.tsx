@@ -35,7 +35,7 @@ export function NodePopup() {
   // Variant bypasses the wizard layout
   if (state.step === 'fields' && state.candidate === 'variant') {
     return (
-      <div class="node-popup rounded-lg border border-[#2a2f3a] bg-[#151922] p-3 shadow-2xl shadow-black/40" data-testid="node-popup">
+      <div class="node-popup r:8px b:1px b:#2a2f3a bg:#151922 p:12px shadow:0|25px|50px|-12px|rgb(0|0|0/0.4) " data-testid="node-popup">
         <VariantFieldsPanel />
       </div>
     );
@@ -47,14 +47,14 @@ export function NodePopup() {
   const selectedCandidate = state.step === 'fields' ? state.candidate : null;
 
   return (
-    <div class="node-popup rounded-lg border border-[#2a2f3a] bg-[#151922] p-3 shadow-2xl shadow-black/40" data-testid="node-popup">
+    <div class="node-popup r:8px b:1px b:#2a2f3a bg:#151922 p:12px shadow:0|25px|50px|-12px|rgb(0|0|0/0.4) " data-testid="node-popup">
       <StepIndicator active={activeStep} />
-      <div class="popup-wizard grid grid-cols-[9rem_1fr] gap-3 max-md:grid-cols-1">
-        <div class="popup-candidate-list flex flex-col gap-1.5 max-md:flex-row max-md:flex-wrap">
+      <div class="popup-wizard grid grid-template-columns:9rem|1fr gap:12px grid-cols:1@<768px">
+        <div class="popup-candidate-list flex flex-col gap:6px flex-row@<768px flex-wrap@<768px">
           {candidates.map(c => (
             <button
               key={c}
-              class={`popup-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200 ${selectedCandidate === c ? 'selected border-cyan-300 bg-cyan-300 font-semibold text-[#0f1115]' : ''}`}
+              class={`popup-option r:6px b:1px b:#384152 bg:#18202b px:10px py:4px text-left font-size:12px fg:legacy-slate-200 legacy-transition b:legacy-cyan-300:hover fg:legacy-cyan-200:hover ${selectedCandidate === c ? 'selected b:legacy-cyan-300 bg:legacy-cyan-300 font-weight:600 fg:#0f1115' : ''}`}
               data-testid={`popup-option-${c}`}
               onClick={() => selectCandidate(c)}
               onMouseEnter={() => { hoveredCandidate.value = c; }}
@@ -64,7 +64,7 @@ export function NodePopup() {
             </button>
           ))}
         </div>
-        <div class="popup-right-panel flex min-h-20 flex-col">
+        <div class="popup-right-panel flex min-h:80px flex-col">
           {state.step === 'candidates' && <PreviewPanel />}
           {state.step === 'fields' && <FieldsPanel />}
         </div>
@@ -75,10 +75,10 @@ export function NodePopup() {
 
 function StepIndicator({ active }: { active: number }) {
   return (
-    <div class="popup-step-indicator mb-2 flex items-center gap-1.5 text-[12px]">
-      <span class={active === 1 ? 'step-active font-semibold text-cyan-300' : 'step-inactive text-slate-600'}>01 Choose</span>
-      <span class="step-arrow text-slate-600">/</span>
-      <span class={active === 2 ? 'step-active font-semibold text-cyan-300' : 'step-inactive text-slate-600'}>02 Configure</span>
+    <div class="popup-step-indicator mb:8px flex items-center gap:6px font-size:12px">
+      <span class={active === 1 ? 'step-active font-weight:600 fg:legacy-cyan-300' : 'step-inactive fg:legacy-slate-600'}>01 Choose</span>
+      <span class="step-arrow fg:legacy-slate-600">/</span>
+      <span class={active === 2 ? 'step-active font-weight:600 fg:legacy-cyan-300' : 'step-inactive fg:legacy-slate-600'}>02 Configure</span>
     </div>
   );
 }
@@ -87,18 +87,18 @@ function PreviewPanel() {
   const hovered = hoveredCandidate.value;
   const state = popupState.value;
   if (!hovered) {
-    return <div class="popup-preview popup-preview-empty flex flex-1 items-center justify-center rounded-md border border-dashed border-[#384152] bg-[#101318] p-2 text-[12px] text-slate-500">Hover to preview fields</div>;
+    return <div class="popup-preview popup-preview-empty flex flex:1 items-center justify-center r:6px b:1px border-style:dashed b:#384152 bg:#101318 p:8px font-size:12px fg:legacy-slate-500">Hover to preview fields</div>;
   }
   const detail = state.step === 'closed'
     ? undefined
     : state.hotspot.candidate_details.find(candidate => candidate.kind === hovered);
   const fields = detail?.fields ?? [];
   return (
-    <div class="popup-preview flex flex-1 flex-col gap-2 rounded-md border border-dashed border-[#384152] bg-[#101318] p-2">
-      <div class="preview-title text-[12px] font-semibold text-cyan-300">{detail?.label ?? hovered}</div>
-      <div class="preview-fields flex flex-wrap gap-1.5">
+    <div class="popup-preview flex flex:1 flex-col gap:8px r:6px b:1px border-style:dashed b:#384152 bg:#101318 p:8px">
+      <div class="preview-title font-size:12px font-weight:600 fg:legacy-cyan-300">{detail?.label ?? hovered}</div>
+      <div class="preview-fields flex flex-wrap gap:6px">
         {fields.map(f => (
-          <span key={f.name} class="preview-field-tag rounded border border-[#384152] bg-[#151922] px-1.5 py-0.5 text-[11px] text-slate-400">{f.label}</span>
+          <span key={f.name} class="preview-field-tag r:4px b:1px b:#384152 bg:#151922 px:6px py:2px font-size:11px fg:legacy-slate-400">{f.label}</span>
         ))}
       </div>
     </div>
@@ -131,28 +131,28 @@ function VariantFieldsPanel() {
   const isVariantValid = () => popupVariantTag.value.trim() !== '' && popupName.value.trim() !== '';
   return (
     <div
-      class="popup-fields flex flex-col gap-2"
+      class="popup-fields flex flex-col gap:8px"
       onMouseLeave={handleCommit}
       onKeyDown={(e) => {
         if (e.key === 'Enter') handleCommit();
       }}
     >
-      <div class="popup-field flex items-center gap-2">
-        <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Tag Value</label>
+      <div class="popup-field flex items-center gap:8px">
+        <label class="min-w:64px font-size:11px font-weight:600 uppercase letter-spacing:0.12em fg:legacy-slate-500">Tag Value</label>
         <input
           type="text"
-          class="rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 font-mono text-[13px] text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
+          class="r:6px b:1px b:#384152 bg:#18202b px:8px py:4px font:mono font-size:13px fg:legacy-slate-100 outline:none legacy-transition fg:legacy-slate-600::placeholder b:legacy-cyan-300:focus legacy-focus-ring "
           data-testid="variant-tag-input"
           value={popupVariantTag.value}
           onInput={(e) => { popupVariantTag.value = (e.target as HTMLInputElement).value; }}
           autoFocus
         />
       </div>
-      <div class="popup-field flex items-center gap-2">
-        <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Name</label>
+      <div class="popup-field flex items-center gap:8px">
+        <label class="min-w:64px font-size:11px font-weight:600 uppercase letter-spacing:0.12em fg:legacy-slate-500">Name</label>
         <input
           type="text"
-          class="rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 font-mono text-[13px] text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
+          class="r:6px b:1px b:#384152 bg:#18202b px:8px py:4px font:mono font-size:13px fg:legacy-slate-100 outline:none legacy-transition fg:legacy-slate-600::placeholder b:legacy-cyan-300:focus legacy-focus-ring "
           data-testid="name-input"
           value={popupName.value}
           onInput={(e) => { popupName.value = (e.target as HTMLInputElement).value; }}
@@ -236,21 +236,21 @@ function FieldsPanel() {
 
   return (
     <div
-      class="popup-fields flex flex-col gap-2"
+      class="popup-fields flex flex-col gap:8px"
       onMouseLeave={handleCommit}
       onKeyDown={(e) => {
         if (e.key === 'Enter') handleCommit();
       }}
     >
       {needsType && (
-        <div class="popup-field flex items-center gap-2">
-          <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Type</label>
-          <div class="type-buttons flex flex-wrap gap-1.5">
+        <div class="popup-field flex items-center gap:8px">
+          <label class="min-w:64px font-size:11px font-weight:600 uppercase letter-spacing:0.12em fg:legacy-slate-500">Type</label>
+          <div class="type-buttons flex flex-wrap gap:6px">
             {['number', 'string', 'char'].map(t => (
               <button
                 key={t}
                 type="button"
-                class={`type-btn rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200 ${popupType.value === t ? 'active selected border-cyan-300 bg-cyan-300 font-semibold text-[#0f1115]' : ''}`}
+                class={`type-btn r:6px b:1px b:#384152 bg:#18202b px:10px py:4px text-left font-size:12px fg:legacy-slate-200 legacy-transition b:legacy-cyan-300:hover fg:legacy-cyan-200:hover ${popupType.value === t ? 'active selected b:legacy-cyan-300 bg:legacy-cyan-300 font-weight:600 fg:#0f1115' : ''}`}
                 onClick={() => { popupType.value = t; }}
               >
                 {t}
@@ -262,7 +262,7 @@ function FieldsPanel() {
             data-testid="type-select"
             value={popupType.value}
             onChange={(e) => { popupType.value = (e.target as HTMLSelectElement).value; }}
-            class="absolute h-px w-px overflow-hidden opacity-0"
+            class="abs h:1px w:1px overflow:hidden opacity:0"
           >
             <option value="number">number</option>
             <option value="string">string</option>
@@ -272,11 +272,11 @@ function FieldsPanel() {
       )}
 
       {needsName && (
-        <div class="popup-field flex items-center gap-2">
-          <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Name</label>
+        <div class="popup-field flex items-center gap:8px">
+          <label class="min-w:64px font-size:11px font-weight:600 uppercase letter-spacing:0.12em fg:legacy-slate-500">Name</label>
           <input
             type="text"
-            class="rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 font-mono text-[13px] text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
+            class="r:6px b:1px b:#384152 bg:#18202b px:8px py:4px font:mono font-size:13px fg:legacy-slate-100 outline:none legacy-transition fg:legacy-slate-600::placeholder b:legacy-cyan-300:focus legacy-focus-ring "
             data-testid="name-input"
             value={popupName.value}
             onInput={(e) => { popupName.value = (e.target as HTMLInputElement).value; }}
@@ -289,8 +289,8 @@ function FieldsPanel() {
       )}
 
       {needsLength && (
-        <div class="popup-field flex items-center gap-2">
-          <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Length</label>
+        <div class="popup-field flex items-center gap:8px">
+          <label class="min-w:64px font-size:11px font-weight:600 uppercase letter-spacing:0.12em fg:legacy-slate-500">Length</label>
           <LengthField
             value={popupLengthVar.value}
             onChange={(value) => { popupLengthVar.value = value; }}
@@ -302,16 +302,16 @@ function FieldsPanel() {
 
       {needsGridLength && (
         <>
-          <div class="popup-field flex items-center gap-2">
-            <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Rows</label>
+          <div class="popup-field flex items-center gap:8px">
+            <label class="min-w:64px font-size:11px font-weight:600 uppercase letter-spacing:0.12em fg:legacy-slate-500">Rows</label>
             <LengthField
               value={popupLengthVar.value}
               onChange={(value) => { popupLengthVar.value = value; }}
               availableVars={lengthVars}
             />
           </div>
-          <div class="popup-field flex items-center gap-2">
-            <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Cols</label>
+          <div class="popup-field flex items-center gap:8px">
+            <label class="min-w:64px font-size:11px font-weight:600 uppercase letter-spacing:0.12em fg:legacy-slate-500">Cols</label>
             <LengthField
               value={popupLengthVar2.value}
               onChange={(value) => { popupLengthVar2.value = value; }}
@@ -323,18 +323,18 @@ function FieldsPanel() {
       )}
 
       {needsCountExpr && (
-        <div class="popup-field flex items-center gap-2">
-          <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Count</label>
+        <div class="popup-field flex items-center gap:8px">
+          <label class="min-w:64px font-size:11px font-weight:600 uppercase letter-spacing:0.12em fg:legacy-slate-500">Count</label>
           <CountField availableVars={lengthVars} />
         </div>
       )}
 
       {needsWeightName && (
-        <div class="popup-field flex items-center gap-2">
-          <label class="min-w-16 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Weight Name</label>
+        <div class="popup-field flex items-center gap:8px">
+          <label class="min-w:64px font-size:11px font-weight:600 uppercase letter-spacing:0.12em fg:legacy-slate-500">Weight Name</label>
           <input
             type="text"
-            class="rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 font-mono text-[13px] text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
+            class="r:6px b:1px b:#384152 bg:#18202b px:8px py:4px font:mono font-size:13px fg:legacy-slate-100 outline:none legacy-transition fg:legacy-slate-600::placeholder b:legacy-cyan-300:focus legacy-focus-ring "
             data-testid="weight-name-input"
             value={popupWeightName.value}
             onInput={(e) => { popupWeightName.value = (e.target as HTMLInputElement).value; }}
@@ -365,7 +365,7 @@ function GridLengthTestSelect({ availableVars }: { availableVars: { name: string
           popupLengthVar2.value = value;
         }
       }}
-      class="absolute h-px w-px overflow-hidden opacity-0"
+      class="abs h:1px w:1px overflow:hidden opacity:0"
     >
       <option value="">-- select --</option>
       {availableVars.map(v => (
@@ -387,13 +387,13 @@ function LengthField({
   testId?: string;
 }) {
   return (
-    <div class="length-field flex min-w-0 flex-1 flex-col gap-1.5">
-      <div class="length-var-options flex flex-wrap gap-1.5">
+    <div class="length-field flex min-w:0 flex:1 flex-col gap:6px">
+      <div class="length-var-options flex flex-wrap gap:6px">
         {availableVars.map(v => (
           <button
             key={v.name}
             type="button"
-            class={`length-var-option rounded-md border border-[#384152] bg-[#18202b] px-2.5 py-1 text-left text-[12px] text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200 ${value === v.name ? 'active selected border-cyan-300 bg-cyan-300 font-semibold text-[#0f1115]' : ''}`}
+            class={`length-var-option r:6px b:1px b:#384152 bg:#18202b px:10px py:4px text-left font-size:12px fg:legacy-slate-200 legacy-transition b:legacy-cyan-300:hover fg:legacy-cyan-200:hover ${value === v.name ? 'active selected b:legacy-cyan-300 bg:legacy-cyan-300 font-weight:600 fg:#0f1115' : ''}`}
             data-testid={`length-var-option-${v.name}`}
             onClick={() => onChange(v.name)}
           >
@@ -402,7 +402,7 @@ function LengthField({
         ))}
       </div>
       <input
-        class="length-expression-input rounded-md border border-[#384152] bg-[#18202b] px-2 py-1 font-mono text-[13px] text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/15"
+        class="length-expression-input r:6px b:1px b:#384152 bg:#18202b px:8px py:4px font:mono font-size:13px fg:legacy-slate-100 outline:none legacy-transition fg:legacy-slate-600::placeholder b:legacy-cyan-300:focus legacy-focus-ring "
         data-testid="length-expression-input"
         type="text"
         placeholder="length expression"
@@ -413,7 +413,7 @@ function LengthField({
         data-testid={testId}
         value={value}
         onChange={(e) => onChange((e.currentTarget as HTMLSelectElement).value)}
-        class="absolute h-px w-px overflow-hidden opacity-0"
+        class="abs h:1px w:1px overflow:hidden opacity:0"
       >
         <option value="">-- select --</option>
         {availableVars.map(v => (
